@@ -1,0 +1,44 @@
+example.invalid
+example.invalid/
+http://example.invalid
+http://example.com.invalid/
+http://.example.com
+http://-example.com
+hppt://example.com
+example.coma
+-example.coma
+foo.123
+http://a.b--c.de/
+
+_http://example.com
+_//example.com
+_example.com
+http://example.com_
+
+http://
+http://.
+http://..
+http://#
+http://##
+http://?
+http://??
+google.com:500000
+show image.jpg
+path:to:file.pm
+/path/to/file.pl
+
+%
+% Not IPv4
+%
+1.2.3.4.5
+1.2.3
+1.2.3.400
+1000.2.3.4
+a1.2.3.4
+1.2.3.4a
+
+%
+% Not email
+%
+foo@bar
+mailto:foo@bar

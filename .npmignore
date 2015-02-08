@@ -1,0 +1,9 @@
+benchmark/
+coverage/
+demo/
+doc/
+support/
+test/
+Makefile
+.*
+*.log

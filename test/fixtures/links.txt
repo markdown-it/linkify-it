@@ -1,0 +1,168 @@
+%
+% Regular links
+%
+My http://example.com site
+http://example.com
+
+My http://example.com/ site
+http://example.com/
+
+http://example.com/foo_bar/
+
+http://user:pass@example.com:8080
+
+http://user@example.com
+
+http://user@example.com:8080
+
+http://user:pass@example.com
+
+http://example.com:8080
+
+http://example.com/?foo=bar
+
+http://example.com?foo=bar
+
+http://example.com/#foo=bar
+
+http://example.com#foo=bar
+
+http://a.in
+
+%
+% localhost
+%
+localhost
+
+localhost/
+
+http://localhost:8000?
+http://localhost:8000
+
+
+%
+% SSL
+%
+My ssl https://example.com site
+https://example.com
+
+
+%
+% Neutral proto
+%
+My ssl //example.com site
+//example.com
+
+%
+% IPs
+%
+4.4.4.4
+
+192.168.1.1/abc
+
+
+%
+% Fuzzy
+%
+test.example@http://vk.com
+http://vk.com
+
+text:http://example.com/
+http://example.com/
+
+google.com
+
+google.com: // no port
+google.com
+
+s.l.o.w.io
+
+a-b.com
+
+GOOGLE.COM.
+GOOGLE.COM
+
+google.xxx // known tld
+google.xxx
+
+
+%
+% Correct termination for . , [] {} () ""
+%
+(Scoped http://example.com/foo_bar)
+http://example.com/foo_bar
+
+http://example.com/foo_bar_(wiki)
+
+http://foo.com/blah_blah_[other]
+
+http://foo.com/blah_blah_{I'm_king}
+
+http://foo.com/blah_blah_"doublequoted"
+
+(Scoped like http://example.com/foo_bar)
+http://example.com/foo_bar
+
+[Scoped like http://example.com/foo_bar]
+http://example.com/foo_bar
+
+{Scoped like http://example.com/foo_bar}
+http://example.com/foo_bar
+
+"Quoted like http://example.com/foo_bar"
+http://example.com/foo_bar
+
+[example.com/foo_bar.jpg)]
+example.com/foo_bar.jpg
+
+http://example.com/foo_bar.jpg.
+http://example.com/foo_bar.jpg
+
+http://example.com/foo_bar/.
+http://example.com/foo_bar/
+
+http://example.com/foo_bar,
+http://example.com/foo_bar
+
+http://example.com/foo_bar?p=10.
+http://example.com/foo_bar?p=10
+
+https://www.google.ru/maps/@59.9393895,30.3165389,15z?hl=ru
+
+https://www.google.com/maps/place/New+York,+NY,+USA/@40.702271,-73.9968471,11z/data=!4m2!3m1!1s0x89c24fa5d33f083b:0xc80b8f06e177fe62?hl=en
+
+https://www.google.com/analytics/web/?hl=ru&pli=1#report/visitors-overview/a26895874w20458057p96934174/
+
+%
+% Emails
+%
+
+%test."foo".bar@gmail.co.uk!
+%test."foo".bar@gmail.co.uk
+
+name@example.com
+
+mailto:name@example.com
+
+mailto:foo_bar@example.com
+
+foo+bar@gmail.com
+
+192.168.1.1@gmail.com
+
+%
+% International
+%
+http://✪df.ws/123
+
+http://xn--df-oiy.ws/123
+
+a.ws
+
+➡.ws/䨹
+
+example.com/䨹
+
+президент.рф
+
+xn--d1abbgf6aiiy.xn--p1ai

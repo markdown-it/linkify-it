@@ -1,0 +1,30 @@
+{
+  "name": "linkify-it",
+  "version": "1.0.0",
+  "description": "Links recognition library with FULL unicode support",
+  "keywords": [
+    "linkify",
+    "linkifier",
+    "autolink",
+    "autolinker"
+  ],
+  "repository": "markdown-it/linkify-it",
+  "license": "MIT",
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "ansi": "~0.3.0",
+    "benchmark": "~1.0.0",
+    "chai": "~1.10.0",
+    "coveralls": "~2.11.2",
+    "eslint": "0.13.0",
+    "eslint-plugin-nodeca": "^1.0.0",
+    "istanbul": "*",
+    "mocha": "*",
+    "ndoc": "^3.1.0",
+    "punycode": "^1.3.2",
+    "tlds": "^1.26.0",
+    "xregexp": "https://github.com/slevithan/xregexp/archive/master.tar.gz"
+  }
+}

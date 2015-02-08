@@ -1,0 +1,26 @@
+#
+# Common nodeca config
+################################################################################
+
+--index         "./README.md"
+--package       "./package.json"
+--gh-ribbon     "https://github.com/markdown-it/linkify-it"
+--output        "doc"
+--render        "html"
+--link-format   "https://github.com/markdown-it/linkify-it/blob/master/{file}#L{line}"
+--broken-links  "show"
+
+
+#
+# Paths with sources
+################################################################################
+
+index.js
+lib
+
+
+#
+# Project specific configuration
+################################################################################
+
+--show-all
