@@ -52,9 +52,11 @@ gh-pages:
 		echo 'Remote repo URL not found' >&2 ; \
 		exit 128 ; \
 		fi
-	$(MAKE) doc && \
-		cp -r ./doc ${TMP_PATH} && \
+	$(MAKE) demo && \
+		cp -r ./demo ${TMP_PATH} && \
 		touch ${TMP_PATH}/.nojekyll
+	$(MAKE) doc && \
+		cp -r ./doc ${TMP_PATH}/doc
 	cd ${TMP_PATH} && \
 		git init && \
 		git add . && \

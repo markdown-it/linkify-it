@@ -11,6 +11,8 @@ linkify-it
 > Links recognition library with FULL unicode support.
 > Focused on high quality link patterns detection in plain text.
 
+__[Demo](http://markdown-it.github.io/linkify-it/)__
+
 Why it's awesome:
 
 - Full unicode support, _with astral characters_!
@@ -73,7 +75,7 @@ linkify.match("Search at google.com.");
 API
 ---
 
-__[API documentation](http://markdown-it.github.io/linkify-it/)__
+__[API documentation](http://markdown-it.github.io/linkify-it/doc)__
 
 ### new LinkifyIt(schemas)
 
