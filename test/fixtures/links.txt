@@ -29,6 +29,9 @@ http://example.com#foo=bar
 
 http://a.in
 
+HTTP://GOOGLE.COM
+
+
 %
 % localhost
 %
@@ -143,6 +146,8 @@ https://www.google.com/analytics/web/?hl=ru&pli=1#report/visitors-overview/a2689
 name@example.com
 
 mailto:name@example.com
+
+MAILTO:NAME@EXAMPLE.COM
 
 mailto:foo_bar@example.com
 

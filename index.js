@@ -279,7 +279,7 @@ function Match(self, shift) {
    *
    * Prefix (protocol) for matched string.
    **/
-  this.schema    = self.__schema__;
+  this.schema    = self.__schema__.toLowerCase();
   /**
    * Match#index
    *
@@ -410,7 +410,7 @@ LinkifyIt.prototype.test = function test(text) {
     while ((m = re.exec(text)) !== null) {
       len = this.testSchemaAt(text, m[2], re.lastIndex);
       if (len) {
-        this.__schema__     = m[2];
+        this.__schema__     = m[2].toLowerCase();
         this.__index__      = m.index + m[1].length;
         this.__last_index__ = m.index + m[0].length + len;
         break;
@@ -475,7 +475,7 @@ LinkifyIt.prototype.test = function test(text) {
 LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
   if (!this.__ready__) { compileSchemas(this); }
 
-  return this.__compiled__[schema].validate(text, pos, this);
+  return this.__compiled__[schema.toLowerCase()].validate(text, pos, this);
 };
 
 
