@@ -15,6 +15,8 @@ describe('links', function () {
 
   var l = linkify();
 
+  l.normalize = function () {}; // kill normalizer
+
   lines = fs.readFileSync(path.join(__dirname, 'fixtures/links.txt'), 'utf8').split(/\r?\n/g);
 
   var skipNext = false;
@@ -52,6 +54,8 @@ describe('not links', function () {
 
   var l = linkify();
 
+  l.normalize = function () {}; // kill normalizer
+
   lines = fs.readFileSync(path.join(__dirname, 'fixtures/not_links.txt'), 'utf8').split(/\r?\n/g);
 
   lines.forEach(function (line, idx) {
@@ -87,17 +91,7 @@ describe('API', function () {
   });
 
 
-  it('add rule as regex', function () {
-    var l = linkify().add('my:', /^\/\/[a-z]+/);
-
-    var match = l.match('my:// my://asdf! google.com.');
-
-    assert.equal(match[0].text, 'my://asdf');
-    assert.equal(match[1].text, 'google.com');
-  });
-
-
-  it('add rule as object (regexp)', function () {
+  it('add rule as regexp, with default normalizer', function () {
     var l = linkify().add('my:', {
       validate: /^\/\/[a-z]+/
     });
@@ -173,6 +167,20 @@ describe('API', function () {
     assert.equal(match[0].text, 'http://google.com');
     assert.equal(match[1].text, 'google.com');
     assert.equal(match[2].text, 'ftp://google.com');
+  });
+
+  it('normalize', function () {
+    var l = linkify(), m;
+
+    m = l.match('mailto:foo@bar.com')[0];
+
+    assert.equal(m.text, 'foo@bar.com');
+    assert.equal(m.url,  'mailto:foo@bar.com');
+
+    m = l.match('foo@bar.com')[0];
+
+    assert.equal(m.text, 'foo@bar.com');
+    assert.equal(m.url,  'mailto:foo@bar.com');
   });
 
 

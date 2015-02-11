@@ -2,7 +2,7 @@
 
 /* TODOS:
  *
- * - revisit normalizers
+ * - dirty auth check in normalizer
  * - optimize link scans on big texts (see benchmarks)
  * - revisit supported protocols and add tests (ftp, git)
  * - improve docs (add examples)
@@ -39,29 +39,23 @@ function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&'); }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Dummy link normalizer function.
-//
-function normalizeUrl(str) { return str; }
-
-// Dummy text normalizer function.
-//
-function normalizeText(str) { return str; }
-
 
 var defaultSchemas = {
-  'http:':   function (text, pos, self) {
-    var tail = text.slice(pos);
+  'http:': {
+    validate: function (text, pos, self) {
+      var tail = text.slice(pos);
 
-    if (!self.re.http) {
-      // compile lazily, becayse "host"-containing variables can change on tlds update.
-      self.re.http =  new RegExp(
-        '^\\/\\/' + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, 'i'
-      );
+      if (!self.re.http) {
+        // compile lazily, becayse "host"-containing variables can change on tlds update.
+        self.re.http =  new RegExp(
+          '^\\/\\/' + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, 'i'
+        );
+      }
+      if (self.re.http.test(tail)) {
+        return tail.match(self.re.http)[0].length;
+      }
+      return 0;
     }
-    if (self.re.http.test(tail)) {
-      return tail.match(self.re.http)[0].length;
-    }
-    return 0;
   },
   'https:':  'http:',
   'ftp:':    'http:',
@@ -84,18 +78,20 @@ var defaultSchemas = {
       return 0;
     }
   },
-  'mailto:':   function (text, pos, self) {
-    var tail = text.slice(pos);
+  'mailto:': {
+    validate: function (text, pos, self) {
+      var tail = text.slice(pos);
 
-    if (!self.re.mailto) {
-      self.re.mailto =  new RegExp(
-        '^' + self.re.src_mail_name + '@' + self.re.src_host_strict, 'i'
-      );
+      if (!self.re.mailto) {
+        self.re.mailto =  new RegExp(
+          '^' + self.re.src_mail_name + '@' + self.re.src_host_strict, 'i'
+        );
+      }
+      if (self.re.mailto.test(tail)) {
+        return tail.match(self.re.mailto)[0].length;
+      }
+      return 0;
     }
-    if (self.re.mailto.test(tail)) {
-      return tail.match(self.re.mailto)[0].length;
-    }
-    return 0;
   }
 };
 
@@ -122,8 +118,7 @@ function createValidator(re) {
 
 function createNormalizer() {
   return function (match, self) {
-    match.text = self.normalizeText(match.text);
-    match.url =  self.normalizeUrl(match.url);
+    self.normalize(match);
   };
 }
 
@@ -197,12 +192,6 @@ function compileSchemas(self) {
 
     self.__compiled__[name] = compiled;
 
-    if (isRegExp(val)) {
-      compiled.validate = createValidator(val);
-      compiled.normalize = createNormalizer();
-      return;
-    }
-
     if (isObject(val)) {
       if (isRegExp(val.validate)) {
         compiled.validate = createValidator(val.validate);
@@ -220,12 +209,6 @@ function compileSchemas(self) {
         schemaError(name, val);
       }
 
-      return;
-    }
-
-    if (isFunction(val)) {
-      compiled.validate = val;
-      compiled.normalize = createNormalizer();
       return;
     }
 
@@ -385,9 +368,6 @@ function LinkifyIt(schemas) {
 
   this.__tlds__           = tlds_default;
   this.__tlds_replaced__  = false;
-
-  this.normalizeUrl       = normalizeUrl;
-  this.normalizeText      = normalizeText;
 
   this.re = {};
 }
@@ -580,16 +560,19 @@ LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
   return this;
 };
 
-/*
- * LinkifyIt#fuzzy(enable)
+/**
+ * LinkifyIt#normalize(match)
  *
- * Enable/disable euristic for links/emails without schemas. On by default.
- **
-LinkifyIt.prototype.fuzzy = function guess(enable) {
-  this.__guess__ = Boolean(enable);
-  this.__ready__ = false;
-  return this;
-};*/
+ * Default normalizer (if schema does not define it's own).
+ **/
+LinkifyIt.prototype.normalize = function normalize(match) {
+  if (!match.schema) { match.url = 'http://' + match.url; }
+
+  if (match.schema === 'mailto:') {
+    match.text = match.text.replace(/^mailto:/i, '');
+    if (!/^mailto:/i.test(match.url)) { match.url = 'mailto:' + match.url; }
+  }
+};
 
 
 module.exports = LinkifyIt;

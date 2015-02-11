@@ -92,7 +92,6 @@ By default understands:
   alphanumeric char.
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
-  - _RegExp_ - regexp to match string tail after prefix
   - _Object_
     - _validate_ - validator function (should return matched length on success),
       or `RegExp`.
