@@ -157,8 +157,8 @@ http://example.com/123
 % Emails
 %
 
-%test."foo".bar@gmail.co.uk!
-%test."foo".bar@gmail.co.uk
+test."foo".bar@gmail.co.uk!
+test."foo".bar@gmail.co.uk
 
 name@example.com
 
