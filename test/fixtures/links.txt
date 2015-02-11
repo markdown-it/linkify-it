@@ -31,13 +31,14 @@ http://a.in
 
 HTTP://GOOGLE.COM
 
+http://example.invalid // don't restrict root domain when schema exists
+http://example.invalid
+
 
 %
-% localhost
+% localhost (only with protocol allowed)
 %
-localhost
-
-localhost/
+//localhost
 
 http://localhost:8000?
 http://localhost:8000
@@ -154,6 +155,10 @@ mailto:foo_bar@example.com
 foo+bar@gmail.com
 
 192.168.1.1@gmail.com
+
+mailto:foo@bar      % explicit protocol make it valid
+mailto:foo@bar
+
 
 %
 % International

@@ -1,14 +1,14 @@
 example.invalid
 example.invalid/
-http://example.invalid
-http://example.com.invalid/
 http://.example.com
 http://-example.com
 hppt://example.com
 example.coma
 -example.coma
 foo.123
-http://a.b--c.de/
+http://a.b--c.de/   % `--` disabled, because collision possible
+localhost           % only with protocol allowed
+localhost/
 
 _http://example.com
 _//example.com
@@ -22,7 +22,7 @@ http://#
 http://##
 http://?
 http://??
-google.com:500000
+google.com:500000 // invalid port
 show image.jpg
 path:to:file.pm
 /path/to/file.pl
@@ -40,5 +40,4 @@ a1.2.3.4
 %
 % Not email
 %
-foo@bar
-mailto:foo@bar
+foo@bar     % Should be at second level domain & with correct tld

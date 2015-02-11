@@ -84,7 +84,7 @@ var defaultSchemas = {
 
       if (!self.re.mailto) {
         self.re.mailto =  new RegExp(
-          '^' + self.re.src_mail_name + '@' + self.re.src_host_strict, 'i'
+          '^' + self.re.src_email_name + '@' + self.re.src_host_strict, 'i'
         );
       }
       if (self.re.mailto.test(tail)) {
@@ -139,36 +139,11 @@ function compileSchemas(self) {
 
   re.src_tlds = tlds.join('|');
 
-  re.src_host = '(?:' +
-                  'localhost' +
-                '|' +
-                  re.src_ip4 +
-                '|' +
-                  '(?:' +
-                    '(?:' +
-                      re.src_domain + '|' +
-                      re.src_xn +
-                    ')\\.' +
-                  ')+' +
-                  '(?:' + re.src_tlds + ')' +
-                ')';
+  function untpl(tpl) { return tpl.replace('%TLDS%', re.src_tlds); }
 
-  re.src_host_strict = re.src_host + re.src_host_terminator;
-
-  re.src_host_port_strict = re.src_host + re.src_port + re.src_host_terminator;
-
-  re.fuzzy_email = new RegExp(
-    '(^|' + re.src_Z + ')([\\-;:&=\\+\\$,\\.a-zA-Z0-9_]+@' + re.src_host_strict + ')', 'i'
-  );
-
-  re.fuzzy_link = new RegExp(
-    // Fuzzy link can't be prepended with .:/\- and non punctuation.
-    '(^|(?![.:/\\-_])(?:' + re.src_ZPCcCf + '))(' + re.src_host_port_strict + re.src_path + ')', 'i'
-  );
-
-  re.host_test = RegExp(
-    'localhost|\\.\\d{1,3}\\.|(?:\\.(' + re.src_tlds + ')(?:' + re.src_ZPCcCf + '|$))', 'i'
-  );
+  re.email_fuzzy      = RegExp(untpl(re.tpl_email_fuzzy), 'i');
+  re.link_fuzzy       = RegExp(untpl(re.tpl_link_fuzzy), 'i');
+  re.host_fuzzy_test  = RegExp(untpl(re.tpl_host_fuzzy_test), 'i');
 
   //
   // Compile each schema
@@ -420,11 +395,11 @@ LinkifyIt.prototype.test = function test(text) {
 
   if (this.__compiled__['http:']) {
     // guess schemaless links
-    tld_pos = text.search(this.re.host_test);
+    tld_pos = text.search(this.re.host_fuzzy_test);
     if (tld_pos >= 0) {
       // if tld is located after found link - no need to check fuzzy pattern
       if (this.__index__ < 0 || tld_pos < this.__index__) {
-        if ((ml = text.match(this.re.fuzzy_link)) !== null) {
+        if ((ml = text.match(this.re.link_fuzzy)) !== null) {
 
           shift = ml.index + ml[1].length;
 
@@ -444,7 +419,7 @@ LinkifyIt.prototype.test = function test(text) {
     if (at_pos >= 0) {
       // We can't skip this check, because this cases are possible:
       // 192.168.1.1@gmail.com, my.in@example.com
-      if ((me = text.match(this.re.fuzzy_email)) !== null) {
+      if ((me = text.match(this.re.email_fuzzy)) !== null) {
 
         shift = me.index + me[1].length;
         next  = me.index + me[0].length;
