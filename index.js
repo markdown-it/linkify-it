@@ -282,17 +282,51 @@ function compileSchemas(self) {
   resetScanCache(self);
 }
 
-
+/**
+ * class Match
+ *
+ * Match result. Single element of array, returned by [[LinkifyIt#match]]
+ **/
 function Match(self, shift) {
   var start = self.__index__,
       end   = self.__last_index__,
       text  = self.__text_cache__.slice(start, end);
 
+  /**
+   * Match#schema
+   *
+   * Prefix (protocol) for matched string.
+   **/
   this.schema    = self.__schema__;
+  /**
+   * Match#index
+   *
+   * First position of matched string.
+   **/
   this.index     = start + shift;
+  /**
+   * Match#lastIndex
+   *
+   * Next position after matched string.
+   **/
   this.lastIndex = end + shift;
+  /**
+   * Match#raw
+   *
+   * Matched string.
+   **/
   this.raw       = text;
+  /**
+   * Match#text
+   *
+   * Notmalized text of matched string.
+   **/
   this.text      = text;
+  /**
+   * Match#url
+   *
+   * Normalized url of matched string.
+   **/
   this.url       = text;
 }
 
@@ -310,14 +344,16 @@ function createMatch(self, shift) {
  **/
 
 /**
- *  new LinkifyIt([schemas])
- *  - schemas (Object): additional schemas to validate (prefix/validator)
- *  Initiates new instance of LinkifyIt.
+ * new LinkifyIt([schemas])
+ * - schemas (Object): additional schemas to validate (prefix/validator)
  *
- *  By default detects:
+ * Creates new linkifier instance with optional additional schemas.
+ * Can be called without `new` keyword for convenience.
  *
- *  - `http(s)://...` , `ftp(s)://...`, `mailto:...` links
- *  - "fuzzy" links and emails.
+ * By default understands:
+ *
+ * - `http(s)://...` , `ftp(s)://...`, `mailto:...` & `//...` links
+ * - "fuzzy" links and emails (google.com, foo@bar.com).
  *
  * `schemas` is an object, where each key/value describes protocol/rule:
  *
@@ -358,7 +394,7 @@ function LinkifyIt(schemas) {
 }
 
 
-/**
+/** chainable
  * LinkifyIt#add(schema, definition)
  * - schema (String): rule name (fixed pattern prefix)
  * - definition (String|RegExp|Object): schema definition
@@ -510,7 +546,7 @@ LinkifyIt.prototype.match = function match(text) {
 };
 
 
-/**
+/** chainable
  * LinkifyIt#tlds(list [, keepOld]) -> this
  * - list (Array): list of tlds
  * - keepOld (Boolean): merge with current list if `true` (`false` by default)

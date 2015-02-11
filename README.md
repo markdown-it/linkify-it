@@ -28,16 +28,42 @@ npm install linkify-it --save
 Browserification is also supported.
 
 
-Use
----
+Usage examples
+--------------
 
 ```js
 var linkify = require('linkify-it')();
 
-linkify
-  .tlds(require('tlds')) // load full tlds list
-  .tlds('.onion', true);
+// Reload full tlds list & add uniffocial `.onion` domain.
+linkify.tlds(require('tlds')).tlds('.onion', true);
 
+// Add `git:` ptotocol as "alias"
+linkify.add('git:', 'http:');
+
+// Add twitter mentions handler
+linkify.add('@', {
+  validate: function (text, pos, self) {
+    var tail = text.slice(pos);
+
+    if (!self.re.twitter) {
+      self.re.twitter =  new RegExp(
+        '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCcCf + ')'
+      );
+    }
+    if (self.re.twitter.test(tail)) {
+      if (pos >= 2 && tail[pos - 2] === '@') {
+        return false;
+      }
+      return tail.match(self.re.twitter)[0].length;
+    }
+    return 0;
+  },
+  normalize: function (m) {
+    m.url = 'https://twitter.com/' + m.url.replace(/^@/, '');
+  }
+});
+
+// Do the job:
 linkify.test("Search at google.com.");
 linkify.match("Search at google.com.");
 
@@ -47,17 +73,17 @@ linkify.match("Search at google.com.");
 API
 ---
 
+__[API documentation](http://markdown-it.github.io/linkify-it/)__
+
 ### new LinkifyIt(schemas)
 
-Creates new instance with optional additional schemas. By default understands:
+Creates new linkifier instance with optional additional schemas.
+Can be called without `new` keyword for convenience.
 
-- __protocols__
-  - `http(s):`
-  - `ftp(s):`
-  - `mailto:`
-- __fuzzy__
-  - links
-  - emails
+By default understands:
+
+- `http(s)://...` , `ftp(s)://...`, `mailto:...` & `//...` links
+- "fuzzy" links and emails (google.com, foo@bar.com).
 
 `schemas` is an object, where each key/value describes protocol/rule:
 

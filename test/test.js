@@ -175,4 +175,34 @@ describe('API', function () {
     assert.equal(match[2].text, 'ftp://google.com');
   });
 
+
+  it('test @twitter rule', function () {
+    var l = linkify().add('@', {
+      validate: function (text, pos, self) {
+        var tail = text.slice(pos);
+
+        if (!self.re.twitter) {
+          self.re.twitter =  new RegExp(
+            '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCcCf + ')'
+          );
+        }
+        if (self.re.twitter.test(tail)) {
+          if (pos >= 2 && tail[pos - 2] === '@') {
+            return false;
+          }
+          return tail.match(self.re.twitter)[0].length;
+        }
+        return 0;
+      },
+      normalize: function (m) {
+        m.url = 'https://twitter.com/' + m.url.replace(/^@/, '');
+      }
+    });
+
+    assert.equal(l.match('hello, @gamajoba_!')[0].text, '@gamajoba_');
+    assert.equal(l.match(':@givi')[0].text, '@givi');
+    assert.equal(l.match(':@givi')[0].url, 'https://twitter.com/givi');
+    assert.notOk(l.test('@@invalid'));
+  });
+
 });
