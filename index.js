@@ -543,9 +543,8 @@ LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
 LinkifyIt.prototype.normalize = function normalize(match) {
   if (!match.schema) { match.url = 'http://' + match.url; }
 
-  if (match.schema === 'mailto:') {
-    match.text = match.text.replace(/^mailto:/i, '');
-    if (!/^mailto:/i.test(match.url)) { match.url = 'mailto:' + match.url; }
+  if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
+    match.url = 'mailto:' + match.url;
   }
 };
 
