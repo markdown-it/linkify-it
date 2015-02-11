@@ -27,6 +27,21 @@ test-ci: lint
 	./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
 
 
+demo: lint
+	rm -rf ./demo
+	mkdir ./demo
+	./support/demodata.js > ./support/demo_template/sample.json
+	./node_modules/.bin/jade ./support/demo_template/index.jade --pretty \
+		--obj ./support/demo_template/sample.json \
+		--out ./demo
+	./node_modules/.bin/stylus -u autoprefixer-stylus \
+		< ./support/demo_template/index.styl \
+		> ./demo/index.css
+	rm -rf ./support/demo_template/sample.json
+	./node_modules/.bin/browserify ./ -s linkifyit > ./demo/linkify-it.js
+	cp ./support/demo_template/index.js ./demo/
+
+
 doc:
 	rm -rf ./doc
 	./node_modules/.bin/ndoc --link-format "{package.homepage}/blob/${CURR_HEAD}/{file}#L{line}"
@@ -64,5 +79,5 @@ publish: browserify
 	npm publish ${GITHUB_PROJ}/tarball/${NPM_VERSION}
 
 
-.PHONY: publish lint test doc gh-pages coverage
+.PHONY: publish lint test doc demo gh-pages coverage
 .SILENT: help lint test doc todo

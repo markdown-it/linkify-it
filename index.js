@@ -65,7 +65,6 @@ var defaultSchemas = {
   },
   'https:':  'http:',
   'ftp:':    'http:',
-  'ftps:':   'http:',
   '//':      {
     validate: function (text, pos, self) {
       var tail = text.slice(pos);
@@ -352,7 +351,7 @@ function createMatch(self, shift) {
  *
  * By default understands:
  *
- * - `http(s)://...` , `ftp(s)://...`, `mailto:...` & `//...` links
+ * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
  * - "fuzzy" links and emails (google.com, foo@bar.com).
  *
  * `schemas` is an object, where each key/value describes protocol/rule:
