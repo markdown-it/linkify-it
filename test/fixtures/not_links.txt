@@ -41,3 +41,4 @@ a1.2.3.4
 % Not email
 %
 foo@bar     % Should be at second level domain & with correct tld
+mailto:bar

@@ -446,6 +446,10 @@ LinkifyIt.prototype.test = function test(text) {
  * at given position. Returns length of found pattern (0 on fail).
  **/
 LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
+  // If not supported schema check requested - terminate
+  if (!this.__compiled__[schema.toLowerCase()]) {
+    return 0;
+  }
   return this.__compiled__[schema.toLowerCase()].validate(text, pos, this);
 };
 

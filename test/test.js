@@ -159,7 +159,10 @@ describe('API', function () {
     var l = linkify();
 
     assert.ok(l.testSchemaAt('http://google.com', 'http:', 5));
+    assert.ok(l.testSchemaAt('http://google.com', 'HTTP:', 5));
     assert.notOk(l.testSchemaAt('http://google.com', 'http:', 6));
+
+    assert.notOk(l.testSchemaAt('http://google.com', 'bad_schema:', 6));
   });
 
 
