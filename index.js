@@ -1,13 +1,5 @@
 'use strict';
 
-/* TODOS:
- *
- * - dirty auth check in normalizer
- * - optimize link scans on big texts (see benchmarks)
- * - revisit supported protocols and add tests (ftp, git)
- * - improve docs (add examples)
- *
- */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helpers
@@ -46,7 +38,7 @@ var defaultSchemas = {
       var tail = text.slice(pos);
 
       if (!self.re.http) {
-        // compile lazily, becayse "host"-containing variables can change on tlds update.
+        // compile lazily, because "host"-containing variables can change on tlds update.
         self.re.http =  new RegExp(
           '^\\/\\/' + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, 'i'
         );
@@ -289,7 +281,7 @@ function Match(self, shift) {
 function createMatch(self, shift) {
   var match = new Match(self, shift);
 
-  self.__compiled__[self.__schema__].normalize(match, self);
+  self.__compiled__[match.schema].normalize(match, self);
 
   return match;
 }
@@ -383,7 +375,7 @@ LinkifyIt.prototype.test = function test(text) {
     while ((m = re.exec(text)) !== null) {
       len = this.testSchemaAt(text, m[2], re.lastIndex);
       if (len) {
-        this.__schema__     = m[2].toLowerCase();
+        this.__schema__     = m[2];
         this.__index__      = m.index + m[1].length;
         this.__last_index__ = m.index + m[0].length + len;
         break;
@@ -540,6 +532,10 @@ LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
  * Default normalizer (if schema does not define it's own).
  **/
 LinkifyIt.prototype.normalize = function normalize(match) {
+
+  // Do minimal possible changes by default. Need to collect feedback prior
+  // to move forward https://github.com/markdown-it/linkify-it/issues/1
+
   if (!match.schema) { match.url = 'http://' + match.url; }
 
   if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
