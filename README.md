@@ -1,5 +1,3 @@
-__!!! Coming soon !!!__
-
 linkify-it
 ==========
 
