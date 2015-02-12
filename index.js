@@ -124,7 +124,7 @@ function createNormalizer() {
 
 // Schemas compiler. Build regexps.
 //
-function compileSchemas(self) {
+function compile(self) {
 
   // load base RE patterns
   var re = self.re = assign({}, require('./lib/re_unicode_parts'), require('./lib/re_url_parts'));
@@ -235,7 +235,6 @@ function compileSchemas(self) {
   // Cleanup
   //
 
-  self.__ready__    = true;
   resetScanCache(self);
 }
 
@@ -339,12 +338,13 @@ function LinkifyIt(schemas) {
 
   this.__schemas__        = assign({}, defaultSchemas, schemas);
   this.__compiled__       = {};
-  this.__ready__          = false;
 
   this.__tlds__           = tlds_default;
   this.__tlds_replaced__  = false;
 
   this.re = {};
+
+  compile(this);
 }
 
 
@@ -357,7 +357,7 @@ function LinkifyIt(schemas) {
  **/
 LinkifyIt.prototype.add = function add(schema, definition) {
   this.__schemas__[schema] = definition;
-  this.__ready__ = false;
+  compile(this);
   return this;
 };
 
@@ -368,8 +368,6 @@ LinkifyIt.prototype.add = function add(schema, definition) {
  * Searches linkifiable pattern and returns `true` on success or `false` on fail.
  **/
 LinkifyIt.prototype.test = function test(text) {
-  if (!this.__ready__) { compileSchemas(this); }
-
   // Reset scan cache
   this.__text_cache__ = text;
   this.__index__      = -1;
@@ -448,8 +446,6 @@ LinkifyIt.prototype.test = function test(text) {
  * at given position. Returns length of found pattern (0 on fail).
  **/
 LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
-  if (!this.__ready__) { compileSchemas(this); }
-
   return this.__compiled__[schema.toLowerCase()].validate(text, pos, this);
 };
 
@@ -471,8 +467,6 @@ LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
  * - __url__ - link, generated from matched text
  **/
 LinkifyIt.prototype.match = function match(text) {
-  if (!this.__ready__) { compileSchemas(this); }
-
   var shift = 0, result = [];
 
   // Try to take previous element from cache, if .test() called before
@@ -518,11 +512,10 @@ LinkifyIt.prototype.match = function match(text) {
 LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
   list = Array.isArray(list) ? list : [ list ];
 
-  this.__ready__ = false;
-
   if (!keepOld) {
     this.__tlds__ = list.slice();
     this.__tlds_replaced__ = true;
+    compile(this);
     return this;
   }
 
@@ -532,6 +525,8 @@ LinkifyIt.prototype.tlds = function tlds(list, keepOld) {
                                     return el !== arr[idx - 1];
                                   })
                                   .reverse();
+
+  compile(this);
   return this;
 };
 

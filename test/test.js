@@ -132,22 +132,26 @@ describe('API', function () {
   it('add bad definition', function () {
     var l;
 
-    l = linkify().add('test:', []);
+    l = linkify();
 
-    assert.throw(function () { l.test('123'); });
-
-    l = linkify().add('test:', {
-      validate: []
+    assert.throw(function () {
+      l.add('test:', []);
     });
 
-    assert.throw(function () { l.test('123'); });
+    l = linkify();
 
-    l = linkify().add('test:', {
-      validate: function () { return false; },
-      normalize: 'bad'
+    assert.throw(function () {
+      l.add('test:', { validate: [] });
     });
 
-    assert.throw(function () { l.test('123'); });
+    l = linkify();
+
+    assert.throw(function () {
+      l.add('test:', {
+        validate: function () { return false; },
+        normalize: 'bad'
+      });
+    });
   });
 
 
