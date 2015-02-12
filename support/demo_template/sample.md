@@ -14,19 +14,23 @@ http://example.com?foo=bar
 http://example.com/#foo=bar
 http://example.com#foo=bar
 http://a.in
+HTTP://GOOGLE.COM
+http://example.invalid // don't restrict root domain when schema exists
+
 
 %
-% localhost
+% localhost (only with protocol allowed)
 %
-localhost
-localhost/
+//localhost
 http://localhost:8000?
-http://localhost:8000
+
 
 %
-% SSL
+% Other protocols
 %
 My ssl https://example.com site
+My ftp://example.com site
+
 
 %
 % Neutral proto
@@ -39,12 +43,12 @@ My ssl //example.com site
 4.4.4.4
 192.168.1.1/abc
 
+
 %
 % Fuzzy
 %
 test.example@http://vk.com
 text:http://example.com/
-http://example.com/
 google.com
 google.com: // no port
 s.l.o.w.io
@@ -52,19 +56,22 @@ a-b.com
 GOOGLE.COM.
 google.xxx // known tld
 
+
 %
-% Correct termination for . , [] {} () ""
+% Correct termination for . , ! ? [] {} () "" ''
 %
 (Scoped http://example.com/foo_bar)
 http://example.com/foo_bar_(wiki)
 http://foo.com/blah_blah_[other]
 http://foo.com/blah_blah_{I'm_king}
+http://foo.com/blah_blah_I'm_king
 http://foo.com/blah_blah_"doublequoted"
+http://foo.com/blah_blah_'singlequoted'
 (Scoped like http://example.com/foo_bar)
 [Scoped like http://example.com/foo_bar]
 {Scoped like http://example.com/foo_bar}
 "Quoted like http://example.com/foo_bar"
-http://example.com/foo_bar
+'Quoted like http://example.com/foo_bar'
 [example.com/foo_bar.jpg)]
 http://example.com/foo_bar.jpg.
 http://example.com/foo_bar/.
@@ -73,15 +80,25 @@ http://example.com/foo_bar?p=10.
 https://www.google.ru/maps/@59.9393895,30.3165389,15z?hl=ru
 https://www.google.com/maps/place/New+York,+NY,+USA/@40.702271,-73.9968471,11z/data=!4m2!3m1!1s0x89c24fa5d33f083b:0xc80b8f06e177fe62?hl=en
 https://www.google.com/analytics/web/?hl=ru&pli=1#report/visitors-overview/a26895874w20458057p96934174/
+http://business.timesonline.co.uk/article/0,,9065-2473189,00.html
+http://example.com/123!
+http://example.com/foo--bar
+http://example.com/foo---bar  % Markdown dash
+http://example.com/foo----bar
 
 %
 % Emails
 %
-ame@example.com
+
+test."foo".bar@gmail.co.uk!
+name@example.com
 mailto:name@example.com
+MAILTO:NAME@EXAMPLE.COM
 mailto:foo_bar@example.com
 foo+bar@gmail.com
 192.168.1.1@gmail.com
+mailto:foo@bar      % explicit protocol make it valid
+
 
 %
 % International
@@ -95,25 +112,26 @@ example.com/䨹
 xn--d1abbgf6aiiy.xn--p1ai
 
 
-
 %
-% NOT links
+% Not links
 %
 example.invalid
 example.invalid/
-http://example.invalid
-http://example.com.invalid/
 http://.example.com
 http://-example.com
 hppt://example.com
 example.coma
 -example.coma
 foo.123
-http://a.b--c.de/
+http://a.b--c.de/   % `--` disabled, because collision possible
+localhost           % only with protocol allowed
+localhost/
+
 _http://example.com
 _//example.com
 _example.com
 http://example.com_
+
 http://
 http://.
 http://..
@@ -121,7 +139,7 @@ http://#
 http://##
 http://?
 http://??
-google.com:500000
+google.com:500000 // invalid port
 show image.jpg
 path:to:file.pm
 /path/to/file.pl
@@ -139,5 +157,5 @@ a1.2.3.4
 %
 % Not email
 %
-foo@bar
-mailto:foo@bar
+foo@bar     % Should be at second level domain & with correct tld
+mailto:bar
