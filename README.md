@@ -42,19 +42,16 @@ linkify
   .tlds('.onion', true);          // Add uniffocial `.onion` domain.
   .linkify.add('git:', 'http:');  // Add `git:` ptotocol as "alias"
 
-linkify.test('Site https://github.com!');  // => true
+console.log(linkify.test('Site github.com!'));  // true
 
-console.log(linkify.test('Site github.com!'));
-/* =>
-      {
-        schema: "",
-        index: 5,
-        lastIndex: 15,
-        raw: "github.com",
-        text: "github.com",
-        url: "http://github.com",
-      }
-*/
+console.log(linkify.match('Site github.com!')); // {
+                                                //   schema: "",
+                                                //   index: 5,
+                                                //   lastIndex: 15,
+                                                //   raw: "github.com",
+                                                //   text: "github.com",
+                                                //   url: "http://github.com",
+                                                // }
 ```
 
 ##### Exmple 2. Add twitter mentions handler
