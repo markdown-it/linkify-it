@@ -31,16 +31,35 @@ Browserification is also supported.
 Usage examples
 --------------
 
+##### Example 1
+
 ```js
 var linkify = require('linkify-it')();
 
 // Reload full tlds list & add uniffocial `.onion` domain.
-linkify.tlds(require('tlds')).tlds('.onion', true);
+linkify
+  .tlds(require('tlds'))          // Reload with full tlds list
+  .tlds('.onion', true);          // Add uniffocial `.onion` domain.
+  .linkify.add('git:', 'http:');  // Add `git:` ptotocol as "alias"
 
-// Add `git:` ptotocol as "alias"
-linkify.add('git:', 'http:');
+linkify.test('Site https://github.com!');  // => true
 
-// Add twitter mentions handler
+console.log(linkify.test('Site github.com!'));
+/* =>
+      {
+        schema: "",
+        index: 5,
+        lastIndex: 15,
+        raw: "github.com",
+        text: "github.com",
+        url: "http://github.com",
+      }
+*/
+```
+
+##### Exmple 2. Add twitter mentions handler
+
+```js
 linkify.add('@', {
   validate: function (text, pos, self) {
     var tail = text.slice(pos);
@@ -51,6 +70,8 @@ linkify.add('@', {
       );
     }
     if (self.re.twitter.test(tail)) {
+      // Linkifier allows punctuation chars before prefix,
+      // but we additionally disable `@` ("@@mention" is invalid)
       if (pos >= 2 && tail[pos - 2] === '@') {
         return false;
       }
@@ -58,15 +79,10 @@ linkify.add('@', {
     }
     return 0;
   },
-  normalize: function (m) {
-    m.url = 'https://twitter.com/' + m.url.replace(/^@/, '');
+  normalize: function (match) {
+    match.url = 'https://twitter.com/' + m.url.replace(/^@/, '');
   }
 });
-
-// Do the job:
-linkify.test("Search at google.com.");
-linkify.match("Search at google.com.");
-
 ```
 
 

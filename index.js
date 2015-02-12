@@ -292,8 +292,8 @@ function createMatch(self, shift) {
  **/
 
 /**
- * new LinkifyIt([schemas])
- * - schemas (Object): additional schemas to validate (prefix/validator)
+ * new LinkifyIt(schemas)
+ * - schemas (Object): Optional. Additional schemas to validate (prefix/validator)
  *
  * Creates new linkifier instance with optional additional schemas.
  * Can be called without `new` keyword for convenience.
@@ -301,16 +301,15 @@ function createMatch(self, shift) {
  * By default understands:
  *
  * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
- * - "fuzzy" links and emails (google.com, foo@bar.com).
+ * - "fuzzy" links and emails (example.com, foo@bar.com).
  *
  * `schemas` is an object, where each key/value describes protocol/rule:
  *
  * - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
  *   for example). `linkify-it` makes shure that prefix is not preceeded with
- *   alphanumeric char.
+ *   alphanumeric char and symbols. Only whitespaces and punctuation allowed.
  * - __value__ - rule to check tail after link prefix
  *   - _String_ - just alias to existing rule
- *   - _RegExp_ - regexp to match string tail after prefix
  *   - _Object_
  *     - _validate_ - validator function (should return matched length on success),
  *       or `RegExp`.
@@ -345,7 +344,7 @@ function LinkifyIt(schemas) {
  * - schema (String): rule name (fixed pattern prefix)
  * - definition (String|RegExp|Object): schema definition
  *
- * Add new rule definition. See constructor descriptiob for details.
+ * Add new rule definition. See constructor description for details.
  **/
 LinkifyIt.prototype.add = function add(schema, definition) {
   this.__schemas__[schema] = definition;

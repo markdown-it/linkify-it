@@ -10,7 +10,7 @@ var path = require('path');
 console.log(JSON.stringify({
   self: {
     demo: {
-      source: fs.readFileSync(path.join(__dirname, './demo_template/sample.md'), 'utf8')
+      source: fs.readFileSync(path.join(__dirname, './demo_template/sample.txt'), 'utf8')
     }
   }
 }, null, 2));
