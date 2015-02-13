@@ -47,16 +47,9 @@
 
     setLinkifiedContent('.result-html', source);
 
-    try {
-      if (source) {
-        // serialize state - source and options
-        permalink.href = '#md64=' + window.btoa(JSON.stringify({
-          source: source
-        }));
-      } else {
-        permalink.href = '';
-      }
-    } catch (__) {
+    if (source) {
+      permalink.href = '#t1=' + encodeURIComponent(source);
+    } else {
       permalink.href = '';
     }
   }
@@ -68,23 +61,16 @@
   $(function() {
 
     // Restore content if opened by permalink
-    if (location.hash && /^(#md=|#md64=)/.test(location.hash)) {
-      try {
-        var cfg;
+    if (location.hash && /^(#t=)/.test(location.hash)) {
+      var source;
 
-        if (/^#md64=/.test(location.hash)) {
-          cfg = JSON.parse(window.atob(location.hash.slice(6)));
-        } else {
-          // Legacy mode for old links. Those become broken in github posts,
-          // so we switched to base64 encoding.
-          cfg = JSON.parse(decodeURIComponent(location.hash.slice(4)));
-        }
+      if (/^#t1=/.test(location.hash)) {
+        source = decodeURIComponent(location.hash.slice(4));
+      }
 
-        if (_.isString(cfg.source)) {
-          $('.source').val(cfg.source);
-        }
-
-      } catch (__) {}
+      if (_.isString(source)) {
+        $('.source').val(source);
+      }
     }
 
     // Activate tooltips
