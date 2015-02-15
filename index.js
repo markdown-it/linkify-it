@@ -119,7 +119,7 @@ function createNormalizer() {
 function compile(self) {
 
   // load base RE patterns
-  var re = self.re = assign({}, require('./lib/re_unicode_parts'), require('./lib/re_url_parts'));
+  var re = self.re = assign({}, require('./lib/re_url_parts'));
 
   // define dynamic patterns
   var tlds = self.__tlds__.slice();
