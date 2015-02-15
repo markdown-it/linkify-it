@@ -118,10 +118,10 @@ function createNormalizer() {
 //
 function compile(self) {
 
-  // load base RE patterns
-  var re = self.re = assign({}, require('./lib/re_url_parts'));
+  // Load & clone RE patterns.
+  var re = self.re = assign({}, require('./lib/re'));
 
-  // define dynamic patterns
+  // Define dynamic patterns
   var tlds = self.__tlds__.slice();
 
   if (!self.__tlds_replaced__) {
