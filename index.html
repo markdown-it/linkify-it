@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>linkify-it demo</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/2.4.1/lodash.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css">
+    <script src="linkify-it.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
+    <!-- Ancient IE support - load shiv & kill broken highlighter--><!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script>window.hljs = null;</script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <h1>
+        linkify-it
+         <small>demo</small>
+      </h1>
+      <p>
+        Type text below to see linkified example.
+        See <a href="./doc/" target="_blank">API Docs</a> for usage details.
+      </p>
+      <p>&nbsp;</p>
+    </div>
+    <div class="container full-height">
+      <div class="row full-height">
+        <div class="col-xs-6 full-height">
+          <div class="demo-control"><a href="#" class="source-clear">clear</a><a id="permalink" href="./" title="Share this snippet as link"><strong>permalink</strong></a></div>
+          <textarea class="source full-height">%
+% Regular links
+%
+My http://example.com site
+My http://example.com/ site
+http://example.com/foo_bar/
+http://user:pass@example.com:8080
+http://user@example.com
+http://user@example.com:8080
+http://user:pass@example.com
+http://example.com:8080
+http://example.com/?foo=bar
+http://example.com?foo=bar
+http://example.com/#foo=bar
+http://example.com#foo=bar
+http://a.in
+HTTP://GOOGLE.COM
+http://example.invalid // don't restrict root domain when schema exists
+
+
+%
+% localhost (only with protocol allowed)
+%
+//localhost
+http://localhost:8000?
+
+
+%
+% Other protocols
+%
+My ssl https://example.com site
+My ftp://example.com site
+
+
+%
+% Neutral proto
+%
+My ssl //example.com site
+
+%
+% IPs
+%
+4.4.4.4
+192.168.1.1/abc
+
+
+%
+% Fuzzy
+%
+test.example@http://vk.com
+text:http://example.com/
+google.com
+google.com: // no port
+s.l.o.w.io
+a-b.com
+GOOGLE.COM.
+google.xxx // known tld
+
+
+%
+% Correct termination for . , ! ? [] {} () &quot;&quot; ''
+%
+(Scoped http://example.com/foo_bar)
+http://example.com/foo_bar_(wiki)
+http://foo.com/blah_blah_[other]
+http://foo.com/blah_blah_{I'm_king}
+http://foo.com/blah_blah_I'm_king
+http://foo.com/blah_blah_&quot;doublequoted&quot;
+http://foo.com/blah_blah_'singlequoted'
+(Scoped like http://example.com/foo_bar)
+[Scoped like http://example.com/foo_bar]
+{Scoped like http://example.com/foo_bar}
+&quot;Quoted like http://example.com/foo_bar&quot;
+'Quoted like http://example.com/foo_bar'
+[example.com/foo_bar.jpg)]
+http://example.com/foo_bar.jpg.
+http://example.com/foo_bar/.
+http://example.com/foo_bar,
+http://example.com/foo_bar?p=10.
+https://www.google.ru/maps/@59.9393895,30.3165389,15z?hl=ru
+https://www.google.com/maps/place/New+York,+NY,+USA/@40.702271,-73.9968471,11z/data=!4m2!3m1!1s0x89c24fa5d33f083b:0xc80b8f06e177fe62?hl=en
+https://www.google.com/analytics/web/?hl=ru&amp;pli=1#report/visitors-overview/a26895874w20458057p96934174/
+http://business.timesonline.co.uk/article/0,,9065-2473189,00.html
+http://example.com/123!
+http://example.com/foo--bar
+http://example.com/foo---bar  % Markdown dash
+http://example.com/foo----bar
+
+%
+% Emails
+%
+
+test.&quot;foo&quot;.bar@gmail.co.uk!
+name@example.com
+mailto:name@example.com
+MAILTO:NAME@EXAMPLE.COM
+mailto:foo_bar@example.com
+foo+bar@gmail.com
+192.168.1.1@gmail.com
+mailto:foo@bar      % explicit protocol make it valid
+
+
+%
+% International
+%
+http://✪df.ws/123
+http://xn--df-oiy.ws/123
+a.ws
+➡.ws/䨹
+example.com/䨹
+президент.рф
+xn--d1abbgf6aiiy.xn--p1ai
+
+
+%
+% Not links
+%
+example.invalid
+example.invalid/
+http://.example.com
+http://-example.com
+hppt://example.com
+example.coma
+-example.coma
+foo.123
+http://a.b--c.de/   % `--` disabled, because collision possible
+localhost           % only with protocol allowed
+localhost/
+
+_http://example.com
+_//example.com
+_example.com
+http://example.com_
+
+http://
+http://.
+http://..
+http://#
+http://##
+http://?
+http://??
+google.com:500000 // invalid port
+show image.jpg
+path:to:file.pm
+/path/to/file.pl
+
+%
+% Not IPv4
+%
+1.2.3.4.5
+1.2.3
+1.2.3.400
+1000.2.3.4
+a1.2.3.4
+1.2.3.4a
+
+%
+% Not email
+%
+foo@bar     % Should be at second level domain &amp; with correct tld
+mailto:bar</textarea>
+        </div>
+        <section class="col-xs-6 full-height">
+          <div class="result-html full-height"></div>
+        </section>
+      </div>
+    </div>
+    <div class="gh-ribbon"><a href="https://github.com/markdown-it/linkify-it" target="_blank">Fork me on GitHub</a></div>
+  </body>
+</html>
