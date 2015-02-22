@@ -241,37 +241,37 @@ function Match(self, shift) {
       text  = self.__text_cache__.slice(start, end);
 
   /**
-   * Match#schema
+   * Match#schema -> String
    *
    * Prefix (protocol) for matched string.
    **/
   this.schema    = self.__schema__.toLowerCase();
   /**
-   * Match#index
+   * Match#index -> Number
    *
    * First position of matched string.
    **/
   this.index     = start + shift;
   /**
-   * Match#lastIndex
+   * Match#lastIndex -> Number
    *
    * Next position after matched string.
    **/
   this.lastIndex = end + shift;
   /**
-   * Match#raw
+   * Match#raw -> String
    *
    * Matched string.
    **/
   this.raw       = text;
   /**
-   * Match#text
+   * Match#text -> String
    *
    * Notmalized text of matched string.
    **/
   this.text      = text;
   /**
-   * Match#url
+   * Match#url -> String
    *
    * Normalized url of matched string.
    **/
