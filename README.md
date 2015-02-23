@@ -44,14 +44,14 @@ linkify
 
 console.log(linkify.test('Site github.com!'));  // true
 
-console.log(linkify.match('Site github.com!')); // {
+console.log(linkify.match('Site github.com!')); // [ {
                                                 //   schema: "",
                                                 //   index: 5,
                                                 //   lastIndex: 15,
                                                 //   raw: "github.com",
                                                 //   text: "github.com",
                                                 //   url: "http://github.com",
-                                                // }
+                                                // } ]
 ```
 
 ##### Exmple 2. Add twitter mentions handler
@@ -77,7 +77,7 @@ linkify.add('@', {
     return 0;
   },
   normalize: function (match) {
-    match.url = 'https://twitter.com/' + m.url.replace(/^@/, '');
+    match.url = 'https://twitter.com/' + match.url.replace(/^@/, '');
   }
 });
 ```
