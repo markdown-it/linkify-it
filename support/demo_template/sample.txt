@@ -16,6 +16,8 @@ http://example.com#foo=bar
 http://a.in
 HTTP://GOOGLE.COM
 http://example.invalid // don't restrict root domain when schema exists
+>>example.com % markdown blockquote
+>>http://example.com % markdown blockquote
 
 
 %
@@ -92,6 +94,7 @@ http://example.com/foo----bar
 
 test."foo".bar@gmail.co.uk!
 name@example.com
+>>name@example.com % markdown blockquote
 mailto:name@example.com
 MAILTO:NAME@EXAMPLE.COM
 mailto:foo_bar@example.com
@@ -131,6 +134,7 @@ _http://example.com
 _//example.com
 _example.com
 http://example.com_
+@example.com
 
 http://
 http://.

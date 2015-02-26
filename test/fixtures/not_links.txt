@@ -18,7 +18,6 @@ _//example.com
 _example.com
 http://example.com_
 @example.com
-@example.com
 
 http://
 http://.
