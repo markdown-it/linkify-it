@@ -17,6 +17,8 @@ _http://example.com
 _//example.com
 _example.com
 http://example.com_
+@example.com
+@example.com
 
 http://
 http://.

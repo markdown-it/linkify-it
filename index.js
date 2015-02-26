@@ -220,8 +220,8 @@ function compile(self) {
                       .map(escapeRE)
                       .join('|');
   // (?!_) cause 1.5x slowdown
-  self.re.schema_test   = RegExp('(^|(?!_)(?:' + re.src_ZPCcCf + '))(' + slist + ')', 'i');
-  self.re.schema_search = RegExp('(^|(?!_)(?:' + re.src_ZPCcCf + '))(' + slist + ')', 'ig');
+  self.re.schema_test   = RegExp('(^|(?!_)(?:>|' + re.src_ZPCcCf + '))(' + slist + ')', 'i');
+  self.re.schema_search = RegExp('(^|(?!_)(?:>|' + re.src_ZPCcCf + '))(' + slist + ')', 'ig');
 
   //
   // Cleanup
