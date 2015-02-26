@@ -61,16 +61,8 @@
   $(function() {
 
     // Restore content if opened by permalink
-    if (location.hash && /^(#t=)/.test(location.hash)) {
-      var source;
-
-      if (/^#t1=/.test(location.hash)) {
-        source = decodeURIComponent(location.hash.slice(4));
-      }
-
-      if (_.isString(source)) {
-        $('.source').val(source);
-      }
+    if (location.hash && /^#t1=/.test(location.hash)) {
+      $('.source').val(decodeURIComponent(location.hash.slice(4)));
     }
 
     // Activate tooltips
