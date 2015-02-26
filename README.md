@@ -39,8 +39,9 @@ var linkify = require('linkify-it')();
 // Reload full tlds list & add uniffocial `.onion` domain.
 linkify
   .tlds(require('tlds'))          // Reload with full tlds list
-  .tlds('.onion', true);          // Add uniffocial `.onion` domain.
+  .tlds('.onion', true);          // Add uniffocial `.onion` domain
   .linkify.add('git:', 'http:');  // Add `git:` ptotocol as "alias"
+  .linkify.add('ftp:', null);     // Disable `ftp:` ptotocol
 
 console.log(linkify.test('Site github.com!'));  // true
 
