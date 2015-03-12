@@ -37,6 +37,7 @@ describe('links', function () {
       it('line ' + (idx + 1), function () {
         assert.ok(l.pretest(line), '(pretest failed in `' + line + '`)');
         assert.ok(l.test(line), '(link not found in `' + line + '`)');
+        assert.ok(l.test('\n' + line + '\n'), '(link not found in `\\n' + line + '\\n`)');
         assert.equal(l.match(line)[0].url, next);
       });
       skipNext = true;
@@ -44,6 +45,7 @@ describe('links', function () {
       it('line ' + (idx + 1), function () {
         assert.ok(l.pretest(line), '(pretest failed in `' + line + '`)');
         assert.ok(l.test(line), '(link not found in `' + line + '`)');
+        assert.ok(l.test('\n' + line + '\n'), '(link not found in `\\n' + line + '\\n`)');
         assert.equal(l.match(line)[0].url, line);
       });
     }
