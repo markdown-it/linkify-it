@@ -1,3 +1,10 @@
+0.1.5 / 2015-03-13
+------------------
+
+- Fixed special chars handling (line breaks).
+- Fixed demo permalink encode/decode.
+
+
 0.1.4 / 2015-03-12
 ------------------
 
