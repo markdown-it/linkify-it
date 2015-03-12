@@ -1,3 +1,12 @@
+0.1.4 / 2015-03-12
+------------------
+
+- Allow `..` and `...` inside of link paths (#9). Useful for github links with
+  commit ranges.
+- Added `.pretest()` method for speed optimizations.
+- Autogenerate demo sample from fixtures.
+
+
 0.1.3 / 2015-03-11
 ------------------
 
