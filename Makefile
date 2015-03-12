@@ -38,8 +38,7 @@ demo: lint
 		< ./support/demo_template/index.styl \
 		> ./demo/index.css
 	rm -rf ./support/demo_template/sample.json
-	./node_modules/.bin/browserify ./ -s linkifyit > ./demo/linkify-it.js
-	cp ./support/demo_template/index.js ./demo/
+	./node_modules/.bin/browserify ./support/demo_template/index.js > ./demo/index.js
 
 
 doc:
