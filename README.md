@@ -118,6 +118,13 @@ By default understands:
 Searches linkifiable pattern and returns `true` on success or `false` on fail.
 
 
+### .pretest(text)
+
+Quick check if link MAY BE can exist. Can be used to optimize more expensive
+`.test()` calls. Return `false` if link can not be found, `true` - if `.test()`
+call needed to know exactly.
+
+
 ### .testSchemaAt(text, name, offset)
 
 Similar to `.test()` but checks only specific protocol tail exactly at given
