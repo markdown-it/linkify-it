@@ -213,7 +213,9 @@ example.com/䨹
 
 президент.рф
 
-xn--d1abbgf6aiiy.xn--p1ai
+
+% Links below provided by diaspora* guys, to make sure regressions will not happen.
+% Those left here for historic reasons.
 
 http://www.bürgerentscheid-krankenhäuser.de
 
