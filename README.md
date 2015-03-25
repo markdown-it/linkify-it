@@ -64,7 +64,7 @@ linkify.add('@', {
 
     if (!self.re.twitter) {
       self.re.twitter =  new RegExp(
-        '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCcCf + ')'
+        '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCc + ')'
       );
     }
     if (self.re.twitter.test(tail)) {
