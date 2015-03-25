@@ -40,6 +40,8 @@ example.com
 >>http://example.com % markdown blockquote
 http://example.com
 
+http://lyricstranslate.com/en/someone-you-നിന്നെ-പോലൊരാള്‍.html % With control character
+http://lyricstranslate.com/en/someone-you-നിന്നെ-പോലൊരാള്‍.html
 
 %
 % localhost (only with protocol allowed)
