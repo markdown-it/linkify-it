@@ -1,3 +1,14 @@
+1.0.0 / 2015-03-25
+------------------
+
+- Version bump to 1.0.0 for semver.
+- Removed `Cf` class from whitespace & punctuation sets (#10).
+- API change. Exported regex names renamed to reflect changes. Update your
+  custom rules if needed:
+  - `src_ZPCcCf` -> `src_ZPCc`
+  - `src_ZCcCf` -> `src_ZCc`
+
+
 0.1.5 / 2015-03-13
 ------------------
 
