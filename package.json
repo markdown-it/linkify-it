@@ -1,6 +1,6 @@
 {
   "name": "linkify-it",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Links recognition library with FULL unicode support",
   "keywords": [
     "linkify",
