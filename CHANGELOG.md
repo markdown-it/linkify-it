@@ -1,4 +1,4 @@
-1.1.0 / WIP
+1.1.0 / 2015-04-21
 ------------------
 
 - Added options to control fuzzy links recognition (`fuzzyLink: true`,
