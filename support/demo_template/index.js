@@ -3,7 +3,7 @@
 /*eslint-env browser*/
 /*global $, _*/
 
-var linkify = require('../../')();
+var linkify = require('../../')({ fuzzyIP: true });
 var mdurl   = require('mdurl');
 var permalink;
 

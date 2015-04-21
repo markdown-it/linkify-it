@@ -32,6 +32,20 @@ function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&'); }
 ////////////////////////////////////////////////////////////////////////////////
 
 
+var defaultOptions = {
+  fuzzyLink: true,
+  fuzzyEmail: true,
+  fuzzyIP: false
+};
+
+
+function isOptionsObj(obj) {
+  return Object.keys(obj || {}).reduce(function (acc, k) {
+    return acc || defaultOptions.hasOwnProperty(k);
+  }, false);
+}
+
+
 var defaultSchemas = {
   'http:': {
     validate: function (text, pos, self) {
@@ -142,6 +156,7 @@ function compile(self) {
 
   re.email_fuzzy      = RegExp(untpl(re.tpl_email_fuzzy), 'i');
   re.link_fuzzy       = RegExp(untpl(re.tpl_link_fuzzy), 'i');
+  re.link_no_ip_fuzzy = RegExp(untpl(re.tpl_link_no_ip_fuzzy), 'i');
   re.host_fuzzy_test  = RegExp(untpl(re.tpl_host_fuzzy_test), 'i');
 
   //
@@ -305,8 +320,9 @@ function createMatch(self, shift) {
  **/
 
 /**
- * new LinkifyIt(schemas)
+ * new LinkifyIt(schemas, options)
  * - schemas (Object): Optional. Additional schemas to validate (prefix/validator)
+ * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
  *
  * Creates new linkifier instance with optional additional schemas.
  * Can be called without `new` keyword for convenience.
@@ -328,11 +344,28 @@ function createMatch(self, shift) {
  *       or `RegExp`.
  *     - _normalize_ - optional function to normalize text & url of matched result
  *       (for example, for @twitter mentions).
+ *
+ * `options`:
+ *
+ * - __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+ * - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
+ *   like version numbers. Default `false`.
+ * - __fuzzyEmail__ - recognize emails without `mailto:` prefix.
+ *
  **/
-function LinkifyIt(schemas) {
+function LinkifyIt(schemas, options) {
   if (!(this instanceof LinkifyIt)) {
-    return new LinkifyIt(schemas);
+    return new LinkifyIt(schemas, options);
   }
+
+  if (!options) {
+    if (isOptionsObj(schemas)) {
+      options = schemas;
+      schemas = {};
+    }
+  }
+
+  this.__opts__           = assign({}, defaultOptions, options);
 
   // Cache last tested result. Used to skip repeating steps on next `match` call.
   this.__index__          = -1;
@@ -366,6 +399,18 @@ LinkifyIt.prototype.add = function add(schema, definition) {
 };
 
 
+/** chainable
+ * LinkifyIt#set(options)
+ * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
+ *
+ * Set recognition options for links without schema.
+ **/
+LinkifyIt.prototype.set = function set(options) {
+  this.__opts__ = assign(this.__opts__, options);
+  return this;
+};
+
+
 /**
  * LinkifyIt#test(text) -> Boolean
  *
@@ -395,13 +440,13 @@ LinkifyIt.prototype.test = function test(text) {
     }
   }
 
-  if (this.__compiled__['http:']) {
+  if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
     // guess schemaless links
     tld_pos = text.search(this.re.host_fuzzy_test);
     if (tld_pos >= 0) {
       // if tld is located after found link - no need to check fuzzy pattern
       if (this.__index__ < 0 || tld_pos < this.__index__) {
-        if ((ml = text.match(this.re.link_fuzzy)) !== null) {
+        if ((ml = text.match(this.__opts__.fuzzyIP ? this.re.link_fuzzy : this.re.link_no_ip_fuzzy)) !== null) {
 
           shift = ml.index + ml[1].length;
 
@@ -415,7 +460,7 @@ LinkifyIt.prototype.test = function test(text) {
     }
   }
 
-  if (this.__compiled__['mailto:']) {
+  if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
     // guess schemaless emails
     at_pos = text.indexOf('@');
     if (at_pos >= 0) {

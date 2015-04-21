@@ -13,7 +13,7 @@ var lines;
 
 describe('links', function () {
 
-  var l = linkify();
+  var l = linkify({ fuzzyIP: true });
 
   l.normalize = function () {}; // kill normalizer
 
@@ -106,6 +106,7 @@ describe('API', function () {
     assert.equal(match[1].text, 'my://asdf');
   });
 
+
   it('add rule with normalizer', function () {
     var l = linkify().add('my:', {
       validate: /^\/\/[a-z]+/,
@@ -120,6 +121,7 @@ describe('API', function () {
     assert.equal(match[1].text, 'ASDF');
     assert.equal(match[1].url, 'MY://ASDF');
   });
+
 
   it('disable rule', function () {
     var l = linkify();
@@ -180,6 +182,7 @@ describe('API', function () {
     assert.equal(match[2].text, 'ftp://google.com');
   });
 
+
   it('normalize', function () {
     var l = linkify(), m;
 
@@ -224,4 +227,39 @@ describe('API', function () {
     assert.notOk(l.test('@@invalid'));
   });
 
+
+  it('set option: fuzzyLink', function () {
+    var l = linkify({ fuzzyLink: false });
+
+    assert.equal(l.test('google.com.'), false);
+
+    l.set({ fuzzyLink: true });
+
+    assert.equal(l.test('google.com.'), true);
+    assert.equal(l.match('google.com.')[0].text, 'google.com');
+  });
+
+
+  it('set option: fuzzyEmail', function () {
+    var l = linkify({ fuzzyEmail: false });
+
+    assert.equal(l.test('foo@bar.com.'), false);
+
+    l.set({ fuzzyEmail: true });
+
+    assert.equal(l.test('foo@bar.com.'), true);
+    assert.equal(l.match('foo@bar.com.')[0].text, 'foo@bar.com');
+  });
+
+
+  it('set option: fuzzyIP', function () {
+    var l = linkify();
+
+    assert.equal(l.test('1.1.1.1.'), false);
+
+    l.set({ fuzzyIP: true });
+
+    assert.equal(l.test('1.1.1.1.'), true);
+    assert.equal(l.match('1.1.1.1.')[0].text, '1.1.1.1');
+  });
 });

@@ -1,7 +1,15 @@
+1.1.0 / WIP
+------------------
+
+- Added options to control fuzzy links recognition (`fuzzyLink: true`,
+  `fuzzyEmail: true`, `fuzzyIP: false`).
+- Disabled IP-links without schema prefix by default.
+
+
 1.0.1 / 2015-04-19
 ------------------
 
-- More strict default 2-characters tlds handle in flex links, to avoid
+- More strict default 2-characters tlds handle in fuzzy links, to avoid
   false positives for `node.js`, `io.js` and so on.
 
 

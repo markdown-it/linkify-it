@@ -39,9 +39,10 @@ var linkify = require('linkify-it')();
 // Reload full tlds list & add uniffocial `.onion` domain.
 linkify
   .tlds(require('tlds'))          // Reload with full tlds list
-  .tlds('.onion', true);          // Add uniffocial `.onion` domain
-  .linkify.add('git:', 'http:');  // Add `git:` ptotocol as "alias"
-  .linkify.add('ftp:', null);     // Disable `ftp:` ptotocol
+  .tlds('.onion', true)           // Add uniffocial `.onion` domain
+  .linkify.add('git:', 'http:')   // Add `git:` ptotocol as "alias"
+  .linkify.add('ftp:', null)      // Disable `ftp:` ptotocol
+  .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (withour schema)
 
 console.log(linkify.test('Site github.com!'));  // true
 
@@ -89,7 +90,7 @@ API
 
 __[API documentation](http://markdown-it.github.io/linkify-it/doc)__
 
-### new LinkifyIt(schemas)
+### new LinkifyIt(schemas, options)
 
 Creates new linkifier instance with optional additional schemas.
 Can be called without `new` keyword for convenience.
@@ -111,6 +112,13 @@ By default understands:
       or `RegExp`.
     - _normalize_ - optional function to normalize text & url of matched result
       (for example, for twitter mentions).
+
+`options`:
+
+- __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+- __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
+  like version numbers. Default `false`.
+- __fuzzyEmail__ - recognize emails without `mailto:` prefix.
 
 
 ### .test(text)
@@ -163,6 +171,11 @@ If list is replaced, then exact match for 2-chars root zones will be checked.
 
 Add new rule with `schema` prefix. For definition details see constructor
 description. To disable existing rule use `.add(name, null)`
+
+
+### .set(options)
+
+Override default options. Missed properties will not be changed.
 
 
 ## License
