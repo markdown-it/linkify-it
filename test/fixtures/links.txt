@@ -146,10 +146,15 @@ http://example.com/foo_bar/
 http://example.com/foo_bar,
 http://example.com/foo_bar
 
+https://github.com/markdown-it/linkify-it/compare/360b13a733f521a8d4903d3a5e1e46c357e9d3ce...f580766349525150a80a32987bb47c2d592efc33
+
 http://example.com/foo_bar...
 http://example.com/foo_bar
 
-https://github.com/markdown-it/linkify-it/compare/360b13a733f521a8d4903d3a5e1e46c357e9d3ce...f580766349525150a80a32987bb47c2d592efc33
+http://172.26.142.48/viewerjs/#../0529/slides.pdf
+
+http://example.com/foo_bar..
+http://example.com/foo_bar
 
 http://example.com/foo_bar?p=10.
 http://example.com/foo_bar?p=10
