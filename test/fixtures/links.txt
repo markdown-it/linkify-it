@@ -177,6 +177,12 @@ http://example.com/foo
 
 http://example.com/foo----bar
 
+% some sites have links with trailing dashes
+http://www.bloomberg.com/news/articles/2015-06-26/from-deutsche-bank-to-siemens-what-s-troubling-germany-inc-
+
+http://example.com/foo-with-trailing-dash-dot-.
+http://example.com/foo-with-trailing-dash-dot-
+
 %
 % Emails
 %
