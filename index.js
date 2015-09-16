@@ -519,7 +519,7 @@ LinkifyIt.prototype.testSchemaAt = function testSchemaAt(text, schema, pos) {
  * LinkifyIt#match(text) -> Array|null
  *
  * Returns array of found link descriptions or `null` on fail. We strongly
- * to use [[LinkifyIt#test]] first, for best speed.
+ * recommend to use [[LinkifyIt#test]] first, for best speed.
  *
  * ##### Result match description
  *
