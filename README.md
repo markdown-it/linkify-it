@@ -115,10 +115,10 @@ By default understands:
 
 `options`:
 
-- __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+- __fuzzyLink__ - recognige URL-s without `http(s)://` head. Default `true`.
 - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
   like version numbers. Default `false`.
-- __fuzzyEmail__ - recognize emails without `mailto:` prefix.
+- __fuzzyEmail__ - recognize emails without `mailto:` prefix. Default `true`.
 
 
 ### .test(text)
@@ -156,16 +156,14 @@ Each match has:
 
 ### .tlds(list[, keepOld])
 
-Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
-to avoid false positives. By default this algorythm used:
+Load (or merge) new tlds list. Those are needed for fuzzy links (without schema)
+to avoid false positives. By default:
 
-- hostname with any 2-letter root zones are ok.
-- biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
-  are ok.
+- 2-letter root zones are ok.
+- biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф are ok.
 - encoded (`xn--...`) root zones are ok.
 
-If list is replaced, then exact match for 2-chars root zones will be checked.
-
+If that's not enougth, you can reload defaults with more detailed zones list.
 
 ### .add(schema, definition)
 
