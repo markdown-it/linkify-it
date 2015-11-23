@@ -42,7 +42,7 @@ linkify
   .tlds('.onion', true)           // Add uniffocial `.onion` domain
   .linkify.add('git:', 'http:')   // Add `git:` ptotocol as "alias"
   .linkify.add('ftp:', null)      // Disable `ftp:` ptotocol
-  .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (withour schema)
+  .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (without schema)
 
 console.log(linkify.test('Site github.com!'));  // true
 
