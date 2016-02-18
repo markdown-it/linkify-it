@@ -56,7 +56,7 @@ console.log(linkify.match('Site github.com!')); // [ {
                                                 // } ]
 ```
 
-##### Exmple 2. Add twitter mentions handler
+##### Example 2. Add twitter mentions handler
 
 ```js
 linkify.add('@', {
