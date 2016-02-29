@@ -183,6 +183,12 @@ http://www.bloomberg.com/news/articles/2015-06-26/from-deutsche-bank-to-siemens-
 http://example.com/foo-with-trailing-dash-dot-.
 http://example.com/foo-with-trailing-dash-dot-
 
+% some urls have nested parens
+http://example.com/render?target=summarize(deriviative(app.numUsers),%221min%22)&title=New_Users_Per_Minute
+
+http://example.com/foo-(with-nested-(parens-(trailing-dot))).
+http://example.com/foo-(with-nested-(parens-(trailing-dot)))
+
 %
 % Emails
 %
