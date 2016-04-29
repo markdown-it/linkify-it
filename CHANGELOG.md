@@ -1,3 +1,9 @@
+1.2.1 / 2016-04-29
+------------------
+
+- Fix detect email after opening parenthesis: `(my@email.com)`, #32.
+
+
 1.2.0 / 2015-06-29
 ------------------
 

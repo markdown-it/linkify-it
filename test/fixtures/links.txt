@@ -208,6 +208,15 @@ foo+bar@gmail.com
 mailto:foo@bar      % explicit protocol make it valid
 mailto:foo@bar
 
+(foobar email@example.com)
+email@example.com
+
+(email@example.com foobar)
+email@example.com
+
+(email@example.com)
+email@example.com
+
 
 %
 % International
