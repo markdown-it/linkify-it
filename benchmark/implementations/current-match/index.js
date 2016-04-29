@@ -4,6 +4,6 @@ var linkify = require('../../../')();
 
 linkify.test('');
 
-exports.run = function(data) {
+exports.run = function (data) {
   return linkify.match(data);
 };

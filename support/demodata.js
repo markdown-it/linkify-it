@@ -10,7 +10,7 @@ var fs   = require('fs');
 var path = require('path');
 
 function isComment(str) { return /^%.*/.test(str); }
-function isEmpty(str) { return !Boolean(str && str.trim()); }
+function isEmpty(str) { return !(str && str.trim()); }
 
 var result = [], lines, line, i;
 

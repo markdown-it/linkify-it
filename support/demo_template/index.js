@@ -55,7 +55,7 @@ function updateResult() {
 //////////////////////////////////////////////////////////////////////////////
 // Init on page load
 //
-$(function() {
+$(function () {
 
   // Restore content if opened by permalink
   if (location.hash && /^(#t1=)/.test(location.hash)) {
