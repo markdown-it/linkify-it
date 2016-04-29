@@ -9,6 +9,10 @@
     "autolinker"
   ],
   "repository": "markdown-it/linkify-it",
+  "files": [
+    "index.js",
+    "lib/"
+  ],
   "license": "MIT",
   "scripts": {
     "test": "make test"
