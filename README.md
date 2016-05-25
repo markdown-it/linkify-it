@@ -39,7 +39,7 @@ var linkify = require('linkify-it')();
 // Reload full tlds list & add unofficial `.onion` domain.
 linkify
   .tlds(require('tlds'))          // Reload with full tlds list
-  .tlds('.onion', true)           // Add unofficial `.onion` domain
+  .tlds('onion', true)            // Add unofficial `.onion` domain
   .linkify.add('git:', 'http:')   // Add `git:` ptotocol as "alias"
   .linkify.add('ftp:', null)      // Disable `ftp:` ptotocol
   .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (without schema)
