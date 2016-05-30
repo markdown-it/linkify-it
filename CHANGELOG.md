@@ -1,3 +1,14 @@
+1.2.2 / 2016-05-30
+------------------
+
+- Security fix: due problem in `Any` class regexp from old `unicode-7.0.0`
+  package (used in `uc-micro`), hang happend with astral char patterns like
+  `😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡 .com` if fuzzy
+  options used. New installs will use fixed `uc-micro` automatically.
+  Old installs need to be updated. #36.
+- Unicode rules updated to 8.+ version.
+
+
 1.2.1 / 2016-04-29
 ------------------
 

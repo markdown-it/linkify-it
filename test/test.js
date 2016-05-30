@@ -262,4 +262,12 @@ describe('API', function () {
     assert.equal(l.test('1.1.1.1.'), true);
     assert.equal(l.match('1.1.1.1.')[0].text, '1.1.1.1');
   });
+
+  it('should not hang in fuzzy mode with sequences of astrals', function () {
+    var l = linkify();
+
+    l.set({ fuzzyLink: true });
+
+    l.match('😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡 .com');
+  });
 });
