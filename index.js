@@ -70,15 +70,25 @@ var defaultSchemas = {
       var tail = text.slice(pos);
 
       if (!self.re.no_http) {
-      // compile lazily, becayse "host"-containing variables can change on tlds update.
+      // compile lazily, because "host"-containing variables can change on tlds update.
         self.re.no_http =  new RegExp(
-          '^' + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, 'i'
+          '^' +
+          self.re.src_auth +
+          // Don't allow single-level domains, because of false positives like '//test'
+          // with code comments
+          '(?:localhost|(?:(?:' + self.re.src_domain + ')\\.)+' + self.re.src_domain_root + ')' +
+          self.re.src_port +
+          self.re.src_host_terminator +
+          self.re.src_path,
+
+          'i'
         );
       }
 
       if (self.re.no_http.test(tail)) {
-        // should not be `://`, that protects from errors in protocol name
+        // should not be `://` & `///`, that protects from errors in protocol name
         if (pos >= 3 && text[pos - 3] === ':') { return 0; }
+        if (pos >= 3 && text[pos - 3] === '/') { return 0; }
         return tail.match(self.re.no_http)[0].length;
       }
       return 0;

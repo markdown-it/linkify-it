@@ -12,6 +12,8 @@ foo.123
 http://a.b--c.de/   % `--` disabled, because collision possible
 localhost           % only with protocol allowed
 localhost/
+///localhost        % 3 '/' not allowed
+//test              % Don't allow single level protocol-less domains to avoid false positives
 
 _http://example.com
 _//example.com

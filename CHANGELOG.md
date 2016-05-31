@@ -1,3 +1,12 @@
+1.2.2 / 2016-05-31
+------------------
+
+- Allow digits in local domains, #36.
+- Restrict user/pass (prohibit [@/] chars) to avoid wrong domain fetch.
+- More restrictions for protocol-transparent links. Don't allow single-level
+  (local) domains, except '//localhost', #19.
+
+
 1.2.2 / 2016-05-30
 ------------------
 
