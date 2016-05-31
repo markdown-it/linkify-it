@@ -34,6 +34,12 @@ HTTP://GOOGLE.COM
 http://example.invalid % don't restrict root domain when schema exists
 http://example.invalid
 
+http://inrgess2 % Allow local domains to end with digit
+http://inrgess2
+
+http://999      % ..and start with digit, and have digits only
+http://999
+
 >>example.com % markdown blockquote
 example.com
 
