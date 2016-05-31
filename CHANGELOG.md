@@ -1,3 +1,10 @@
+1.2.x / WIP
+------------------
+
+- Consider `<` & `>` as invalid in links.
+- Support links in lt/gt braces: `<user@domain.com>`, `<http://example.com>`.
+
+
 1.2.3 / 2016-05-31
 ------------------
 

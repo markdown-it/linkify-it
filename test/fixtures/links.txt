@@ -191,6 +191,37 @@ http://www.bloomberg.com/news/articles/2015-06-26/from-deutsche-bank-to-siemens-
 http://example.com/foo-with-trailing-dash-dot-.
 http://example.com/foo-with-trailing-dash-dot-
 
+<http://domain.com>
+http://domain.com
+
+<http://domain.com>.
+http://domain.com
+
+<http://domain.com/foo>
+http://domain.com/foo
+
+<http://domain.com/foo>.
+http://domain.com/foo
+
+<domain.com>
+domain.com
+
+<domain.com>.
+domain.com
+
+<domain.com/foo>
+domain.com/foo
+
+<user@domain.com>
+user@domain.com
+
+<user@domain.com>.
+user@domain.com
+
+<mailto:user@domain.com>
+mailto:user@domain.com
+
+
 %
 % Emails
 %
