@@ -1,4 +1,4 @@
-1.2.x / WIP
+1.2.4 / 2016-06-03
 ------------------
 
 - Consider `<` & `>` as invalid in links.
