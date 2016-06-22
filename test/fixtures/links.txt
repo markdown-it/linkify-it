@@ -123,6 +123,8 @@ http://foo.com/blah_blah_{I'm_king}
 
 http://foo.com/blah_blah_I'm_king
 
+http://www.kmart.com/bestway-10'-x-30inch-steel-pro-frame-pool/p-004W007538417001P
+
 http://foo.com/blah_blah_"doublequoted"
 
 http://foo.com/blah_blah_'singlequoted'

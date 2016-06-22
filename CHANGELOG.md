@@ -4,6 +4,7 @@
 - `---` no longer terminates link. Use option `{ '---': true }` to return old
   behaviour.
 - `.onCompile()` hook to modify base regexp constants.
+- Allow `foo'-bar` in path
 
 
 1.2.4 / 2016-06-03
