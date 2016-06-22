@@ -28,7 +28,7 @@
     "chai": "^3.5.0",
     "coveralls": "^2.11.2",
     "jade": "^1.11.0",
-    "eslint": "~2.11.0",
+    "eslint": "~2.13.1",
     "eslint-plugin-nodeca": "^1.0.0",
     "istanbul": "*",
     "mdurl": "^1.0.0",
