@@ -270,4 +270,15 @@ describe('API', function () {
 
     l.match('😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡 .com');
   });
+
+
+  it('should accept `---` if enabled', function () {
+    var l = linkify();
+
+    assert.equal(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo---bar');
+
+    l = linkify(null, { '---': true });
+
+    assert.equal(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo');
+  });
 });

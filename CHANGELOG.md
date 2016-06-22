@@ -1,3 +1,11 @@
+2.0.0 / 2016-06-22
+------------------
+
+- `---` no longer terminates link. Use option `{ '---': true }` to return old
+  behaviour.
+- `.onCompile()` hook to modify base regexp constants.
+
+
 1.2.4 / 2016-06-03
 ------------------
 

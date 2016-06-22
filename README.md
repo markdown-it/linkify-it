@@ -119,6 +119,7 @@ By default understands:
 - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
   like version numbers. Default `false`.
 - __fuzzyEmail__ - recognize emails without `mailto:` prefix. Default `true`.
+- __---__ - set `true` to terminate link with `---` (if it's considered as long dash).
 
 
 ### .test(text)

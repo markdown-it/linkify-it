@@ -150,10 +150,12 @@ function createNormalizer() {
 function compile(self) {
 
   // Load & clone RE patterns.
-  var re = self.re = assign({}, require('./lib/re'));
+  var re = self.re = require('./lib/re')(self.__opts__);
 
   // Define dynamic patterns
   var tlds = self.__tlds__.slice();
+
+  self.onCompile();
 
   if (!self.__tlds_replaced__) {
     tlds.push(tlds_2ch_src_re);
@@ -620,6 +622,15 @@ LinkifyIt.prototype.normalize = function normalize(match) {
   if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
     match.url = 'mailto:' + match.url;
   }
+};
+
+
+/**
+ * LinkifyIt#onCompile()
+ *
+ * Override to modify basic RegExp-s.
+ **/
+LinkifyIt.prototype.onCompile = function onCompile() {
 };
 
 
