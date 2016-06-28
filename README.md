@@ -103,7 +103,7 @@ By default understands:
 `schemas` is an object, where each key/value describes protocol/rule:
 
 - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
-  for example). `linkify-it` makes shure that prefix is not preceeded with
+  for example). `linkify-it` makes sure that prefix is not preceeded with
   alphanumeric char.
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
@@ -115,7 +115,7 @@ By default understands:
 
 `options`:
 
-- __fuzzyLink__ - recognige URL-s without `http(s)://` head. Default `true`.
+- __fuzzyLink__ - recognize URL-s without `http(s)://` head. Default `true`.
 - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
   like version numbers. Default `false`.
 - __fuzzyEmail__ - recognize emails without `mailto:` prefix. Default `true`.
