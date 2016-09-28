@@ -1,8 +1,7 @@
 env:
   node:     true
   browser:  false
-  # Postponed: enable partially (less on server, more on client)
-  es6: true
+  es6:      false
 
 rules:
   accessor-pairs:         2
