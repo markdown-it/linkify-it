@@ -17,6 +17,9 @@ http://user@example.com:8080
 
 http://user:pass@example.com
 
+[https](https://www.ibm.com)[mailto](mailto:someone@ibm.com) % should not catch as auth (before @ in big link)
+https://www.ibm.com
+
 http://example.com:8080
 
 http://example.com/?foo=bar
