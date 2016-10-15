@@ -43,6 +43,9 @@ http://inrgess2
 http://999      % ..and start with digit, and have digits only
 http://999
 
+http://host-name % local domain with dash
+http://host-name
+
 >>example.com % markdown blockquote
 example.com
 
