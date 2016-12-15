@@ -237,6 +237,7 @@ describe('API', function () {
 
     assert.equal(l.test('google.com.'), true);
     assert.equal(l.match('google.com.')[0].text, 'google.com');
+    assert.equal(l.match('google.com.')[0].schema, 'http:');
   });
 
 
@@ -249,6 +250,7 @@ describe('API', function () {
 
     assert.equal(l.test('foo@bar.com.'), true);
     assert.equal(l.match('foo@bar.com.')[0].text, 'foo@bar.com');
+    assert.equal(l.match('foo@bar.com.')[0].schema, 'mailto:');
   });
 
 

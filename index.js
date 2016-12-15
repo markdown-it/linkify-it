@@ -463,7 +463,7 @@ LinkifyIt.prototype.test = function test(text) {
           shift = ml.index + ml[1].length;
 
           if (this.__index__ < 0 || shift < this.__index__) {
-            this.__schema__     = '';
+            this.__schema__     = 'http:';
             this.__index__      = shift;
             this.__last_index__ = ml.index + ml[0].length;
           }

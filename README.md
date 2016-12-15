@@ -47,7 +47,7 @@ linkify
 console.log(linkify.test('Site github.com!'));  // true
 
 console.log(linkify.match('Site github.com!')); // [ {
-                                                //   schema: "",
+                                                //   schema: "http:",
                                                 //   index: 5,
                                                 //   lastIndex: 15,
                                                 //   raw: "github.com",
