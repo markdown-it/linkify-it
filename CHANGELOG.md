@@ -1,3 +1,9 @@
+2.0.3 / 2016-12-09
+------------------
+
+- Process `｜` (asian vertical pipe 0xFF5C) as valid text separator.
+
+
 2.0.2 / 2016-10-15
 ------------------
 

@@ -290,3 +290,15 @@ http://xn--bndnis-fr-krankenhuser-i5b27cha.de/wp-content/uploads/2011/11/cropped
 http://ﻡﻮﻘﻋ.ﻭﺯﺍﺭﺓ-ﺍﻼﺘﺻﺍﻼﺗ.ﻢﺻﺭ/
 
 http://xn--4gbrim.xn----ymcbaaajlc6dj7bxne2c.xn--wgbh1c/
+
+%
+% Others...
+%
+｜www.google.com/www.google.com/foo｜bar    % #46, asian vertical pipes
+www.google.com/www.google.com/foo
+
+｜test@google.com｜bar
+test@google.com
+
+｜http://google.com｜bar
+http://google.com
