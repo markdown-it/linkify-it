@@ -40,8 +40,8 @@ var linkify = require('linkify-it')();
 linkify
   .tlds(require('tlds'))          // Reload with full tlds list
   .tlds('onion', true)            // Add unofficial `.onion` domain
-  .linkify.add('git:', 'http:')   // Add `git:` ptotocol as "alias"
-  .linkify.add('ftp:', null)      // Disable `ftp:` ptotocol
+  .add('git:', 'http:')           // Add `git:` protocol as "alias"
+  .add('ftp:', null)              // Disable `ftp:` ptotocol
   .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (without schema)
 
 console.log(linkify.test('Site github.com!'));  // true
@@ -103,13 +103,16 @@ By default understands:
 `schemas` is an object, where each key/value describes protocol/rule:
 
 - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
-  for example). `linkify-it` makes sure that prefix is not preceeded with
+  for example). `linkify-it` makes sure that prefix is not preceded with
   alphanumeric char.
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
   - _Object_
-    - _validate_ - validator function (should return matched length on success),
-      or `RegExp`.
+    - _validate_ - either a `RegExp` (start with `^`, and don't include the
+      link prefix itself), or a validator function which, given arguments
+      _text_, _pos_, and _self_, returns the length of a match in _text_
+      starting at index _pos_.  _pos_ is the index right after the link prefix.
+      _self_ can be used to access the linkify object to cache data.
     - _normalize_ - optional function to normalize text & url of matched result
       (for example, for twitter mentions).
 
@@ -164,12 +167,15 @@ to avoid false positives. By default:
 - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф are ok.
 - encoded (`xn--...`) root zones are ok.
 
-If that's not enougth, you can reload defaults with more detailed zones list.
+If that's not enough, you can reload defaults with more detailed zones list.
 
-### .add(schema, definition)
+### .add(key, value)
 
-Add new rule with `schema` prefix. For definition details see constructor
-description. To disable existing rule use `.add(name, null)`
+Add a new schema to the schemas object.  As described in the constructor
+definition, `key` is a link prefix (`skype:`, for example), and `value`
+is a String to alias to another schema, or an Object with `validate` and
+optionally `normalize` definitions.  To disable an existing rule, use
+`.add(key, null)`.
 
 
 ### .set(options)
