@@ -100,7 +100,7 @@ var defaultSchemas = {
 
       if (!self.re.mailto) {
         self.re.mailto =  new RegExp(
-          '^' + self.re.src_email_name + '@' + self.re.src_host_strict, 'i'
+          '^' + self.re.src_email_name + '@' + self.re.src_host_strict + self.re.src_get_params, 'i'
         );
       }
       if (self.re.mailto.test(tail)) {

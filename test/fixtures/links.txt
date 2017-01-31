@@ -250,6 +250,8 @@ foo+bar@gmail.com
 mailto:foo@bar      % explicit protocol make it valid
 mailto:foo@bar
 
+mailto:someone@example.com?subject=This%20is%20the%20subject&cc=someone_else@example.com&body=This%20is%20the%20body
+
 (foobar email@example.com)
 email@example.com
 
@@ -259,7 +261,8 @@ email@example.com
 (email@example.com)
 email@example.com
 
-
+(someone@example.com?subject=This%20is%20the%20subject&cc=someone_else@example.com&body=This%20is%20the%20body)
+someone@example.com?subject=This%20is%20the%20subject&cc=someone_else@example.com&body=This%20is%20the%20body
 %
 % International
 %
