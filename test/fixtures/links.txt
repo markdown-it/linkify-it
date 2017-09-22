@@ -291,6 +291,16 @@ http://ﻡﻮﻘﻋ.ﻭﺯﺍﺭﺓ-ﺍﻼﺘﺻﺍﻼﺗ.ﻢﺻﺭ/
 
 http://xn--4gbrim.xn----ymcbaaajlc6dj7bxne2c.xn--wgbh1c/
 
+
+% some urls have nested parens
+http://example.com/render?target=summarize(deriviative(app.numUsers),%221min%22)&title=New_Users_Per_Minute
+
+http://example.com/foo-(with-nested-(parens)).
+http://example.com/foo-(with-nested-(parens))
+
+http://example.com/(foo) (bar)
+http://example.com/(foo)
+
 %
 % Others...
 %
