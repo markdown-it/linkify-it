@@ -18,7 +18,7 @@
     "test": "make test"
   },
   "dependencies": {
-    "uc.micro": "^1.0.1"
+    "uc.micro": "^1.0.5"
   },
   "devDependencies": {
     "ansi": "^0.3.0",
