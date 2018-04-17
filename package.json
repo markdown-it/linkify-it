@@ -13,6 +13,8 @@
     "index.js",
     "lib/"
   ],
+  "main": "index.js",
+  "types": "index.d.ts",
   "license": "MIT",
   "scripts": {
     "test": "make test"
