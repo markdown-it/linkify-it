@@ -8,7 +8,7 @@
     "autolink",
     "autolinker"
   ],
-  "repository": "f0x52/linkify-it",
+  "repository": "markdown-it/linkify-it",
   "files": [
     "index.js",
     "lib/"
