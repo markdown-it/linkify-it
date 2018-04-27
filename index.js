@@ -617,7 +617,7 @@ LinkifyIt.prototype.normalize = function normalize(match) {
   // Do minimal possible changes by default. Need to collect feedback prior
   // to move forward https://github.com/markdown-it/linkify-it/issues/1
 
-  if (!match.schema) { match.url = 'http://' + match.url; }
+  if (!match.schema) { match.url = 'https://' + match.url; }
 
   if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
     match.url = 'mailto:' + match.url;
