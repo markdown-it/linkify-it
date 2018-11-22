@@ -9,7 +9,6 @@ hppt://example.com
 example.coma
 -example.coma
 foo.123
-http://a.b--c.de/   % `--` disabled, because collision possible
 localhost           % only with protocol allowed
 localhost/
 ///localhost        % 3 '/' not allowed
