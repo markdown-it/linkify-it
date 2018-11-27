@@ -302,3 +302,15 @@ test@google.com
 
 ｜http://google.com｜bar
 http://google.com
+
+%
+% Domains with multiple dashes
+%
+
+https://5b0ee223b312746c1659db3f--thelounge-chat.netlify.com/docs/
+
+www.a--b.com
+
+www.c--u.com
+
+http://a---b.com/
