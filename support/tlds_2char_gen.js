@@ -8,6 +8,7 @@
 
 
 /*eslint-disable no-console*/
+/*eslint-env es6*/
 
 function toRanges(str) {
   var ranges = [], i;
@@ -30,11 +31,7 @@ function toRanges(str) {
   return '[' + ranges.join('') + ']';
 }
 
-var tlds = require('tlds')
-              .filter(function (name) {
-                return /^[a-z]{2}$/.test(name);
-              })
-              .sort();
+var tlds = require('tlds').filter(name => /^[a-z]{2}$/.test(name)).sort();
 
 //
 // group by first letter
@@ -42,8 +39,8 @@ var tlds = require('tlds')
 
 var result = [];
 
-'abcdefghijklmnopqrstuvwxyz'.split('').forEach(function (letter) {
-  var list = tlds.filter(function (name) { return name[0] === letter; });
+'abcdefghijklmnopqrstuvwxyz'.split('').forEach(letter => {
+  var list = tlds.filter(name => name[0] === letter);
 
   if (!list.length) { return; }
 
@@ -52,7 +49,7 @@ var result = [];
     return;
   }
 
-  result.push(letter + '[' + list.map(function (n) { return n[1]; }).join('') + ']');
+  result.push(letter + '[' + list.map(n => n[1]).join('') + ']');
 });
 
 result = result.join('|');

@@ -69,8 +69,8 @@ describe('not links', function () {
 
     it('line ' + (idx + 1), function () {
       assert.notOk(l.test(line),
-       '(should not find link in `' + line + '`, but found `' +
-       JSON.stringify((l.match(line) || [])[0]) + '`)');
+        '(should not find link in `' + line + '`, but found `' +
+        JSON.stringify((l.match(line) || [])[0]) + '`)');
     });
   });
 
