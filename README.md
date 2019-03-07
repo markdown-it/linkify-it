@@ -41,7 +41,7 @@ linkify
   .tlds(require('tlds'))          // Reload with full tlds list
   .tlds('onion', true)            // Add unofficial `.onion` domain
   .add('git:', 'http:')           // Add `git:` protocol as "alias"
-  .add('ftp:', null)              // Disable `ftp:` ptotocol
+  .add('ftp:', null)              // Disable `ftp:` protocol
   .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (without schema)
 
 console.log(linkify.test('Site github.com!'));  // true
