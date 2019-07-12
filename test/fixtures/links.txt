@@ -232,6 +232,9 @@ mailto:user@domain.com
 test."foo".bar@gmail.co.uk!
 test."foo".bar@gmail.co.uk
 
+"test@example.com"
+test@example.com
+
 name@example.com
 
 >>name@example.com % markdown blockquote
