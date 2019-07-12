@@ -1,3 +1,10 @@
+2.2.0 / 2019-07-12
+------------------
+
+- Improved quoted email detect (disable `"` at email start), #72.
+- Fix some google links (allow more consecutive `.`), #66.
+
+
 2.1.0 / 2018-11-27
 ------------------
 
