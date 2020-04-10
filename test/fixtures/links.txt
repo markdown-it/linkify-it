@@ -9,6 +9,8 @@ http://example.com/
 
 http://example.com/foo_bar/
 
+http://example_test.com/foo_bar/
+
 http://user:pass@example.com:8080
 
 http://user@example.com

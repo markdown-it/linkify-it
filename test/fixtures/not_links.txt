@@ -16,6 +16,7 @@ localhost/
 //test              % Don't allow single level protocol-less domains to avoid false positives
 
 _http://example.com
+http://_example.com
 _//example.com
 _example.com
 http://example.com_
