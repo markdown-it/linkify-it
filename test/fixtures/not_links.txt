@@ -17,6 +17,8 @@ localhost/
 
 _http://example.com
 http://_example.com
+http://example_.com
+http://example_test_.com
 _//example.com
 _example.com
 http://example.com_
