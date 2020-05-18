@@ -168,6 +168,8 @@ https://www.google.com/search?source=hp&ei=y0QtW7yUGpiq0PEPv5qv8Ag&q=best+sci+fi
 
 https://www.google.com/search?sxsrf=ACYBGNTJFmX-GjNJ8fM-2LCkqyNyxGU1Ng%3A1575534146332&ei=Qr7oXf7rE4rRrgSEgrmoAw&q=clover&oq=clover&gs_l=psy-ab.3..0i67j0l9.2986.3947..4187...0.2..0.281.1366.1j0j5......0....1..gws-wiz.......0i71j35i39j0i131.qWp1nz4IJVA&ved=0ahUKEwj-lP6Iip7mAhWKqIsKHQRBDjUQ4dUDCAs&uact=5
 
+https://ourworldindata.org/grapher/covid-deaths-days-since-per-million?zoomToSelection=true&time=9..&country=FRA+DEU+ITA+ESP+GBR+USA+CAN
+
 http://example.com/foo_bar...
 http://example.com/foo_bar
 
