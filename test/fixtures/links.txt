@@ -164,8 +164,6 @@ http://example.com/foo_bar
 
 https://github.com/markdown-it/linkify-it/compare/360b13a733f521a8d4903d3a5e1e46c357e9d3ce...f580766349525150a80a32987bb47c2d592efc33
 
-https://www.google.com/search?source=hp&ei=y0QtW7yUGpiq0PEPv5qv8Ag&q=best+sci+fi+books&oq=best+sci&gs_l=psy-ab.3.1.0j0i20i264k1j0j0i131k1j0l6.2035.4079.0.5985.9.8.0.0.0.0.132.797.5j3.8.0....0...1c.1.64.psy-ab..1.8.797.0..35i39k1j0i67k1.0.iug3EHWIyxc
-
 https://www.google.com/search?sxsrf=ACYBGNTJFmX-GjNJ8fM-2LCkqyNyxGU1Ng%3A1575534146332&ei=Qr7oXf7rE4rRrgSEgrmoAw&q=clover&oq=clover&gs_l=psy-ab.3..0i67j0l9.2986.3947..4187...0.2..0.281.1366.1j0j5......0....1..gws-wiz.......0i71j35i39j0i131.qWp1nz4IJVA&ved=0ahUKEwj-lP6Iip7mAhWKqIsKHQRBDjUQ4dUDCAs&uact=5
 
 https://ourworldindata.org/grapher/covid-deaths-days-since-per-million?zoomToSelection=true&time=9..&country=FRA+DEU+ITA+ESP+GBR+USA+CAN
