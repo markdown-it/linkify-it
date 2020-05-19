@@ -1,9 +1,17 @@
+3.0.1 / 2020-05-19
+------------------
+
+- Reverted #54 fix (allowed multiple `!` in links), and added collision
+  sample.
+
+
 3.0.0 / 2020-05-19
 ------------------
 
 - Allow unlimited `.` inside link params, #81. This should not be breaking, but
   bumped version for sure.
 - Allow `..&` in params, #87.
+- Allow multiple `!` in links, #54.
 - Deps bump.
 - Rewrite build scripts.
 
