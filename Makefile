@@ -11,17 +11,10 @@ GITHUB_PROJ := https://github.com/nodeca/${NPM_PACKAGE}
 
 
 lint:
-	./node_modules/.bin/eslint .
+	npm run lint
 
-
-test: lint
-	rm -rf coverage
-	./node_modules/.bin/istanbul cover node_modules/.bin/_mocha
-
-
-report-coverage:
-	./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
-
+test:
+	npm run test
 
 demo: lint
 	rm -rf ./demo
