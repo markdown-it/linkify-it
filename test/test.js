@@ -4,7 +4,7 @@
 
 var fs      = require('fs');
 var path    = require('path');
-var assert  = require('chai').assert;
+var assert  = require('assert');
 
 var linkify = require('../');
 
@@ -38,7 +38,7 @@ describe('links', function () {
         assert.ok(l.pretest(line), '(pretest failed in `' + line + '`)');
         assert.ok(l.test('\n' + line + '\n'), '(link not found in `\\n' + line + '\\n`)');
         assert.ok(l.test(line), '(link not found in `' + line + '`)');
-        assert.equal(l.match(line)[0].url, next);
+        assert.strictEqual(l.match(line)[0].url, next);
       });
       skipNext = true;
     } else {
@@ -46,7 +46,7 @@ describe('links', function () {
         assert.ok(l.pretest(line), '(pretest failed in `' + line + '`)');
         assert.ok(l.test('\n' + line + '\n'), '(link not found in `\\n' + line + '\\n`)');
         assert.ok(l.test(line), '(link not found in `' + line + '`)');
-        assert.equal(l.match(line)[0].url, line);
+        assert.strictEqual(l.match(line)[0].url, line);
       });
     }
   });
@@ -68,7 +68,7 @@ describe('not links', function () {
     if (!line.trim()) { return; }
 
     it('line ' + (idx + 1), function () {
-      assert.notOk(l.test(line),
+      assert.ok(!l.test(line),
         '(should not find link in `' + line + '`, but found `' +
         JSON.stringify((l.match(line) || [])[0]) + '`)');
     });
@@ -81,17 +81,17 @@ describe('API', function () {
   it('extend tlds', function () {
     var l = linkify();
 
-    assert.notOk(l.test('google.myroot'));
+    assert.ok(!l.test('google.myroot'));
 
     l.tlds('myroot', true);
 
     assert.ok(l.test('google.myroot'));
-    assert.notOk(l.test('google.xyz'));
+    assert.ok(!l.test('google.xyz'));
 
     l.tlds(require('tlds'));
 
     assert.ok(l.test('google.xyz'));
-    assert.notOk(l.test('google.myroot'));
+    assert.ok(!l.test('google.myroot'));
   });
 
 
@@ -102,8 +102,8 @@ describe('API', function () {
 
     var match = l.match('google.com. my:// my://asdf!');
 
-    assert.equal(match[0].text, 'google.com');
-    assert.equal(match[1].text, 'my://asdf');
+    assert.strictEqual(match[0].text, 'google.com');
+    assert.strictEqual(match[1].text, 'my://asdf');
   });
 
 
@@ -118,8 +118,8 @@ describe('API', function () {
 
     var match = l.match('google.com. my:// my://asdf!');
 
-    assert.equal(match[1].text, 'ASDF');
-    assert.equal(match[1].url, 'MY://ASDF');
+    assert.strictEqual(match[1].text, 'ASDF');
+    assert.strictEqual(match[1].url, 'MY://ASDF');
   });
 
 
@@ -130,8 +130,8 @@ describe('API', function () {
     assert.ok(l.test('foo@bar.com'));
     l.add('http:', null);
     l.add('mailto:', null);
-    assert.notOk(l.test('http://google.com'));
-    assert.notOk(l.test('foo@bar.com'));
+    assert.ok(!l.test('http://google.com'));
+    assert.ok(!l.test('foo@bar.com'));
   });
 
 
@@ -140,19 +140,19 @@ describe('API', function () {
 
     l = linkify();
 
-    assert.throw(function () {
+    assert.throws(function () {
       l.add('test:', []);
     });
 
     l = linkify();
 
-    assert.throw(function () {
+    assert.throws(function () {
       l.add('test:', { validate: [] });
     });
 
     l = linkify();
 
-    assert.throw(function () {
+    assert.throws(function () {
       l.add('test:', {
         validate: function () { return false; },
         normalize: 'bad'
@@ -166,9 +166,9 @@ describe('API', function () {
 
     assert.ok(l.testSchemaAt('http://google.com', 'http:', 5));
     assert.ok(l.testSchemaAt('http://google.com', 'HTTP:', 5));
-    assert.notOk(l.testSchemaAt('http://google.com', 'http:', 6));
+    assert.ok(!l.testSchemaAt('http://google.com', 'http:', 6));
 
-    assert.notOk(l.testSchemaAt('http://google.com', 'bad_schema:', 6));
+    assert.ok(!l.testSchemaAt('http://google.com', 'bad_schema:', 6));
   });
 
 
@@ -177,9 +177,9 @@ describe('API', function () {
 
     var match = l.match('.com. http://google.com google.com ftp://google.com');
 
-    assert.equal(match[0].text, 'http://google.com');
-    assert.equal(match[1].text, 'google.com');
-    assert.equal(match[2].text, 'ftp://google.com');
+    assert.strictEqual(match[0].text, 'http://google.com');
+    assert.strictEqual(match[1].text, 'google.com');
+    assert.strictEqual(match[2].text, 'ftp://google.com');
   });
 
 
@@ -188,13 +188,13 @@ describe('API', function () {
 
     m = l.match('mailto:foo@bar.com')[0];
 
-    // assert.equal(m.text, 'foo@bar.com');
-    assert.equal(m.url,  'mailto:foo@bar.com');
+    // assert.strictEqual(m.text, 'foo@bar.com');
+    assert.strictEqual(m.url,  'mailto:foo@bar.com');
 
     m = l.match('foo@bar.com')[0];
 
-    // assert.equal(m.text, 'foo@bar.com');
-    assert.equal(m.url,  'mailto:foo@bar.com');
+    // assert.strictEqual(m.text, 'foo@bar.com');
+    assert.strictEqual(m.url,  'mailto:foo@bar.com');
   });
 
 
@@ -221,46 +221,46 @@ describe('API', function () {
       }
     });
 
-    assert.equal(l.match('hello, @gamajoba_!')[0].text, '@gamajoba_');
-    assert.equal(l.match(':@givi')[0].text, '@givi');
-    assert.equal(l.match(':@givi')[0].url, 'https://twitter.com/givi');
-    assert.notOk(l.test('@@invalid'));
+    assert.strictEqual(l.match('hello, @gamajoba_!')[0].text, '@gamajoba_');
+    assert.strictEqual(l.match(':@givi')[0].text, '@givi');
+    assert.strictEqual(l.match(':@givi')[0].url, 'https://twitter.com/givi');
+    assert.ok(!l.test('@@invalid'));
   });
 
 
   it('set option: fuzzyLink', function () {
     var l = linkify({ fuzzyLink: false });
 
-    assert.equal(l.test('google.com.'), false);
+    assert.strictEqual(l.test('google.com.'), false);
 
     l.set({ fuzzyLink: true });
 
-    assert.equal(l.test('google.com.'), true);
-    assert.equal(l.match('google.com.')[0].text, 'google.com');
+    assert.strictEqual(l.test('google.com.'), true);
+    assert.strictEqual(l.match('google.com.')[0].text, 'google.com');
   });
 
 
   it('set option: fuzzyEmail', function () {
     var l = linkify({ fuzzyEmail: false });
 
-    assert.equal(l.test('foo@bar.com.'), false);
+    assert.strictEqual(l.test('foo@bar.com.'), false);
 
     l.set({ fuzzyEmail: true });
 
-    assert.equal(l.test('foo@bar.com.'), true);
-    assert.equal(l.match('foo@bar.com.')[0].text, 'foo@bar.com');
+    assert.strictEqual(l.test('foo@bar.com.'), true);
+    assert.strictEqual(l.match('foo@bar.com.')[0].text, 'foo@bar.com');
   });
 
 
   it('set option: fuzzyIP', function () {
     var l = linkify();
 
-    assert.equal(l.test('1.1.1.1.'), false);
+    assert.strictEqual(l.test('1.1.1.1.'), false);
 
     l.set({ fuzzyIP: true });
 
-    assert.equal(l.test('1.1.1.1.'), true);
-    assert.equal(l.match('1.1.1.1.')[0].text, '1.1.1.1');
+    assert.strictEqual(l.test('1.1.1.1.'), true);
+    assert.strictEqual(l.match('1.1.1.1.')[0].text, '1.1.1.1');
   });
 
   it('should not hang in fuzzy mode with sequences of astrals', function () {
@@ -275,10 +275,10 @@ describe('API', function () {
   it('should accept `---` if enabled', function () {
     var l = linkify();
 
-    assert.equal(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo---bar');
+    assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo---bar');
 
     l = linkify(null, { '---': true });
 
-    assert.equal(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo');
+    assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo');
   });
 });
