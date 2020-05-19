@@ -1,10 +1,11 @@
-3.0.0 / WIP
+3.0.0 / 2020-05-19
 ------------------
 
 - Allow unlimited `.` inside link params, #81. This should not be breaking, but
   bumped version for sure.
 - Allow `..&` in params, #87.
-- Deps bump + jade => pug.
+- Deps bump.
+- Rewrite build scripts.
 
 
 2.2.0 / 2019-07-12
