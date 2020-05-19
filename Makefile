@@ -16,23 +16,11 @@ lint:
 test:
 	npm run test
 
-demo: lint
-	rm -rf ./demo
-	mkdir ./demo
-	./support/demodata.js > ./support/demo_template/sample.json
-	./node_modules/.bin/pug ./support/demo_template/index.pug --pretty \
-		--obj ./support/demo_template/sample.json \
-		--out ./demo
-	./node_modules/.bin/stylus -u autoprefixer-stylus \
-		< ./support/demo_template/index.styl \
-		> ./demo/index.css
-	rm -rf ./support/demo_template/sample.json
-	./node_modules/.bin/browserify ./support/demo_template/index.js > ./demo/index.js
-
+demo:
+	npm run demo
 
 doc:
-	rm -rf ./doc
-	./node_modules/.bin/ndoc --link-format "{package.homepage}/blob/${CURR_HEAD}/{file}#L{line}"
+	npm run doc
 
 
 gh-pages:

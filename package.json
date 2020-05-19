@@ -18,7 +18,9 @@
     "lint": "eslint .",
     "test": "npm run lint && nyc mocha",
     "coverage": "npm run test && nyc report --reporter html",
-    "report-coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "report-coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "demo": "npm run lint && node support/build_demo.js",
+    "doc": "node support/build_doc.js"
   },
   "dependencies": {
     "uc.micro": "^1.0.1"
@@ -35,6 +37,7 @@
     "ndoc": "^5.0.1",
     "nyc": "^15.0.1",
     "pug-cli": "^1.0.0-alpha6",
+    "shelljs": "^0.8.4",
     "stylus": "~0.54.5",
     "tlds": "^1.166.0"
   }

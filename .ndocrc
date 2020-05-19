@@ -4,10 +4,10 @@
 
 --index         "./README.md"
 --package       "./package.json"
---gh-ribbon     "https://github.com/markdown-it/linkify-it"
+--gh-ribbon     "https://github.com/{package.repository}"
 --output        "doc"
 --render        "html"
---link-format   "https://github.com/markdown-it/linkify-it/blob/master/{file}#L{line}"
+--link-format   "https://github.com/{package.repository}/blob/master/{file}#L{line}"
 --broken-links  "show"
 
 
