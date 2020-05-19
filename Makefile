@@ -22,25 +22,8 @@ demo:
 doc:
 	npm run doc
 
-
 gh-pages:
-	@if test -z ${REMOTE_REPO} ; then \
-		echo 'Remote repo URL not found' >&2 ; \
-		exit 128 ; \
-		fi
-	$(MAKE) demo && \
-		cp -r ./demo ${TMP_PATH} && \
-		touch ${TMP_PATH}/.nojekyll
-	$(MAKE) doc && \
-		cp -r ./doc ${TMP_PATH}/doc
-	cd ${TMP_PATH} && \
-		git init && \
-		git add . && \
-		git commit -q -m 'Recreated docs'
-	cd ${TMP_PATH} && \
-		git remote add remote ${REMOTE_REPO} && \
-		git push --force remote +master:gh-pages
-	rm -rf ${TMP_PATH}
+	npm run gh-pages
 
 
 publish: browserify
