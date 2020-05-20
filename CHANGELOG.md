@@ -1,3 +1,9 @@
+3.0.2 / 2020-05-20
+------------------
+
+- Proper fix for #54. Allow multiple `!` in links (but not at the end).
+
+
 3.0.1 / 2020-05-19
 ------------------
 
