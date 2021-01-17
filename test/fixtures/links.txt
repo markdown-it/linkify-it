@@ -55,6 +55,12 @@ http://example.com
 http://lyricstranslate.com/en/someone-you-നിന്നെ-പോലൊരാള്‍.html % With control character
 http://lyricstranslate.com/en/someone-you-നിന്നെ-പോലൊരാള്‍.html
 
+https://api_stage.dzcode.io
+https://api_stage.dzcode.io
+
+https://api_stage.dz_code.io
+https://api_stage.dz_code.io
+
 %
 % localhost (only with protocol allowed)
 %
@@ -114,6 +120,11 @@ GOOGLE.COM
 google.xxx // known tld
 google.xxx
 
+api_stage.dzcode.io
+api_stage.dzcode.io
+
+api_stage.dz_code.io
+api_stage.dz_code.io
 
 %
 % Correct termination for . , ! ? [] {} () "" ''
