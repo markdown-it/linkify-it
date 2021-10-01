@@ -1,3 +1,9 @@
+3.0.3 / 2021-10-01
+------------------
+
+- Fixed #98. Don't count `;` at the end of link (when followed with space).
+
+
 3.0.2 / 2020-05-20
 ------------------
 
