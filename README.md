@@ -1,7 +1,7 @@
 linkify-it
 ==========
 
-[![Build Status](https://img.shields.io/travis/markdown-it/linkify-it/master.svg?style=flat)](https://travis-ci.org/markdown-it/linkify-it)
+[![CI](https://github.com/markdown-it/linkify-it/actions/workflows/ci.yml/badge.svg)](https://github.com/markdown-it/linkify-it/actions/workflows/ci.yml)
 [![NPM version](https://img.shields.io/npm/v/linkify-it.svg?style=flat)](https://www.npmjs.org/package/linkify-it)
 [![Coverage Status](https://img.shields.io/coveralls/markdown-it/linkify-it/master.svg?style=flat)](https://coveralls.io/r/markdown-it/linkify-it?branch=master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/markdown-it/linkify-it)
