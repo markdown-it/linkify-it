@@ -11,10 +11,12 @@
   "repository": "markdown-it/linkify-it",
   "files": [
     "index.js",
+    "dist/",
     "lib/"
   ],
   "license": "MIT",
   "scripts": {
+    "build": "npx webpack",
     "lint": "eslint .",
     "test": "npm run lint && nyc mocha",
     "coverage": "npm run test && nyc report --reporter html",
@@ -42,6 +44,8 @@
     "shelljs": "^0.8.4",
     "shx": "^0.3.2",
     "stylus": "~0.55.0",
-    "tlds": "^1.166.0"
+    "tlds": "^1.166.0",
+    "webpack": "^5.58.0",
+    "webpack-cli": "^4.9.0"
   }
 }

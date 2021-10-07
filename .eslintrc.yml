@@ -6,6 +6,8 @@ env:
 ignorePatterns:
   - coverage/
   - demo/
+  - dist/
+  - webpack.config.js
 
 rules:
   accessor-pairs:         2
