@@ -2,10 +2,11 @@ module.exports = {
     entry: './index.js',
     mode: 'production',
     output: {
-        filename: 'linkifyIt.umd.min.js',
+        filename: 'linkify-it.umd.min.js',
         library: {
             type: 'umd',
-            name: 'linkifyIt',
-        }
+            name: 'LinkifyIt',
+        },
+        globalObject: 'this',
     }
 };
