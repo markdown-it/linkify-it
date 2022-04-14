@@ -281,4 +281,27 @@ describe('API', function () {
 
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo');
   });
+
+  it('should find a match at the start', function () {
+    var l = linkify();
+
+    l.set({ fuzzyLink: true });
+
+    assert.strictEqual(l.matchAtStart('http://google.com 123').text, 'http://google.com');
+    assert.ok(!l.matchAtStart('google.com 123'));
+    assert.ok(!l.matchAtStart('  http://google.com 123'));
+  });
+
+  it('matchAtStart should not interfere with normal match', function () {
+    var l = linkify();
+    var str;
+
+    str = 'http://google.com http://google.com';
+    assert.ok(l.matchAtStart(str));
+    assert.strictEqual(l.match(str).length, 2);
+
+    str = 'aaa http://google.com http://google.com';
+    assert.ok(!l.matchAtStart(str));
+    assert.strictEqual(l.match(str).length, 2);
+  });
 });

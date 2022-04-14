@@ -158,6 +158,13 @@ Each match has:
 - __url__ - link, generated from matched text
 
 
+### .matchAtStart(text)
+
+Checks if a match exists at the start of the string. Returns `Match`
+(see docs for `match(text)`) or null if no URL is at the start.
+Doesn't work with fuzzy links.
+
+
 ### .tlds(list[, keepOld])
 
 Load (or merge) new tlds list. Those are needed for fuzzy links (without schema)

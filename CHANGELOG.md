@@ -1,3 +1,9 @@
+3.1.0 / WIP
+------------------
+
+- Add `matchAtStart` method to match full URLs at the start of the string.
+
+
 3.0.3 / 2021-10-01
 ------------------
 

@@ -254,8 +254,9 @@ function compile(self) {
                       .map(escapeRE)
                       .join('|');
   // (?!_) cause 1.5x slowdown
-  self.re.schema_test   = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'i');
-  self.re.schema_search = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'ig');
+  self.re.schema_test     = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'i');
+  self.re.schema_search   = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'ig');
+  self.re.schema_at_start = RegExp('^' + self.re.schema_search.source, 'i');
 
   self.re.pretest = RegExp(
     '(' + self.re.schema_test.source + ')|(' + self.re.host_fuzzy_test.source + ')|@',
@@ -567,6 +568,33 @@ LinkifyIt.prototype.match = function match(text) {
   }
 
   return null;
+};
+
+
+/**
+ * LinkifyIt#matchAtStart(text) -> Match|null
+ *
+ * Returns fully-formed (not fuzzy) link if it starts at the beginning
+ * of the string, and null otherwise.
+ **/
+LinkifyIt.prototype.matchAtStart = function matchAtStart(text) {
+  // Reset scan cache
+  this.__text_cache__ = text;
+  this.__index__      = -1;
+
+  if (!text.length) return null;
+
+  var m = this.re.schema_at_start.exec(text);
+  if (!m) return null;
+
+  var len = this.testSchemaAt(text, m[2], m[0].length);
+  if (len) {
+    this.__schema__     = m[2];
+    this.__index__      = m.index + m[1].length;
+    this.__last_index__ = m.index + m[0].length + len;
+  }
+
+  return createMatch(this, 0);
 };
 
 
