@@ -1,7 +1,9 @@
-3.1.0 / WIP
+4.0.0 / WIP
 ------------------
 
 - Add `matchAtStart` method to match full URLs at the start of the string.
+- Fixed paired symbols (`()`, `{}`, `""`, etc.) after punctuation.
+- `---` option now affects parsing of emails  (e.g. `user@example.com---`)
 
 
 3.0.3 / 2021-10-01
