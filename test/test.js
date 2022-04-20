@@ -276,10 +276,12 @@ describe('API', function () {
     var l = linkify();
 
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo---bar');
+    assert.strictEqual(l.match('text@example.com---foo'), null);
 
     l = linkify(null, { '---': true });
 
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo');
+    assert.strictEqual(l.match('text@example.com---foo')[0].text, 'text@example.com');
   });
 
   it('should find a match at the start', function () {
