@@ -1,4 +1,4 @@
-4.0.0 / WIP
+4.0.0 / 2022-04-22
 ------------------
 
 - Add `matchAtStart` method to match full URLs at the start of the string.
