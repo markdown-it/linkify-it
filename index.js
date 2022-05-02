@@ -588,11 +588,11 @@ LinkifyIt.prototype.matchAtStart = function matchAtStart(text) {
   if (!m) return null;
 
   var len = this.testSchemaAt(text, m[2], m[0].length);
-  if (len) {
-    this.__schema__     = m[2];
-    this.__index__      = m.index + m[1].length;
-    this.__last_index__ = m.index + m[0].length + len;
-  }
+  if (!len) return null;
+
+  this.__schema__     = m[2];
+  this.__index__      = m.index + m[1].length;
+  this.__last_index__ = m.index + m[0].length + len;
 
   return createMatch(this, 0);
 };

@@ -1,3 +1,9 @@
+4.0.1 / WIP
+------------------
+
+- Fix `http://` incorrectly returned as a link by matchStart.
+
+
 4.0.0 / 2022-04-22
 ------------------
 

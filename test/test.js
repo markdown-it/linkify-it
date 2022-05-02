@@ -306,4 +306,12 @@ describe('API', function () {
     assert.ok(!l.matchAtStart(str));
     assert.strictEqual(l.match(str).length, 2);
   });
+
+  it('should not match incomplete links', function () {
+    // regression test for https://github.com/markdown-it/markdown-it/issues/868
+    var l = linkify();
+
+    assert.ok(!l.matchAtStart('http://'));
+    assert.ok(!l.matchAtStart('https://'));
+  });
 });
