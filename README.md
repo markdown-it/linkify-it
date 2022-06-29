@@ -152,7 +152,7 @@ Each match has:
 - __schema__ - link schema, can be empty for fuzzy links, or `//` for
   protocol-neutral  links.
 - __index__ - offset of matched text
-- __lastIndex__ - index of next char after mathch end
+- __lastIndex__ - index of next char after match end
 - __raw__ - matched text
 - __text__ - normalized text
 - __url__ - link, generated from matched text
