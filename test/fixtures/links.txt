@@ -135,6 +135,10 @@ http://foo.com/blah_blah_"doublequoted"
 
 http://foo.com/blah_blah_'singlequoted'
 
+https://domain.com/@username:4/some-words'&=0
+
+https://domain.com/@username:4/some-words':0
+
 (Scoped like http://example.com/foo_bar)
 http://example.com/foo_bar
 
