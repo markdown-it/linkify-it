@@ -3,6 +3,17 @@ env:
   browser:  false
   es6:      false
 
+parserOptions:
+  ecmaVersion: latest
+
+overrides:
+  -
+    files: [ '*.mjs' ]
+    parserOptions:
+      sourceType: module
+    rules:
+      no-restricted-globals: [ 2, require, __dirname ]
+
 ignorePatterns:
   - coverage/
   - demo/

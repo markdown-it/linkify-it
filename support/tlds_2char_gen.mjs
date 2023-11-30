@@ -4,11 +4,13 @@
 //
 // Code is dirty, i know, but it's needed only once
 //
-'use strict';
-
 
 /*eslint-disable no-console*/
-/*eslint-env es6*/
+
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
+const tldList = require('tlds');
 
 function toRanges(str) {
   var ranges = [], i;
@@ -31,7 +33,7 @@ function toRanges(str) {
   return '[' + ranges.join('') + ']';
 }
 
-var tlds = require('tlds').filter(name => /^[a-z]{2}$/.test(name)).sort();
+var tlds = tldList.filter(name => /^[a-z]{2}$/.test(name)).sort();
 
 //
 // group by first letter

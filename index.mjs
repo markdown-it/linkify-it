@@ -1,4 +1,4 @@
-'use strict';
+import reFactory from './lib/re.mjs';
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ function createNormalizer() {
 function compile(self) {
 
   // Load & clone RE patterns.
-  var re = self.re = require('./lib/re')(self.__opts__);
+  var re = self.re = reFactory(self.__opts__);
 
   // Define dynamic patterns
   var tlds = self.__tlds__.slice();
@@ -661,4 +661,4 @@ LinkifyIt.prototype.onCompile = function onCompile() {
 };
 
 
-module.exports = LinkifyIt;
+export default LinkifyIt;

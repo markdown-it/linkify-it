@@ -4,10 +4,7 @@
 
 /*eslint no-console:0*/
 
-'use strict';
-
-var fs   = require('fs');
-var path = require('path');
+import { readFileSync } from 'fs';
 
 function isComment(str) { return /^%.*/.test(str); }
 function isEmpty(str) { return !(str && str.trim()); }
@@ -15,7 +12,7 @@ function isEmpty(str) { return !(str && str.trim()); }
 var result = [], lines, line, i;
 
 // Read links fixture
-lines = fs.readFileSync(path.join(__dirname, '../test/fixtures/links.txt'), 'utf8').split(/\r?\n/g);
+lines = readFileSync(new URL('../test/fixtures/links.txt', import.meta.url), 'utf8').split(/\r?\n/g);
 
 // Cleanup
 for (i = 0; i < lines.length; i++) {
@@ -44,7 +41,7 @@ result.push('');
 result.push('');
 
 // Read non-links fixture
-lines = fs.readFileSync(path.join(__dirname, '../test/fixtures/not_links.txt'), 'utf8').split(/\r?\n/g);
+lines = readFileSync(new URL('../test/fixtures/not_links.txt', import.meta.url), 'utf8').split(/\r?\n/g);
 
 result = result.concat(lines);
 

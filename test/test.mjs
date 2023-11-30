@@ -1,12 +1,11 @@
-'use strict';
-
 /*eslint-env node,mocha*/
 
-var fs      = require('fs');
-var path    = require('path');
-var assert  = require('assert');
-
-var linkify = require('../');
+import { readFileSync } from 'fs';
+import assert from 'node:assert';
+import linkify from '../index.mjs';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const tlds = require('tlds');
 
 var lines;
 
@@ -17,7 +16,7 @@ describe('links', function () {
 
   l.normalize = function () {}; // kill normalizer
 
-  lines = fs.readFileSync(path.join(__dirname, 'fixtures/links.txt'), 'utf8').split(/\r?\n/g);
+  lines = readFileSync(new URL('fixtures/links.txt', import.meta.url), 'utf8').split(/\r?\n/g);
 
   var skipNext = false;
 
@@ -60,7 +59,7 @@ describe('not links', function () {
 
   l.normalize = function () {}; // kill normalizer
 
-  lines = fs.readFileSync(path.join(__dirname, 'fixtures/not_links.txt'), 'utf8').split(/\r?\n/g);
+  lines = readFileSync(new URL('fixtures/not_links.txt', import.meta.url), 'utf8').split(/\r?\n/g);
 
   lines.forEach(function (line, idx) {
     line = line.replace(/^%.*/, '');
@@ -88,7 +87,7 @@ describe('API', function () {
     assert.ok(l.test('google.myroot'));
     assert.ok(!l.test('google.xyz'));
 
-    l.tlds(require('tlds'));
+    l.tlds(tlds);
 
     assert.ok(l.test('google.xyz'));
     assert.ok(!l.test('google.myroot'));

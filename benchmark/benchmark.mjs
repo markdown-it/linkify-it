@@ -1,45 +1,31 @@
 #!/usr/bin/env node
 /*eslint no-console:0*/
 
-'use strict';
-
-var path      = require('path');
-var fs        = require('fs');
-var util      = require('util');
-var Benchmark = require('benchmark');
-var ansi      = require('ansi');
+import { readFileSync, readdirSync } from 'fs';
+import util from 'node:util';
+import Benchmark from 'benchmark';
+import ansi from 'ansi';
 var cursor    = ansi(process.stdout);
 
-var IMPLS_DIRECTORY = path.join(__dirname, 'implementations');
-var IMPLS_PATHS = {};
 var IMPLS = [];
 
+for (const name of readdirSync(new URL('./implementations', import.meta.url)).sort()) {
+  const filepath = new URL(`./implementations/${name}/index.mjs`, import.meta.url);
+  const code = (await import(filepath));
 
-fs.readdirSync(IMPLS_DIRECTORY).sort().forEach(function (name) {
-  var file = path.join(IMPLS_DIRECTORY, name);
-  var code = require(file);
+  IMPLS.push({ name, code });
+}
 
-  IMPLS_PATHS[name] = file;
-  IMPLS.push({
-    name: name,
-    code: code
-  });
-});
-
-
-var SAMPLES_DIRECTORY = path.join(__dirname, 'samples');
 var SAMPLES = [];
 
-fs.readdirSync(SAMPLES_DIRECTORY).sort().forEach(function (sample) {
-  var filepath = path.join(SAMPLES_DIRECTORY, sample),
-      extname  = path.extname(filepath),
-      basename = path.basename(filepath, extname);
+readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
+  var filepath = new URL(`./samples/${sample}`, import.meta.url);
 
   var content = {};
 
-  content.string = fs.readFileSync(filepath, 'utf8');
+  content.string = readFileSync(filepath, 'utf8');
 
-  var title    = util.format('(%d bytes)', content.string.length);
+  var title    = `(${content.string.length} bytes)`;
 
   function onComplete() {
     cursor.write('\n');
@@ -77,7 +63,7 @@ fs.readdirSync(SAMPLES_DIRECTORY).sort().forEach(function (sample) {
 
 
   SAMPLES.push({
-    name: basename,
+    name: sample.split('.')[0],
     title: title,
     content: content,
     suite: suite
@@ -124,14 +110,6 @@ function run(files) {
     sample.suite.run();
   });
 }
-
-module.exports.IMPLS_DIRECTORY   = IMPLS_DIRECTORY;
-module.exports.IMPLS_PATHS       = IMPLS_PATHS;
-module.exports.IMPLS             = IMPLS;
-module.exports.SAMPLES_DIRECTORY = SAMPLES_DIRECTORY;
-module.exports.SAMPLES           = SAMPLES;
-module.exports.select            = select;
-module.exports.run               = run;
 
 run(process.argv.slice(2).map(function (source) {
   return new RegExp(source, 'i');

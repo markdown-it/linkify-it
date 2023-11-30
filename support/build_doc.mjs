@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 
-'use strict';
-
-/* eslint-env es6 */
-
-const shell = require('shelljs');
+import shell from 'shelljs';
 
 shell.rm('-rf', 'doc');
 

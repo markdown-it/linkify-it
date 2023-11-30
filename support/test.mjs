@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-'use strict';
-
 /*eslint-disable no-console*/
 
-var linkify = require('../')();
-var inspect = require('util').inspect;
+import linkifyit from '../index.mjs';
+import { inspect } from 'node:util';
+const linkify = linkifyit();
 
 var text = [].concat(process.argv.slice(2)).join(' ');
 
