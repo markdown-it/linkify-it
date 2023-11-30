@@ -9,14 +9,14 @@ import { readFileSync } from 'fs'
 function isComment(str) { return /^%.*/.test(str) }
 function isEmpty(str) { return !(str && str.trim()) }
 
-var result = [], lines, line, i
+let result = []
 
 // Read links fixture
-lines = readFileSync(new URL('../test/fixtures/links.txt', import.meta.url), 'utf8').split(/\r?\n/g)
+let lines = readFileSync(new URL('../test/fixtures/links.txt', import.meta.url), 'utf8').split(/\r?\n/g)
 
 // Cleanup
-for (i = 0; i < lines.length; i++) {
-  line = lines[i]
+for (let i = 0; i < lines.length; i++) {
+  const line = lines[i]
 
   if (isComment(line)) {
     result.push(line)

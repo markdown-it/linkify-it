@@ -13,12 +13,12 @@ const require = createRequire(import.meta.url)
 const tldList = require('tlds')
 
 function toRanges(str) {
-  var ranges = [], i
+  const ranges = []
 
   str = str.slice(1, -1)
 
   while (str.length) {
-    for (i = 1; ; i++) {
+    for (let i = 1; ; i++) {
       if (str[i] !== String.fromCharCode(str[i - 1].charCodeAt(0) + 1)) {
         if (i < 3) {
           ranges.push(str.slice(0, i))
@@ -33,16 +33,16 @@ function toRanges(str) {
   return '[' + ranges.join('') + ']'
 }
 
-var tlds = tldList.filter(name => /^[a-z]{2}$/.test(name)).sort()
+const tlds = tldList.filter(name => /^[a-z]{2}$/.test(name)).sort()
 
 //
 // group by first letter
 //
 
-var result = []
+let result = []
 
 'abcdefghijklmnopqrstuvwxyz'.split('').forEach(letter => {
-  var list = tlds.filter(name => name[0] === letter)
+  const list = tlds.filter(name => name[0] === letter)
 
   if (!list.length) { return }
 

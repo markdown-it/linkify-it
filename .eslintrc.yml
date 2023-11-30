@@ -19,6 +19,10 @@ ignorePatterns:
   - demo/
 
 rules:
+  no-var: 2
+  prefer-const: 2
+  one-var: [ 2, { initialized: 'never' } ]
+
   accessor-pairs:         2
   array-bracket-spacing:  [ 2, "always", { "singleValue": true, "objectsInArrays": true, "arraysInArrays": true } ]
   block-scoped-var:       2

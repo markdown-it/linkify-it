@@ -5,7 +5,7 @@ import linkifyit from '../index.mjs'
 import { inspect } from 'node:util'
 const linkify = linkifyit()
 
-var text = [].concat(process.argv.slice(2)).join(' ')
+const text = [].concat(process.argv.slice(2)).join(' ')
 
 console.log(text)
 console.log(linkify.test(text))

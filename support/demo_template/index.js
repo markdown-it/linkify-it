@@ -3,22 +3,21 @@
 /*eslint-env browser*/
 /*global $, _*/
 
-var linkify = require('../../')({ fuzzyIP: true })
-var mdurl   = require('mdurl')
-var permalink
+const linkify = require('../../')({ fuzzyIP: true })
+const mdurl   = require('mdurl')
+let permalink
 
 function escape(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 function setLinkifiedContent(selector, content) {
-  var out     = escape(content),
-      matches = linkify.match(content),
-      result  = [],
-      last
+  let out = escape(content)
+  const matches = linkify.match(content)
 
   if (matches) {
-    last = 0
+    const result  = []
+    let last = 0
     matches.forEach(function (match) {
       if (last < match.index) {
         result.push(escape(content.slice(last, match.index)).replace(/\r?\n/g, '<br>'))
@@ -40,7 +39,7 @@ function setLinkifiedContent(selector, content) {
 }
 
 function updateResult() {
-  var source = $('.source').val()
+  const source = $('.source').val()
 
   setLinkifiedContent('.result-html', source)
 

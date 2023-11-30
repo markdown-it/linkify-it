@@ -5,9 +5,9 @@ import { readFileSync, readdirSync } from 'fs'
 import util from 'node:util'
 import Benchmark from 'benchmark'
 import ansi from 'ansi'
-var cursor    = ansi(process.stdout)
+const cursor    = ansi(process.stdout)
 
-var IMPLS = []
+const IMPLS = []
 
 for (const name of readdirSync(new URL('./implementations', import.meta.url)).sort()) {
   const filepath = new URL(`./implementations/${name}/index.mjs`, import.meta.url)
@@ -16,23 +16,23 @@ for (const name of readdirSync(new URL('./implementations', import.meta.url)).so
   IMPLS.push({ name, code })
 }
 
-var SAMPLES = []
+const SAMPLES = []
 
 readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
-  var filepath = new URL(`./samples/${sample}`, import.meta.url)
+  const filepath = new URL(`./samples/${sample}`, import.meta.url)
 
-  var content = {}
+  const content = {}
 
   content.string = readFileSync(filepath, 'utf8')
 
-  var title    = `(${content.string.length} bytes)`
+  const title    = `(${content.string.length} bytes)`
 
   function onComplete() {
     cursor.write('\n')
   }
 
 
-  var suite = new Benchmark.Suite(title, {
+  const suite = new Benchmark.Suite(title, {
 
     onStart: function onStart() {
       console.log('\nSample: %s %s', sample, title)
@@ -72,7 +72,7 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
 
 
 function select(patterns) {
-  var result = []
+  const result = []
 
   if (!(patterns instanceof Array)) {
     patterns = [ patterns ]
@@ -95,7 +95,7 @@ function select(patterns) {
 
 
 function run(files) {
-  var selected = select(files)
+  const selected = select(files)
 
   if (selected.length > 0) {
     console.log('Selected samples: (%d of %d)', selected.length, SAMPLES.length)
