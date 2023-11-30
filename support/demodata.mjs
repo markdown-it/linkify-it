@@ -4,49 +4,49 @@
 
 /*eslint no-console:0*/
 
-import { readFileSync } from 'fs';
+import { readFileSync } from 'fs'
 
-function isComment(str) { return /^%.*/.test(str); }
-function isEmpty(str) { return !(str && str.trim()); }
+function isComment(str) { return /^%.*/.test(str) }
+function isEmpty(str) { return !(str && str.trim()) }
 
-var result = [], lines, line, i;
+var result = [], lines, line, i
 
 // Read links fixture
-lines = readFileSync(new URL('../test/fixtures/links.txt', import.meta.url), 'utf8').split(/\r?\n/g);
+lines = readFileSync(new URL('../test/fixtures/links.txt', import.meta.url), 'utf8').split(/\r?\n/g)
 
 // Cleanup
 for (i = 0; i < lines.length; i++) {
-  line = lines[i];
+  line = lines[i]
 
   if (isComment(line)) {
-    result.push(line);
-    continue;
+    result.push(line)
+    continue
   }
 
   if (isEmpty(line)) {
     if (isComment(lines[i + 1])) {
-      result.push('');
+      result.push('')
     }
-    continue;
+    continue
   }
 
-  result.push(line);
+  result.push(line)
 
   if (!isComment(lines[i + 1]) && !isEmpty(lines[i + 1])) {
-    i++;
+    i++
   }
 }
 
-result.push('');
-result.push('');
+result.push('')
+result.push('')
 
 // Read non-links fixture
-lines = readFileSync(new URL('../test/fixtures/not_links.txt', import.meta.url), 'utf8').split(/\r?\n/g);
+lines = readFileSync(new URL('../test/fixtures/not_links.txt', import.meta.url), 'utf8').split(/\r?\n/g)
 
-result = result.concat(lines);
+result = result.concat(lines)
 
 // Join lines
-result = result.join('\n');
+result = result.join('\n')
 
 console.log(JSON.stringify({
   self: {
@@ -54,4 +54,4 @@ console.log(JSON.stringify({
       source: result
     }
   }
-}, null, 2));
+}, null, 2))

@@ -1,8 +1,8 @@
-import linkifyit from '../../../index.mjs';
-const linkify = linkifyit();
+import linkifyit from '../../../index.mjs'
+const linkify = linkifyit()
 
-linkify.test('');
+linkify.test('')
 
 export function run(data) {
-  return linkify.pretest(data);
+  return linkify.pretest(data)
 }
