@@ -16,10 +16,10 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -28,10 +28,7 @@ jobs:
     - name: Test
       run: npm test
 
-    - name: Create coverage report
-      run: npm run report-coveralls
-
     - name: Upload coverage report to coveralls.io
-      uses: coverallsapp/github-action@v1.1.2
+      uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
