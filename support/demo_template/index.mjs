@@ -1,10 +1,9 @@
-'use strict'
-
 /*eslint-env browser*/
 /*global $, _*/
 
-const linkify = require('../../')({ fuzzyIP: true })
-const mdurl   = require('mdurl')
+import linkifyit from '../../index.mjs'
+import mdurl from 'mdurl'
+const linkify = linkifyit({ fuzzyIP: true })
 let permalink
 
 function escape(str) {

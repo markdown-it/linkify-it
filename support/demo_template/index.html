@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>linkify-it demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/2.4.1/lodash.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>
+        linkify-it <small>demo</small></h1>
+      <p>
+        Type text below to see linkified example.
+        See <a href="./doc/" target="_blank">API Docs</a> for usage details.
+      </p>
+      <p>&nbsp;</p>
+    </div>
+    <div class="container full-height">
+      <div class="row full-height">
+        <div class="col-xs-6 full-height">
+          <div class="demo-control"><a class="source-clear" href="#">clear</a><a id="permalink" href="./" title="Share this snippet as link"><strong>permalink</strong></a></div>
+          <textarea class="source full-height"><!--SAMPLE--></textarea>
+        </div>
+        <section class="col-xs-6 full-height">
+          <div class="result-html full-height"></div>
+        </section>
+      </div>
+    </div>
+    <div class="gh-ribbon"><a href="https://github.com/markdown-it/linkify-it" target="_blank">Fork me on GitHub</a></div>
+  </body>
+</html>

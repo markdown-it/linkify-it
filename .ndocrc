@@ -2,6 +2,7 @@
 # Common nodeca config
 ################################################################################
 
+--alias mjs:js
 --index         "./README.md"
 --package       "./package.json"
 --gh-ribbon     "https://github.com/{package.repository}"
@@ -15,7 +16,7 @@
 # Paths with sources
 ################################################################################
 
-index.js
+index.mjs
 lib
 
 
