@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>linkify-it demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/2.4.1/lodash.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>
+        linkify-it <small>demo</small></h1>
+      <p>
+        Type text below to see linkified example.
+        See <a href="./doc/" target="_blank">API Docs</a> for usage details.
+      </p>
+      <p>&nbsp;</p>
+    </div>
+    <div class="container full-height">
+      <div class="row full-height">
+        <div class="col-xs-6 full-height">
+          <div class="demo-control"><a class="source-clear" href="#">clear</a><a id="permalink" href="./" title="Share this snippet as link"><strong>permalink</strong></a></div>
+          <textarea class="source full-height">%
+% Regular links
+%
+My http://example.com site
+My http://example.com/ site
+http://example.com/foo_bar/
+http://user:pass@example.com:8080
+http://user@example.com
+http://user@example.com:8080
+http://user:pass@example.com
+[https](https://www.ibm.com)[mailto](mailto:someone@ibm.com) % should not catch as auth (before @ in big link)
+http://example.com:8080
+http://example.com/?foo=bar
+http://example.com?foo=bar
+http://example.com/#foo=bar
+http://example.com#foo=bar
+http://a.in
+HTTP://GOOGLE.COM
+http://example.invalid % don't restrict root domain when schema exists
+http://inrgess2 % Allow local domains to end with digit
+http://999      % ..and start with digit, and have digits only
+http://host-name % local domain with dash
+&gt;&gt;example.com % markdown blockquote
+&gt;&gt;http://example.com % markdown blockquote
+http://lyricstranslate.com/en/someone-you-നിന്നെ-പോലൊരാള്‍.html % With control character
+
+%
+% localhost (only with protocol allowed)
+%
+//localhost
+//test.123
+http://localhost:8000?
+
+%
+% Other protocols
+%
+My ssl https://example.com site
+My ftp://example.com site
+
+%
+% Neutral proto
+%
+My ssl //example.com site
+
+%
+% IPs
+%
+4.4.4.4
+192.168.1.1/abc
+
+%
+% Fuzzy
+%
+test.example@http://vk.com
+text:http://example.com/
+google.com
+google.com: // no port
+s.l.o.w.io
+a-b.com
+GOOGLE.COM.
+google.xxx // known tld
+
+%
+% Correct termination for . , ! ? [] {} () &quot;&quot; ''
+%
+(Scoped http://example.com/foo_bar)
+http://example.com/foo_bar_(wiki)
+http://foo.com/blah_blah_[other]
+http://foo.com/blah_blah_{I'm_king}
+http://foo.com/blah_blah_I'm_king
+http://www.kmart.com/bestway-10'-x-30inch-steel-pro-frame-pool/p-004W007538417001P
+http://foo.com/blah_blah_&quot;doublequoted&quot;
+http://foo.com/blah_blah_'singlequoted'
+(Scoped like http://example.com/foo_bar)
+[Scoped like http://example.com/foo_bar]
+{Scoped like http://example.com/foo_bar}
+&quot;Quoted like http://example.com/foo_bar&quot;
+'Quoted like http://example.com/foo_bar'
+[example.com/foo_bar.jpg)]
+http://example.com/foo_bar.jpg.
+http://example.com/foo_bar/.
+http://example.com/foo_bar,
+http://index-of.es/Android/Professional.Android.2.Application.Development.(Wrox,.2010,.0470565527).pdf
+https://github.com/markdown-it/linkify-it/compare/360b13a733f521a8d4903d3a5e1e46c357e9d3ce...f580766349525150a80a32987bb47c2d592efc33
+https://www.google.com/search?sxsrf=ACYBGNTJFmX-GjNJ8fM-2LCkqyNyxGU1Ng%3A1575534146332&amp;ei=Qr7oXf7rE4rRrgSEgrmoAw&amp;q=clover&amp;oq=clover&amp;gs_l=psy-ab.3..0i67j0l9.2986.3947..4187...0.2..0.281.1366.1j0j5......0....1..gws-wiz.......0i71j35i39j0i131.qWp1nz4IJVA&amp;ved=0ahUKEwj-lP6Iip7mAhWKqIsKHQRBDjUQ4dUDCAs&amp;uact=5
+https://ourworldindata.org/grapher/covid-deaths-days-since-per-million?zoomToSelection=true&amp;time=9..&amp;country=FRA+DEU+ITA+ESP+GBR+USA+CAN
+http://example.com/foo_bar...
+http://172.26.142.48/viewerjs/#../0529/slides.pdf
+http://example.com/foo_bar..
+http://example.com/foo_bar?p=10.
+https://www.google.ru/maps/@59.9393895,30.3165389,15z?hl=ru
+https://www.google.com/maps/place/New+York,+NY,+USA/@40.702271,-73.9968471,11z/data=!4m2!3m1!1s0x89c24fa5d33f083b:0xc80b8f06e177fe62?hl=en
+https://www.google.com/analytics/web/?hl=ru&amp;pli=1#report/visitors-overview/a26895874w20458057p96934174/
+http://business.timesonline.co.uk/article/0,,9065-2473189,00.html
+https://google.com/mail/u/0/#label/!!!Today/15c9b8193da01e65
+http://example.com/123!
+http://example.com/123!!!
+http://example.com/foo--bar
+See http://example.com/123; Example link.
+http://example.com/123;123
+
+% some sites have links with trailing dashes
+http://www.bloomberg.com/news/articles/2015-06-26/from-deutsche-bank-to-siemens-what-s-troubling-germany-inc-
+http://example.com/foo-with-trailing-dash-dot-.
+&lt;http://domain.com&gt;
+&lt;http://domain.com&gt;.
+&lt;http://domain.com/foo&gt;
+&lt;http://domain.com/foo&gt;.
+&lt;domain.com&gt;
+&lt;domain.com&gt;.
+&lt;domain.com/foo&gt;
+&lt;user@domain.com&gt;
+&lt;user@domain.com&gt;.
+&lt;mailto:user@domain.com&gt;
+
+%
+% Emails
+%
+test.&quot;foo&quot;.bar@gmail.co.uk!
+&quot;test@example.com&quot;
+name@example.com
+&gt;&gt;name@example.com % markdown blockquote
+mailto:name@example.com
+MAILTO:NAME@EXAMPLE.COM
+mailto:foo_bar@example.com
+foo+bar@gmail.com
+192.168.1.1@gmail.com
+mailto:foo@bar      % explicit protocol make it valid
+(foobar email@example.com)
+(email@example.com foobar)
+(email@example.com)
+
+%
+% International
+%
+http://✪df.ws/123
+http://xn--df-oiy.ws/123
+a.ws
+➡.ws/䨹
+example.com/䨹
+президент.рф
+
+% Links below provided by diaspora* guys, to make sure regressions will not happen.
+% Those left here for historic reasons.
+http://www.bürgerentscheid-krankenhäuser.de
+http://www.xn--brgerentscheid-krankenhuser-xkc78d.de
+http://bündnis-für-krankenhäuser.de/wp-content/uploads/2011/11/cropped-logohp.jpg
+http://xn--bndnis-fr-krankenhuser-i5b27cha.de/wp-content/uploads/2011/11/cropped-logohp.jpg
+http://ﻡﻮﻘﻋ.ﻭﺯﺍﺭﺓ-ﺍﻼﺘﺻﺍﻼﺗ.ﻢﺻﺭ/
+http://xn--4gbrim.xn----ymcbaaajlc6dj7bxne2c.xn--wgbh1c/
+
+%
+% Others...
+%
+｜www.google.com/www.google.com/foo｜bar    % #46, asian vertical pipes
+｜test@google.com｜bar
+｜http://google.com｜bar
+
+%
+% Domains with multiple dashes
+%
+https://5b0ee223b312746c1659db3f--thelounge-chat.netlify.com/docs/
+www.a--b.com
+www.c--u.com
+http://a---b.com/
+
+
+%
+% Not links
+%
+example.invalid
+example.invalid/
+http://.example.com
+http://-example.com
+hppt://example.com
+example.coma
+-example.coma
+foo.123
+localhost           % only with protocol allowed
+localhost/
+///localhost        % 3 '/' not allowed
+///test.com
+//test              % Don't allow single level protocol-less domains to avoid false positives
+
+_http://example.com
+_//example.com
+_example.com
+http://example.com_
+@example.com
+
+node.js and io.js
+
+http://
+http://.
+http://..
+http://#
+http://##
+http://?
+http://??
+google.com:500000 // invalid port
+show image.jpg
+path:to:file.pm
+/path/to/file.pl
+
+%
+% Not IPv4
+%
+1.2.3.4.5
+1.2.3
+1.2.3.400
+1000.2.3.4
+a1.2.3.4
+1.2.3.4a
+
+%
+% Not email
+%
+foo@bar     % Should be at second level domain &amp; with correct tld
+mailto:bar
+</textarea>
+        </div>
+        <section class="col-xs-6 full-height">
+          <div class="result-html full-height"></div>
+        </section>
+      </div>
+    </div>
+    <div class="gh-ribbon"><a href="https://github.com/markdown-it/linkify-it" target="_blank">Fork me on GitHub</a></div>
+  </body>
+</html>
