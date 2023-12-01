@@ -238,12 +238,12 @@ function compile (self) {
   // Build schema condition
   //
   const slist = Object.keys(self.__compiled__)
-                      .filter(function (name) {
-                        // Filter disabled & fake schemas
-                        return name.length > 0 && self.__compiled__[name]
-                      })
-                      .map(escapeRE)
-                      .join('|')
+    .filter(function (name) {
+      // Filter disabled & fake schemas
+      return name.length > 0 && self.__compiled__[name]
+    })
+    .map(escapeRE)
+    .join('|')
   // (?!_) cause 1.5x slowdown
   self.re.schema_test = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'i')
   self.re.schema_search = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'ig')
@@ -605,11 +605,11 @@ LinkifyIt.prototype.tlds = function tlds (list, keepOld) {
   }
 
   this.__tlds__ = this.__tlds__.concat(list)
-                                  .sort()
-                                  .filter(function (el, idx, arr) {
-                                    return el !== arr[idx - 1]
-                                  })
-                                  .reverse()
+    .sort()
+    .filter(function (el, idx, arr) {
+      return el !== arr[idx - 1]
+    })
+    .reverse()
 
   compile(this)
   return this
