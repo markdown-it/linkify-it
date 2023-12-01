@@ -2,7 +2,7 @@
 /*global $, _*/
 
 import linkifyit from '../../index.mjs'
-import mdurl from 'mdurl'
+import * as mdurl from 'mdurl'
 const linkify = linkifyit({ fuzzyIP: true })
 let permalink
 

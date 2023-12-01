@@ -17,6 +17,7 @@ overrides:
 ignorePatterns:
   - coverage/
   - demo/
+  - build/
 
 rules:
   no-var: 2

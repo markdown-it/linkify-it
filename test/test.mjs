@@ -1,4 +1,4 @@
-/*eslint-env node,mocha*/
+/* eslint-env mocha */
 
 import { readFileSync } from 'fs'
 import assert from 'node:assert'
