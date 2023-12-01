@@ -8,9 +8,8 @@
 /* eslint-disable no-console */
 
 import { createRequire } from 'node:module'
-const require = createRequire(import.meta.url)
 
-const tldList = require('tlds')
+const tldList = createRequire(import.meta.url)('tlds')
 
 function toRanges (str) {
   const ranges = []

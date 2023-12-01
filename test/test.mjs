@@ -4,8 +4,8 @@ import { readFileSync } from 'fs'
 import assert from 'node:assert'
 import linkify from '../index.mjs'
 import { createRequire } from 'node:module'
-const require = createRequire(import.meta.url)
-const tlds = require('tlds')
+
+const tlds = createRequire(import.meta.url)('tlds')
 
 let lines
 
