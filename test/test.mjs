@@ -10,7 +10,6 @@ const tlds = require('tlds')
 let lines
 
 describe('links', function () {
-
   const l = linkify({ fuzzyIP: true })
 
   l.normalize = function () {} // kill normalizer
@@ -48,11 +47,9 @@ describe('links', function () {
       })
     }
   })
-
 })
 
 describe('not links', function () {
-
   const l = linkify()
 
   l.normalize = function () {} // kill normalizer
@@ -70,11 +67,9 @@ describe('not links', function () {
         JSON.stringify((l.match(line) || [])[0]) + '`)')
     })
   })
-
 })
 
 describe('API', function () {
-
   it('extend tlds', function () {
     const l = linkify()
 

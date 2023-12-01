@@ -140,7 +140,6 @@ function createNormalizer () {
 // Schemas compiler. Build regexps.
 //
 function compile (self) {
-
   // Load & clone RE patterns.
   const re = self.re = reFactory(self.__opts__)
 
@@ -447,7 +446,6 @@ LinkifyIt.prototype.test = function test (text) {
       // if tld is located after found link - no need to check fuzzy pattern
       if (this.__index__ < 0 || tld_pos < this.__index__) {
         if ((ml = text.match(this.__opts__.fuzzyIP ? this.re.link_fuzzy : this.re.link_no_ip_fuzzy)) !== null) {
-
           shift = ml.index + ml[1].length
 
           if (this.__index__ < 0 || shift < this.__index__) {
@@ -467,7 +465,6 @@ LinkifyIt.prototype.test = function test (text) {
       // We can't skip this check, because this cases are possible:
       // 192.168.1.1@gmail.com, my.in@example.com
       if ((me = text.match(this.re.email_fuzzy)) !== null) {
-
         shift = me.index + me[1].length
         next = me.index + me[0].length
 
@@ -624,7 +621,6 @@ LinkifyIt.prototype.tlds = function tlds (list, keepOld) {
  * Default normalizer (if schema does not define it's own).
  **/
 LinkifyIt.prototype.normalize = function normalize (match) {
-
   // Do minimal possible changes by default. Need to collect feedback prior
   // to move forward https://github.com/markdown-it/linkify-it/issues/1
 

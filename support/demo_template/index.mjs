@@ -53,7 +53,6 @@ function updateResult () {
 // Init on page load
 //
 $(function () {
-
   // Restore content if opened by permalink
   if (location.hash && /^(#t1=)/.test(location.hash)) {
     $('.source').val(mdurl.decode(location.hash.slice(4), mdurl.decode.componentChars))
