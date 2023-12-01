@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+
+//
+// Simple CLI helper for quick-check patterns
+//
+
 /* eslint-disable no-console */
 
 import linkifyit from '../index.mjs'
