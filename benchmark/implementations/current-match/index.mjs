@@ -3,6 +3,6 @@ const linkify = linkifyit()
 
 linkify.test('')
 
-export function run(data) {
+export function run (data) {
   return linkify.match(data)
 }

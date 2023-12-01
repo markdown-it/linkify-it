@@ -1,21 +1,21 @@
-/*eslint-env browser*/
-/*global $, _*/
+/* eslint-env browser */
+/* global $, _ */
 
 import linkifyit from '../../index.mjs'
 import * as mdurl from 'mdurl'
 const linkify = linkifyit({ fuzzyIP: true })
 let permalink
 
-function escape(str) {
+function escape (str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-function setLinkifiedContent(selector, content) {
+function setLinkifiedContent (selector, content) {
   let out = escape(content)
   const matches = linkify.match(content)
 
   if (matches) {
-    const result  = []
+    const result = []
     let last = 0
     matches.forEach(function (match) {
       if (last < match.index) {
@@ -37,7 +37,7 @@ function setLinkifiedContent(selector, content) {
   $(selector).html(out)
 }
 
-function updateResult() {
+function updateResult () {
   const source = $('.source').val()
 
   setLinkifiedContent('.result-html', source)
@@ -49,8 +49,7 @@ function updateResult() {
   }
 }
 
-
-//////////////////////////////////////////////////////////////////////////////
+//
 // Init on page load
 //
 $(function () {

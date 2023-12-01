@@ -9,7 +9,6 @@ const tlds = require('tlds')
 
 let lines
 
-
 describe('links', function () {
 
   const l = linkify({ fuzzyIP: true })
@@ -52,7 +51,6 @@ describe('links', function () {
 
 })
 
-
 describe('not links', function () {
 
   const l = linkify()
@@ -93,7 +91,6 @@ describe('API', function () {
     assert.ok(!l.test('google.myroot'))
   })
 
-
   it('add rule as regexp, with default normalizer', function () {
     const l = linkify().add('my:', {
       validate: /^\/\/[a-z]+/
@@ -105,13 +102,12 @@ describe('API', function () {
     assert.strictEqual(match[1].text, 'my://asdf')
   })
 
-
   it('add rule with normalizer', function () {
     const l = linkify().add('my:', {
       validate: /^\/\/[a-z]+/,
       normalize: function (m) {
         m.text = m.text.replace(/^my:\/\//, '').toUpperCase()
-        m.url  = m.url.toUpperCase()
+        m.url = m.url.toUpperCase()
       }
     })
 
@@ -120,7 +116,6 @@ describe('API', function () {
     assert.strictEqual(match[1].text, 'ASDF')
     assert.strictEqual(match[1].url, 'MY://ASDF')
   })
-
 
   it('disable rule', function () {
     const l = linkify()
@@ -132,7 +127,6 @@ describe('API', function () {
     assert.ok(!l.test('http://google.com'))
     assert.ok(!l.test('foo@bar.com'))
   })
-
 
   it('add bad definition', function () {
     let l
@@ -159,7 +153,6 @@ describe('API', function () {
     })
   })
 
-
   it('test at position', function () {
     const l = linkify()
 
@@ -169,7 +162,6 @@ describe('API', function () {
 
     assert.ok(!l.testSchemaAt('http://google.com', 'bad_schema:', 6))
   })
-
 
   it('correct cache value', function () {
     const l = linkify()
@@ -181,21 +173,19 @@ describe('API', function () {
     assert.strictEqual(match[2].text, 'ftp://google.com')
   })
 
-
   it('normalize', function () {
     const l = linkify()
 
     let m = l.match('mailto:foo@bar.com')[0]
 
     // assert.strictEqual(m.text, 'foo@bar.com');
-    assert.strictEqual(m.url,  'mailto:foo@bar.com')
+    assert.strictEqual(m.url, 'mailto:foo@bar.com')
 
     m = l.match('foo@bar.com')[0]
 
     // assert.strictEqual(m.text, 'foo@bar.com');
-    assert.strictEqual(m.url,  'mailto:foo@bar.com')
+    assert.strictEqual(m.url, 'mailto:foo@bar.com')
   })
-
 
   it('test @twitter rule', function () {
     const l = linkify().add('@', {
@@ -203,7 +193,7 @@ describe('API', function () {
         const tail = text.slice(pos)
 
         if (!self.re.twitter) {
-          self.re.twitter =  new RegExp(
+          self.re.twitter = new RegExp(
             '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCc + ')'
           )
         }
@@ -226,7 +216,6 @@ describe('API', function () {
     assert.ok(!l.test('@@invalid'))
   })
 
-
   it('set option: fuzzyLink', function () {
     const l = linkify({ fuzzyLink: false })
 
@@ -238,7 +227,6 @@ describe('API', function () {
     assert.strictEqual(l.match('google.com.')[0].text, 'google.com')
   })
 
-
   it('set option: fuzzyEmail', function () {
     const l = linkify({ fuzzyEmail: false })
 
@@ -249,7 +237,6 @@ describe('API', function () {
     assert.strictEqual(l.test('foo@bar.com.'), true)
     assert.strictEqual(l.match('foo@bar.com.')[0].text, 'foo@bar.com')
   })
-
 
   it('set option: fuzzyIP', function () {
     const l = linkify()
@@ -269,7 +256,6 @@ describe('API', function () {
 
     l.match('😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡 .com')
   })
-
 
   it('should accept `---` if enabled', function () {
     let l = linkify()

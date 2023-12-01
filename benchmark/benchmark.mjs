@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/*eslint no-console:0*/
+/* eslint-disable no-console */
 
 import { readFileSync, readdirSync } from 'fs'
 import util from 'node:util'
 import Benchmark from 'benchmark'
 import ansi from 'ansi'
-const cursor    = ansi(process.stdout)
+const cursor = ansi(process.stdout)
 
 const IMPLS = []
 
@@ -25,16 +25,15 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
 
   content.string = readFileSync(filepath, 'utf8')
 
-  const title    = `(${content.string.length} bytes)`
+  const title = `(${content.string.length} bytes)`
 
-  function onComplete() {
+  function onComplete () {
     cursor.write('\n')
   }
 
-
   const suite = new Benchmark.Suite(title, {
 
-    onStart: function onStart() {
+    onStart: function onStart () {
       console.log('\nSample: %s %s', sample, title)
     },
 
@@ -42,11 +41,10 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
 
   })
 
-
   IMPLS.forEach(function (impl) {
     suite.add(impl.name, {
 
-      onCycle: function onCycle(event) {
+      onCycle: function onCycle (event) {
         cursor.horizontalAbsolute()
         cursor.eraseLine()
         cursor.write(' > ' + event.target)
@@ -56,11 +54,9 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
 
       fn: function () {
         impl.code.run(content.string)
-        return
       }
     })
   })
-
 
   SAMPLES.push({
     name: sample.split('.')[0],
@@ -70,15 +66,14 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
   })
 })
 
-
-function select(patterns) {
+function select (patterns) {
   const result = []
 
   if (!(patterns instanceof Array)) {
-    patterns = [ patterns ]
+    patterns = [patterns]
   }
 
-  function checkName(name) {
+  function checkName (name) {
     return patterns.length === 0 || patterns.some(function (regexp) {
       return regexp.test(name)
     })
@@ -93,8 +88,7 @@ function select(patterns) {
   return result
 }
 
-
-function run(files) {
+function run (files) {
   const selected = select(files)
 
   if (selected.length > 0) {

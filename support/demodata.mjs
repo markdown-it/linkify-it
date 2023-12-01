@@ -2,12 +2,12 @@
 
 // Build demo data for embedding into html
 
-/*eslint no-console:0*/
+/* eslint no-console:0 */
 
 import { readFileSync } from 'fs'
 
-function isComment(str) { return /^%.*/.test(str) }
-function isEmpty(str) { return !(str && str.trim()) }
+function isComment (str) { return /^%.*/.test(str) }
+function isEmpty (str) { return !(str && str.trim()) }
 
 let result = []
 

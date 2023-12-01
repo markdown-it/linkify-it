@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-/*eslint-disable no-console*/
+/* eslint-disable no-console */
 
 import { readFileSync } from 'fs'
 import linkifyit from '../index.mjs'
 
 const linkify = linkifyit()
 
-// Forse compilation
+// Force compilation
 linkify.test('')
 
 const data = readFileSync(new URL('/samples/lorem1.txt', import.meta.url), 'utf8')

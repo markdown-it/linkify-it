@@ -5,14 +5,14 @@
 // Code is dirty, i know, but it's needed only once
 //
 
-/*eslint-disable no-console*/
+/* eslint-disable no-console */
 
 import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 
 const tldList = require('tlds')
 
-function toRanges(str) {
+function toRanges (str) {
   const ranges = []
 
   str = str.slice(1, -1)

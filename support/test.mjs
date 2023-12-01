@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/*eslint-disable no-console*/
+/* eslint-disable no-console */
 
 import linkifyit from '../index.mjs'
 import { inspect } from 'node:util'

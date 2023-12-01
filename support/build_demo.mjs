@@ -3,7 +3,7 @@
 import shell from 'shelljs'
 import { readFileSync, writeFileSync } from 'fs'
 
-function escape(input) {
+function escape (input) {
   return input
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
@@ -25,8 +25,8 @@ let sample_links = readFileSync('test/fixtures/links.txt', 'utf8')
 // Cleanup
 const lines = sample_links.split(/\r?\n/g)
 const result = []
-function isComment(str) { return /^%.*/.test(str) }
-function isEmpty(str) { return !(str && str.trim()) }
+function isComment (str) { return /^%.*/.test(str) }
+function isEmpty (str) { return !(str && str.trim()) }
 
 for (let i = 0; i < lines.length; i++) {
   const line = lines[i]
