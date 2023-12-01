@@ -34,7 +34,8 @@ Usage examples
 ##### Example 1
 
 ```js
-var linkify = require('linkify-it')();
+import linkifyit from 'linkify-it';
+const linkify = linkifyit();
 
 // Reload full tlds list & add unofficial `.onion` domain.
 linkify
@@ -61,7 +62,7 @@ console.log(linkify.match('Site github.com!')); // [ {
 ```js
 linkify.add('@', {
   validate: function (text, pos, self) {
-    var tail = text.slice(pos);
+    const tail = text.slice(pos);
 
     if (!self.re.twitter) {
       self.re.twitter =  new RegExp(
