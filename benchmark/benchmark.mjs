@@ -32,38 +32,23 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
   }
 
   const suite = new Benchmark.Suite(title, {
-
-    onStart: function onStart () {
-      console.log('\nSample: %s %s', sample, title)
-    },
-
-    onComplete: onComplete
-
+    onStart: () => { console.log('\nSample: %s %s', sample, title) },
+    onComplete
   })
 
   IMPLS.forEach(function (impl) {
     suite.add(impl.name, {
-
-      onCycle: function onCycle (event) {
+      onCycle: event => {
         cursor.horizontalAbsolute()
         cursor.eraseLine()
         cursor.write(' > ' + event.target)
       },
-
-      onComplete: onComplete,
-
-      fn: function () {
-        impl.code.run(content.string)
-      }
+      onComplete,
+      fn: () => { impl.code.run(content.string) }
     })
   })
 
-  SAMPLES.push({
-    name: sample.split('.')[0],
-    title: title,
-    content: content,
-    suite: suite
-  })
+  SAMPLES.push({ name: sample.split('.')[0], title, content, suite })
 })
 
 function select (patterns) {
