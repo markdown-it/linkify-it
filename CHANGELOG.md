@@ -1,4 +1,4 @@
-Undeleased
+5.0.1 / 2026-05-23
 ------------------
 
 - Fixed DoS in fuzzy links/emails search.
