@@ -115,11 +115,6 @@ const tlds_2ch_src_re = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghik
 // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
 const tlds_default = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'.split('|')
 
-function resetScanCache (self) {
-  self.__index__ = -1
-  self.__text_cache__ = ''
-}
-
 function createValidator (re) {
   return function (text, pos) {
     const tail = text.slice(pos)
@@ -158,8 +153,11 @@ function compile (self) {
   function untpl (tpl) { return tpl.replace('%TLDS%', re.src_tlds) }
 
   re.email_fuzzy = RegExp(untpl(re.tpl_email_fuzzy), 'i')
+  re.email_fuzzy_global = RegExp(untpl(re.tpl_email_fuzzy), 'ig')
   re.link_fuzzy = RegExp(untpl(re.tpl_link_fuzzy), 'i')
+  re.link_fuzzy_global = RegExp(untpl(re.tpl_link_fuzzy), 'ig')
   re.link_no_ip_fuzzy = RegExp(untpl(re.tpl_link_no_ip_fuzzy), 'i')
+  re.link_no_ip_fuzzy_global = RegExp(untpl(re.tpl_link_no_ip_fuzzy), 'ig')
   re.host_fuzzy_test = RegExp(untpl(re.tpl_host_fuzzy_test), 'i')
 
   //
@@ -253,12 +251,6 @@ function compile (self) {
     '(' + self.re.schema_test.source + ')|(' + self.re.host_fuzzy_test.source + ')|@',
     'i'
   )
-
-  //
-  // Cleanup
-  //
-
-  resetScanCache(self)
 }
 
 /**
@@ -266,55 +258,45 @@ function compile (self) {
  *
  * Match result. Single element of array, returned by [[LinkifyIt#match]]
  **/
-function Match (self, shift) {
-  const start = self.__index__
-  const end = self.__last_index__
-  const text = self.__text_cache__.slice(start, end)
+function Match (text, schema, index, lastIndex) {
+  const raw = text.slice(index, lastIndex)
 
   /**
    * Match#schema -> String
    *
    * Prefix (protocol) for matched string.
    **/
-  this.schema = self.__schema__.toLowerCase()
+  this.schema = schema.toLowerCase()
   /**
    * Match#index -> Number
    *
    * First position of matched string.
    **/
-  this.index = start + shift
+  this.index = index
   /**
    * Match#lastIndex -> Number
    *
    * Next position after matched string.
    **/
-  this.lastIndex = end + shift
+  this.lastIndex = lastIndex
   /**
    * Match#raw -> String
    *
    * Matched string.
    **/
-  this.raw = text
+  this.raw = raw
   /**
    * Match#text -> String
    *
    * Notmalized text of matched string.
    **/
-  this.text = text
+  this.text = raw
   /**
    * Match#url -> String
    *
    * Normalized url of matched string.
    **/
-  this.url = text
-}
-
-function createMatch (self, shift) {
-  const match = new Match(self, shift)
-
-  self.__compiled__[match.schema].normalize(match, self)
-
-  return match
+  this.url = raw
 }
 
 /**
@@ -369,12 +351,6 @@ function LinkifyIt (schemas, options) {
 
   this.__opts__ = assign({}, defaultOptions, options)
 
-  // Cache last tested result. Used to skip repeating steps on next `match` call.
-  this.__index__ = -1
-  this.__last_index__ = -1 // Next scan position
-  this.__schema__ = ''
-  this.__text_cache__ = ''
-
   this.__schemas__ = assign({}, defaultSchemas, schemas)
   this.__compiled__ = {}
 
@@ -416,69 +392,38 @@ LinkifyIt.prototype.set = function set (options) {
  * Searches linkifiable pattern and returns `true` on success or `false` on fail.
  **/
 LinkifyIt.prototype.test = function test (text) {
-  // Reset scan cache
-  this.__text_cache__ = text
-  this.__index__ = -1
-
   if (!text.length) { return false }
 
-  let m, ml, me, len, shift, next, re, tld_pos, at_pos
+  let m, re
 
   // try to scan for link with schema - that's the most simple rule
   if (this.re.schema_test.test(text)) {
     re = this.re.schema_search
     re.lastIndex = 0
     while ((m = re.exec(text)) !== null) {
-      len = this.testSchemaAt(text, m[2], re.lastIndex)
-      if (len) {
-        this.__schema__ = m[2]
-        this.__index__ = m.index + m[1].length
-        this.__last_index__ = m.index + m[0].length + len
-        break
-      }
+      if (this.testSchemaAt(text, m[2], re.lastIndex)) { return true }
     }
   }
 
   if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
     // guess schemaless links
-    tld_pos = text.search(this.re.host_fuzzy_test)
-    if (tld_pos >= 0) {
-      // if tld is located after found link - no need to check fuzzy pattern
-      if (this.__index__ < 0 || tld_pos < this.__index__) {
-        if ((ml = text.match(this.__opts__.fuzzyIP ? this.re.link_fuzzy : this.re.link_no_ip_fuzzy)) !== null) {
-          shift = ml.index + ml[1].length
-
-          if (this.__index__ < 0 || shift < this.__index__) {
-            this.__schema__ = ''
-            this.__index__ = shift
-            this.__last_index__ = ml.index + ml[0].length
-          }
-        }
+    if (text.search(this.re.host_fuzzy_test) >= 0) {
+      if (text.match(this.__opts__.fuzzyIP ? this.re.link_fuzzy : this.re.link_no_ip_fuzzy) !== null) {
+        return true
       }
     }
   }
 
   if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
     // guess schemaless emails
-    at_pos = text.indexOf('@')
-    if (at_pos >= 0) {
+    if (text.indexOf('@') >= 0) {
       // We can't skip this check, because this cases are possible:
       // 192.168.1.1@gmail.com, my.in@example.com
-      if ((me = text.match(this.re.email_fuzzy)) !== null) {
-        shift = me.index + me[1].length
-        next = me.index + me[0].length
-
-        if (this.__index__ < 0 || shift < this.__index__ ||
-            (shift === this.__index__ && next > this.__last_index__)) {
-          this.__schema__ = 'mailto:'
-          this.__index__ = shift
-          this.__last_index__ = next
-        }
-      }
+      if (text.match(this.re.email_fuzzy) !== null) { return true }
     }
   }
 
-  return this.__index__ >= 0
+  return false
 }
 
 /**
@@ -527,23 +472,88 @@ LinkifyIt.prototype.testSchemaAt = function testSchemaAt (text, schema, pos) {
  **/
 LinkifyIt.prototype.match = function match (text) {
   const result = []
-  let shift = 0
+  const type_schemed = []
+  const type_fuzzy_link = []
+  const type_fuzzy_email = []
+  let m, len, re
 
-  // Try to take previous element from cache, if .test() called before
-  if (this.__index__ >= 0 && this.__text_cache__ === text) {
-    result.push(createMatch(this, shift))
-    shift = this.__last_index__
+  function choose (a, b) {
+    if (!a) { return b }
+    if (!b) { return a }
+    if (a.index !== b.index) { return a.index < b.index ? a : b }
+    return a.lastIndex >= b.lastIndex ? a : b
   }
 
-  // Cut head if cache was used
-  let tail = shift ? text.slice(shift) : text
+  if (!text.length) { return null }
 
-  // Scan string until end reached
-  while (this.test(tail)) {
-    result.push(createMatch(this, shift))
+  // scan for links with schema
+  if (this.re.schema_test.test(text)) {
+    re = this.re.schema_search
+    re.lastIndex = 0
+    while ((m = re.exec(text)) !== null) {
+      len = this.testSchemaAt(text, m[2], re.lastIndex)
+      if (len) {
+        type_schemed.push({
+          schema: m[2],
+          index: m.index + m[1].length,
+          lastIndex: m.index + m[0].length + len
+        })
+      }
+    }
+  }
 
-    tail = tail.slice(this.__last_index__)
-    shift += this.__last_index__
+  if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
+    re = this.__opts__.fuzzyIP ? this.re.link_fuzzy_global : this.re.link_no_ip_fuzzy_global
+    re.lastIndex = 0
+    while ((m = re.exec(text)) !== null) {
+      type_fuzzy_link.push({
+        schema: '',
+        index: m.index + m[1].length,
+        lastIndex: m.index + m[0].length
+      })
+    }
+  }
+
+  if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
+    re = this.re.email_fuzzy_global
+    re.lastIndex = 0
+    while ((m = re.exec(text)) !== null) {
+      type_fuzzy_email.push({
+        schema: 'mailto:',
+        index: m.index + m[1].length,
+        lastIndex: m.index + m[0].length
+      })
+    }
+  }
+
+  const indexes = [0, 0, 0]
+  let lastIndex = 0
+
+  for (;;) {
+    const candidates = [
+      type_schemed[indexes[0]],
+      type_fuzzy_email[indexes[1]],
+      type_fuzzy_link[indexes[2]]
+    ]
+
+    const candidate = choose(choose(candidates[0], candidates[1]), candidates[2])
+
+    if (!candidate) { break }
+
+    if (candidate === candidates[0]) {
+      indexes[0]++
+    } else if (candidate === candidates[1]) {
+      indexes[1]++
+    } else {
+      indexes[2]++
+    }
+
+    if (candidate.index < lastIndex) { continue }
+
+    const match = new Match(text, candidate.schema, candidate.index, candidate.lastIndex)
+    this.__compiled__[match.schema].normalize(match, this)
+    result.push(match)
+    lastIndex = candidate.lastIndex
   }
 
   if (result.length) {
@@ -560,10 +570,6 @@ LinkifyIt.prototype.match = function match (text) {
  * of the string, and null otherwise.
  **/
 LinkifyIt.prototype.matchAtStart = function matchAtStart (text) {
-  // Reset scan cache
-  this.__text_cache__ = text
-  this.__index__ = -1
-
   if (!text.length) return null
 
   const m = this.re.schema_at_start.exec(text)
@@ -572,11 +578,10 @@ LinkifyIt.prototype.matchAtStart = function matchAtStart (text) {
   const len = this.testSchemaAt(text, m[2], m[0].length)
   if (!len) return null
 
-  this.__schema__ = m[2]
-  this.__index__ = m.index + m[1].length
-  this.__last_index__ = m.index + m[0].length + len
+  const match = new Match(text, m[2], m.index + m[1].length, m.index + m[0].length + len)
 
-  return createMatch(this, 0)
+  this.__compiled__[match.schema].normalize(match, this)
+  return match
 }
 
 /** chainable

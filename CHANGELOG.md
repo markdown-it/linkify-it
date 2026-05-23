@@ -1,3 +1,12 @@
+Undeleased
+------------------
+
+- Fixed DoS in fuzzy links/emails search.
+- Reworked search logic - check each pattern separate, use `g` regexes instead
+  of slice.
+- Removed internal cache - useless overcomplication.
+
+
 5.0.0 / 2023-12-01
 ------------------
 
