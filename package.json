@@ -27,6 +27,16 @@
     "build/"
   ],
   "license": "MIT",
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/puzrin"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/markdown-it"
+    }
+  ],
   "scripts": {
     "lint": "eslint .",
     "test": "npm run lint && npm run build && c8 --exclude build --exclude test -r text -r html -r lcov mocha",
