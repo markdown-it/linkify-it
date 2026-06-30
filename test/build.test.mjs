@@ -1,5 +1,4 @@
-/* eslint-env mocha */
-
+import { describe, it } from 'node:test'
 import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)

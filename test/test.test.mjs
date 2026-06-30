@@ -1,7 +1,6 @@
-/* eslint-env mocha */
-
 import { readFileSync } from 'fs'
 import assert from 'node:assert'
+import { describe, it } from 'node:test'
 import linkify from '../index.mjs'
 import { createRequire } from 'node:module'
 
