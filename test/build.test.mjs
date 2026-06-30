@@ -1,6 +1,8 @@
-'use strict'
 /* eslint-env mocha */
 
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 const linkify = require('../')
 const assert = require('assert')
 
