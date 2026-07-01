@@ -1,3 +1,10 @@
+5.0.2 / 2026-07-02
+------------------
+
+- Fixed DoS in `mailto:` links (restrict user name to 64 chars).
+- Restricted user/pass part length in links.
+
+
 5.0.1 / 2026-05-23
 ------------------
 
