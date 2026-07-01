@@ -1,53 +1,74 @@
 #!/usr/bin/env node
-import { readFileSync, readdirSync } from 'fs'
+/* eslint no-console:0 */
+
+import fs from 'node:fs'
 import util from 'node:util'
-import Benchmark from 'benchmark'
-import ansi from 'ansi'
-const cursor = ansi(process.stdout)
+import { do_not_optimize as doNotOptimize, measure } from 'mitata'
+
+const WARMUP_MSEC = 250
+const BENCHMARK_OPTIONS = {
+  /* min_cpu_time: 1000 * 1e6,
+  min_samples: 24 */
+}
 
 const IMPLS = []
 
-for (const name of readdirSync(new URL('./implementations', import.meta.url)).sort()) {
+for (const name of fs.readdirSync(new URL('./implementations', import.meta.url)).sort()) {
   const filepath = new URL(`./implementations/${name}/index.mjs`, import.meta.url)
-  const code = (await import(filepath))
+  const code = await import(filepath)
 
   IMPLS.push({ name, code })
 }
 
 const SAMPLES = []
 
-readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
+fs.readdirSync(new URL('./samples', import.meta.url)).sort().forEach((sample) => {
   const filepath = new URL(`./samples/${sample}`, import.meta.url)
 
   const content = {}
 
-  content.string = readFileSync(filepath, 'utf8')
+  content.string = fs.readFileSync(filepath, 'utf8')
 
   const title = `(${content.string.length} bytes)`
 
-  function onComplete () {
-    cursor.write('\n')
-  }
-
-  const suite = new Benchmark.Suite(title, {
-    onStart: () => { console.log('\nSample: %s %s', sample, title) },
-    onComplete
-  })
-
-  IMPLS.forEach(function (impl) {
-    suite.add(impl.name, {
-      onCycle: event => {
-        cursor.horizontalAbsolute()
-        cursor.eraseLine()
-        cursor.write(` > ${event.target}`)
-      },
-      onComplete,
-      fn: () => { impl.code.run(content.string) }
-    })
-  })
-
-  SAMPLES.push({ name: sample.split('.')[0], title, content, suite })
+  SAMPLES.push({ name: sample.split('.')[0], filename: sample, title, content })
 })
+
+function formatNumber (num) {
+  return num.toLocaleString('en-US', { maximumFractionDigits: 0 })
+}
+
+function relativeStandardError (samples, mean) {
+  if (samples.length < 2 || mean === 0) return 0
+
+  const variance = samples.reduce((acc, sample) => {
+    return acc + (sample - mean) ** 2
+  }, 0) / (samples.length - 1)
+
+  return (Math.sqrt(variance) / Math.sqrt(samples.length) / mean) * 100
+}
+
+function formatRun (run) {
+  if (run.error) return `${run.name}: error`
+
+  const stats = run.stats
+  const throughput = 1e9 / stats.avg
+
+  return [
+    run.name,
+    `${formatNumber(throughput)} ops/sec`,
+    `+/-${relativeStandardError(stats.samples, stats.avg).toFixed(2)}%`,
+    `${formatNumber(stats.ticks)} samples`
+  ].join(' ')
+}
+
+function warmup (impl, data) {
+  const started = performance.now()
+
+  do {
+    doNotOptimize(impl.code.run(data))
+  } while (performance.now() - started < WARMUP_MSEC)
+}
 
 function select (patterns) {
   const result = []
@@ -71,7 +92,7 @@ function select (patterns) {
   return result
 }
 
-function run (files) {
+async function run (files) {
   const selected = select(files)
 
   if (selected.length > 0) {
@@ -83,11 +104,29 @@ function run (files) {
     console.log('There isn\'t any sample matches any of these patterns: %s', util.inspect(files))
   }
 
-  selected.forEach(function (sample) {
-    sample.suite.run()
-  })
+  for (const sample of selected) {
+    console.log('\n\nSample: %s %s', sample.filename, sample.title)
+
+    IMPLS.forEach((impl) => {
+      warmup(impl, sample.content.string)
+    })
+
+    for (const impl of IMPLS) {
+      let stats, error
+
+      try {
+        stats = await measure(() => {
+          doNotOptimize(impl.code.run(sample.content.string))
+        }, BENCHMARK_OPTIONS)
+      } catch (err) {
+        error = err
+      }
+
+      console.log(' > %s', formatRun({ name: impl.name, stats, error }))
+    }
+  }
 }
 
-run(process.argv.slice(2).map(function (source) {
+await run(process.argv.slice(2).map(function (source) {
   return new RegExp(source, 'i')
 }))
