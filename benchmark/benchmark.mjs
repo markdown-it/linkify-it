@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
-
 import { readFileSync, readdirSync } from 'fs'
 import util from 'node:util'
 import Benchmark from 'benchmark'

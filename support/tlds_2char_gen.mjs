@@ -5,8 +5,6 @@
 // Code is dirty, i know, but it's needed only once
 //
 
-/* eslint-disable no-console */
-
 import { createRequire } from 'node:module'
 
 const tldList = createRequire(import.meta.url)('tlds')

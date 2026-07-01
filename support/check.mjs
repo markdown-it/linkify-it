@@ -4,8 +4,6 @@
 // Simple CLI helper for quick-check patterns
 //
 
-/* eslint-disable no-console */
-
 import linkifyit from '../index.mjs'
 import { inspect } from 'node:util'
 const linkify = linkifyit()
