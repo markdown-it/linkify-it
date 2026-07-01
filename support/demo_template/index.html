@@ -4,31 +4,39 @@
     <title>linkify-it demo</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css">
+    <meta name="description" content="Live linkify-it demo. Type text and see links detected in your browser.">
+    <meta name="keywords" content="linkify,links,autolink,javascript">
+
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="index.css">
     <script src="index.js"></script>
   </head>
-  <body>
-    <div class="container">
-      <h1>
-        linkify-it <small>demo</small></h1>
-      <p>
-        Type text below to see linkified example.
-        See <a href="./doc/" target="_blank">API Docs</a> for usage details.
-      </p>
-      <p>&nbsp;</p>
+  <body class="d-flex flex-column vh-100 overflow-hidden px-4 pt-3 pb-4">
+    <div class="d-flex align-items-center justify-content-between flex-shrink-0 mb-2">
+      <h1>linkify-it demo</h1>
+      <a class="github-link" href="https://github.com/markdown-it/linkify-it" target="_blank" title="Source code for linkify-it" aria-label="Source code for linkify-it">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>
+        </svg>
+      </a>
     </div>
-    <div class="container full-height">
-      <div class="row full-height">
-        <div class="col-xs-6 full-height">
-          <div class="demo-control"><a class="source-clear" href="#">clear</a><a id="permalink" href="./" title="Share this snippet as link"><strong>permalink</strong></a></div>
-          <textarea class="source full-height"><!--SAMPLE--></textarea>
+    <div class="d-flex flex-grow-1 gap-4 overflow-hidden">
+      <div class="src demo-column d-flex flex-column">
+        <div class="d-flex justify-content-between flex-shrink-0 fs-5">
+          <span class="text-secondary">Edit source</span>
+          <div class="d-flex gap-3">
+            <a href="#" id="clear" class="text-secondary">Clear</a>
+            <a href="./" id="permalink" title="Share this snippet as link">Permalink</a>
+          </div>
         </div>
-        <section class="col-xs-6 full-height">
-          <div class="result-html full-height"></div>
-        </section>
+        <textarea id="source"><!--SAMPLE--></textarea>
+      </div>
+      <div class="dst demo-column d-flex flex-column">
+        <div class="d-flex justify-content-between flex-shrink-0 fs-5">
+          <span class="text-secondary">Result (linkified HTML)</span>
+        </div>
+        <div id="result"></div>
       </div>
     </div>
-    <div class="gh-ribbon"><a href="https://github.com/markdown-it/linkify-it" target="_blank">Fork me on GitHub</a></div>
   </body>
 </html>

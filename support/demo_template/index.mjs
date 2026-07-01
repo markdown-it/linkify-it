@@ -50,9 +50,9 @@ function updateResult () {
 
 window.onload = () => {
   permalink = document.getElementById('permalink')
-  clear = document.querySelector('.source-clear')
-  source = document.querySelector('.source')
-  result = document.querySelector('.result-html')
+  clear = document.getElementById('clear')
+  source = document.getElementById('source')
+  result = document.getElementById('result')
 
   // Restore content if opened by permalink
   if (location.hash && /^(#t1=)/.test(location.hash)) {
