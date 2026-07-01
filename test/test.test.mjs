@@ -2,9 +2,6 @@ import { readFileSync } from 'fs'
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
 import linkify from '../index.mjs'
-import { createRequire } from 'node:module'
-
-const tlds = createRequire(import.meta.url)('tlds')
 
 let lines
 
@@ -79,7 +76,7 @@ describe('API', function () {
     assert.ok(l.test('google.myroot'))
     assert.ok(!l.test('google.xyz'))
 
-    l.tlds(tlds)
+    l.tlds(['xyz'])
 
     assert.ok(l.test('google.xyz'))
     assert.ok(!l.test('google.myroot'))
