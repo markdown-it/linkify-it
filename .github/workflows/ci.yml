@@ -22,7 +22,7 @@ jobs:
       with:
         node-version: lts/*
 
-    - run: npm install
+    - run: npm ci
 
     - name: Test
       run: npm test
