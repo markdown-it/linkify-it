@@ -44,7 +44,8 @@
     "doc": "node support/build_doc.mjs",
     "build": "rollup -c support/rollup.config.mjs",
     "gh-pages": "npm run demo && npm run doc && gh-pages -d demo -f",
-    "prepublishOnly": "npm run lint && npm run build && npm run gh-pages"
+    "prepack": "npm test && npm run build && npm run demo && npm run doc",
+    "postpublish": "npm run gh-pages"
   },
   "dependencies": {
     "uc.micro": "^2.0.0"
