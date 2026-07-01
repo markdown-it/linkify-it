@@ -1,5 +1,4 @@
 import linkifyit from '../../index.mjs'
-import * as mdurl from 'mdurl'
 const linkify = linkifyit({ fuzzyIP: true })
 let source
 let result
@@ -43,7 +42,7 @@ function updateResult () {
   setLinkifiedContent(result, text)
 
   if (text) {
-    permalink.href = `#t1=${mdurl.encode(text, mdurl.encode.componentChars)}`
+    permalink.href = `#t1=${encodeURIComponent(text)}`
   } else {
     permalink.href = ''
   }
@@ -57,7 +56,7 @@ window.onload = () => {
 
   // Restore content if opened by permalink
   if (location.hash && /^(#t1=)/.test(location.hash)) {
-    source.value = mdurl.decode(location.hash.slice(4), mdurl.decode.componentChars)
+    source.value = decodeURIComponent(location.hash.slice(4))
   }
 
   // Setup listeners
