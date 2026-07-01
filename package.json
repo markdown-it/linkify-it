@@ -43,7 +43,7 @@
     "demo": "npm run lint && node support/build_demo.mjs",
     "doc": "node support/build_doc.mjs",
     "build": "rollup -c support/rollup.config.mjs",
-    "gh-pages": "npm run demo && npm run doc && shx cp -R doc/ demo/ && gh-pages -d demo -f",
+    "gh-pages": "npm run demo && npm run doc && gh-pages -d demo -f",
     "prepublishOnly": "npm run lint && npm run build && npm run gh-pages"
   },
   "dependencies": {
@@ -59,8 +59,6 @@
     "neostandard": "^0.13.0",
     "ndoc": "^6.0.0",
     "rollup": "^4.6.1",
-    "shelljs": "^0.8.4",
-    "shx": "^0.3.2",
     "tlds": "^1.166.0"
   }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import shell from 'shelljs'
-import { readFileSync, writeFileSync } from 'fs'
+import { execFileSync } from 'child_process'
+import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 
 function escape (input) {
   return input
@@ -12,10 +12,10 @@ function escape (input) {
     // .replaceAll("'", '&#039;');
 }
 
-shell.rm('-rf', 'demo')
-shell.mkdir('demo')
+rmSync('demo', { force: true, recursive: true })
+mkdirSync('demo')
 
-shell.cp('support/demo_template/index.css', 'demo/')
+copyFileSync('support/demo_template/index.css', 'demo/index.css')
 
 // Read html template and inject escaped sample
 const html = readFileSync('support/demo_template/index.html', 'utf8')
@@ -63,4 +63,4 @@ ${sample_not_links}`
 const output = html.replace('<!--SAMPLE-->', escape(sample))
 writeFileSync('demo/index.html', output)
 
-shell.exec('node_modules/.bin/rollup -c support/demo_template/rollup.config.mjs')
+execFileSync('node_modules/.bin/rollup', ['-c', 'support/demo_template/rollup.config.mjs'], { stdio: 'inherit' })

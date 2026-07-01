@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-import shell from 'shelljs'
+import { execFileSync } from 'child_process'
+import { rmSync } from 'fs'
 
-shell.rm('-rf', 'doc')
+rmSync('demo/doc', { force: true, recursive: true })
 
-const head = shell.exec('git show-ref --hash HEAD').stdout.slice(0, 6)
+const head = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim()
 
 const link_format = `https://github.com/{package.repository}/blob/${head}/{file}#L{line}`
 
-shell.exec(`node node_modules/.bin/ndoc --link-format "${link_format}"`)
+execFileSync('node_modules/.bin/ndoc', ['--output', 'demo/doc', '--link-format', link_format], { stdio: 'inherit' })
