@@ -1,16 +1,16 @@
-/* eslint-env browser */
-/* global $, _ */
-
 import linkifyit from '../../index.mjs'
 import * as mdurl from 'mdurl'
 const linkify = linkifyit({ fuzzyIP: true })
+let source
+let result
 let permalink
+let clear
 
 function escape (str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-function setLinkifiedContent (selector, content) {
+function setLinkifiedContent (el, content) {
   let out = escape(content)
   const matches = linkify.match(content)
 
@@ -34,43 +34,45 @@ function setLinkifiedContent (selector, content) {
     out = result.join('')
   }
 
-  $(selector).html(out)
+  el.innerHTML = out
 }
 
 function updateResult () {
-  const source = $('.source').val()
+  const text = source.value
 
-  setLinkifiedContent('.result-html', source)
+  setLinkifiedContent(result, text)
 
-  if (source) {
-    permalink.href = `#t1=${mdurl.encode(source, mdurl.encode.componentChars)}`
+  if (text) {
+    permalink.href = `#t1=${mdurl.encode(text, mdurl.encode.componentChars)}`
   } else {
     permalink.href = ''
   }
 }
 
-//
-// Init on page load
-//
-$(function () {
+window.onload = () => {
+  permalink = document.getElementById('permalink')
+  clear = document.querySelector('.source-clear')
+  source = document.querySelector('.source')
+  result = document.querySelector('.result-html')
+
   // Restore content if opened by permalink
   if (location.hash && /^(#t1=)/.test(location.hash)) {
-    $('.source').val(mdurl.decode(location.hash.slice(4), mdurl.decode.componentChars))
+    source.value = mdurl.decode(location.hash.slice(4), mdurl.decode.componentChars)
   }
 
-  // Activate tooltips
-  $('._tip').tooltip({ container: 'body' })
-
-  permalink = document.getElementById('permalink')
-
   // Setup listeners
-  $('.source').on('keyup paste cut mouseup', _.debounce(updateResult, 300, { maxWait: 500 }))
+  let timer
 
-  $('.source-clear').on('click', function (event) {
-    $('.source').val('')
+  source.addEventListener('input', () => {
+    clearTimeout(timer)
+    timer = setTimeout(updateResult, 300)
+  })
+
+  clear.addEventListener('click', (event) => {
+    source.value = ''
     updateResult()
     event.preventDefault()
   })
 
   updateResult()
-})
+}

@@ -2,6 +2,7 @@ import neostandard from 'neostandard'
 
 export default [
   ...neostandard({
+    env: ['browser'],
     ignores: [
       'coverage/**',
       'demo/**',
@@ -11,14 +12,6 @@ export default [
   {
     rules: {
       camelcase: 'off'
-    }
-  },
-  {
-    files: ['support/demo_template/**/*.mjs'],
-    languageOptions: {
-      globals: {
-        location: 'readonly'
-      }
     }
   }
 ]
