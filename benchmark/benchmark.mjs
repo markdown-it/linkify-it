@@ -41,7 +41,7 @@ readdirSync(new URL('./samples', import.meta.url)).sort().forEach(sample => {
       onCycle: event => {
         cursor.horizontalAbsolute()
         cursor.eraseLine()
-        cursor.write(' > ' + event.target)
+        cursor.write(` > ${event.target}`)
       },
       onComplete,
       fn: () => { impl.code.run(content.string) }

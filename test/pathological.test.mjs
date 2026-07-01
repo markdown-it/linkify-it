@@ -4,12 +4,12 @@ import linkify from '../index.mjs'
 describe('pathological cases', function () {
   it('should not hang on fuzzy links followed by an email marker', { timeout: 10000 }, function () {
     // ~1 MiB input
-    linkify().match('a.com '.repeat(174762) + '@')
+    linkify().match(`${'a.com '.repeat(174762)}@`)
   })
 
   it('should not hang on fuzzy emails followed by a link marker', { timeout: 10000 }, function () {
     // ~1 MiB input
-    linkify().match('a@b.com '.repeat(131071) + '.com')
+    linkify().match(`${'a@b.com '.repeat(131071)}.com`)
   })
 
   it('should not hang on repeated "mailto:" schema prefixes', { timeout: 10000 }, function () {

@@ -43,7 +43,7 @@ function updateResult () {
   setLinkifiedContent('.result-html', source)
 
   if (source) {
-    permalink.href = '#t1=' + mdurl.encode(source, mdurl.encode.componentChars)
+    permalink.href = `#t1=${mdurl.encode(source, mdurl.encode.componentChars)}`
   } else {
     permalink.href = ''
   }

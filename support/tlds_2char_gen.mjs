@@ -22,14 +22,14 @@ function toRanges (str) {
         if (i < 3) {
           ranges.push(str.slice(0, i))
         } else {
-          ranges.push(str[0] + '-' + str[i - 1])
+          ranges.push(`${str[0]}-${str[i - 1]}`)
         }
         str = str.slice(i)
         break
       }
     }
   }
-  return '[' + ranges.join('') + ']'
+  return `[${ranges.join('')}]`
 }
 
 const tlds = tldList.filter(name => /^[a-z]{2}$/.test(name)).sort()
@@ -50,7 +50,7 @@ let result = []
     return
   }
 
-  result.push(letter + '[' + list.map(n => n[1]).join('') + ']')
+  result.push(`${letter}[${list.map(n => n[1]).join('')}]`)
 })
 
 result = result.join('|')

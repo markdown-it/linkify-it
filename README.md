@@ -65,7 +65,7 @@ linkify.add('@', {
 
     if (!self.re.twitter) {
       self.re.twitter =  new RegExp(
-        '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCc + ')'
+        `^([a-zA-Z0-9_]){1,15}(?!_)(?=$|${self.re.src_ZPCc})`
       );
     }
     if (self.re.twitter.test(tail)) {
@@ -79,7 +79,7 @@ linkify.add('@', {
     return 0;
   },
   normalize: function (match) {
-    match.url = 'https://twitter.com/' + match.url.replace(/^@/, '');
+    match.url = `https://twitter.com/${match.url.replace(/^@/, '')}`;
   }
 });
 ```

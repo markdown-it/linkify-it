@@ -51,7 +51,7 @@ const defaultSchemas = {
       if (!self.re.http) {
         // compile lazily, because "host"-containing variables can change on tlds update.
         self.re.http = new RegExp(
-          '^\\/\\/' + self.re.src_auth + self.re.src_host_port_strict + self.re.src_path, 'i'
+          `^\\/\\/${self.re.src_auth}${self.re.src_host_port_strict}${self.re.src_path}`, 'i'
         )
       }
       if (self.re.http.test(tail)) {
@@ -73,7 +73,7 @@ const defaultSchemas = {
           self.re.src_auth +
           // Don't allow single-level domains, because of false positives like '//test'
           // with code comments
-          '(?:localhost|(?:(?:' + self.re.src_domain + ')\\.)+' + self.re.src_domain_root + ')' +
+          `(?:localhost|(?:(?:${self.re.src_domain})\\.)+${self.re.src_domain_root})` +
           self.re.src_port +
           self.re.src_host_terminator +
           self.re.src_path,
@@ -97,7 +97,7 @@ const defaultSchemas = {
 
       if (!self.re.mailto) {
         self.re.mailto = new RegExp(
-          '^' + self.re.src_email_name + '@' + self.re.src_host_strict, 'i'
+          `^${self.re.src_email_name}@${self.re.src_host_strict}`, 'i'
         )
       }
       if (self.re.mailto.test(tail)) {
@@ -169,7 +169,7 @@ function compile (self) {
   self.__compiled__ = {} // Reset compiled data
 
   function schemaError (name, val) {
-    throw new Error('(LinkifyIt) Invalid schema "' + name + '": ' + val)
+    throw new Error(`(LinkifyIt) Invalid schema "${name}": ${val}`)
   }
 
   Object.keys(self.__schemas__).forEach(function (name) {
@@ -243,12 +243,12 @@ function compile (self) {
     .map(escapeRE)
     .join('|')
   // (?!_) cause 1.5x slowdown
-  self.re.schema_test = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'i')
-  self.re.schema_search = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'ig')
-  self.re.schema_at_start = RegExp('^' + self.re.schema_search.source, 'i')
+  self.re.schema_test = RegExp(`(^|(?!_)(?:[><\uff5c]|${re.src_ZPCc}))(${slist})`, 'i')
+  self.re.schema_search = RegExp(`(^|(?!_)(?:[><\uff5c]|${re.src_ZPCc}))(${slist})`, 'ig')
+  self.re.schema_at_start = RegExp(`^${self.re.schema_search.source}`, 'i')
 
   self.re.pretest = RegExp(
-    '(' + self.re.schema_test.source + ')|(' + self.re.host_fuzzy_test.source + ')|@',
+    `(${self.re.schema_test.source})|(${self.re.host_fuzzy_test.source})|@`,
     'i'
   )
 }
@@ -629,10 +629,10 @@ LinkifyIt.prototype.normalize = function normalize (match) {
   // Do minimal possible changes by default. Need to collect feedback prior
   // to move forward https://github.com/markdown-it/linkify-it/issues/1
 
-  if (!match.schema) { match.url = 'http://' + match.url }
+  if (!match.schema) { match.url = `http://${match.url}` }
 
   if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
-    match.url = 'mailto:' + match.url
+    match.url = `mailto:${match.url}`
   }
 }
 

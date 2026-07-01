@@ -30,18 +30,18 @@ describe('links', function () {
     if (!line.trim()) { return }
 
     if (next.trim()) {
-      it('line ' + (idx + 1), function () {
-        assert.ok(l.pretest(line), '(pretest failed in `' + line + '`)')
-        assert.ok(l.test('\n' + line + '\n'), '(link not found in `\\n' + line + '\\n`)')
-        assert.ok(l.test(line), '(link not found in `' + line + '`)')
+      it(`line ${idx + 1}`, function () {
+        assert.ok(l.pretest(line), `(pretest failed in \`${line}\`)`)
+        assert.ok(l.test(`\n${line}\n`), `(link not found in \`\\n${line}\\n\`)`)
+        assert.ok(l.test(line), `(link not found in \`${line}\`)`)
         assert.strictEqual(l.match(line)[0].url, next)
       })
       skipNext = true
     } else {
-      it('line ' + (idx + 1), function () {
-        assert.ok(l.pretest(line), '(pretest failed in `' + line + '`)')
-        assert.ok(l.test('\n' + line + '\n'), '(link not found in `\\n' + line + '\\n`)')
-        assert.ok(l.test(line), '(link not found in `' + line + '`)')
+      it(`line ${idx + 1}`, function () {
+        assert.ok(l.pretest(line), `(pretest failed in \`${line}\`)`)
+        assert.ok(l.test(`\n${line}\n`), `(link not found in \`\\n${line}\\n\`)`)
+        assert.ok(l.test(line), `(link not found in \`${line}\`)`)
         assert.strictEqual(l.match(line)[0].url, line)
       })
     }
@@ -60,10 +60,10 @@ describe('not links', function () {
 
     if (!line.trim()) { return }
 
-    it('line ' + (idx + 1), function () {
+    it(`line ${idx + 1}`, function () {
       assert.ok(!l.test(line),
-        '(should not find link in `' + line + '`, but found `' +
-        JSON.stringify((l.match(line) || [])[0]) + '`)')
+        `(should not find link in \`${line}\`, but found \`` +
+        `${JSON.stringify((l.match(line) || [])[0])}\`)`)
     })
   })
 })
@@ -188,7 +188,7 @@ describe('API', function () {
 
         if (!self.re.twitter) {
           self.re.twitter = new RegExp(
-            '^([a-zA-Z0-9_]){1,15}(?!_)(?=$|' + self.re.src_ZPCc + ')'
+            `^([a-zA-Z0-9_]){1,15}(?!_)(?=$|${self.re.src_ZPCc})`
           )
         }
         if (self.re.twitter.test(tail)) {
@@ -200,7 +200,7 @@ describe('API', function () {
         return 0
       },
       normalize: function (m) {
-        m.url = 'https://twitter.com/' + m.url.replace(/^@/, '')
+        m.url = `https://twitter.com/${m.url.replace(/^@/, '')}`
       }
     })
 
