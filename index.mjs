@@ -1,4 +1,4 @@
-import reFactory from './lib/re.mjs'
+import REBuilder from './lib/re.mjs'
 
 //
 // Helpers
@@ -51,7 +51,7 @@ const defaultSchemas = {
       if (!self.re.http) {
         // compile lazily, because "host"-containing variables can change on tlds update.
         self.re.http = new RegExp(
-          `^\\/\\/${self.re.src_auth}${self.re.src_host_port_strict}${self.re.src_path}`, 'i'
+          `^\\/\\/${self.re.get_auth().source}${self.re.get_host_port_strict().source}${self.re.get_path().source}`, 'i'
         )
       }
       if (self.re.http.test(tail)) {
@@ -70,13 +70,13 @@ const defaultSchemas = {
       // compile lazily, because "host"-containing variables can change on tlds update.
         self.re.no_http = new RegExp(
           '^' +
-          self.re.src_auth +
+          self.re.get_auth().source +
           // Don't allow single-level domains, because of false positives like '//test'
           // with code comments
-          `(?:localhost|(?:(?:${self.re.src_domain})\\.)+${self.re.src_domain_root})` +
-          self.re.src_port +
-          self.re.src_host_terminator +
-          self.re.src_path,
+          `(?:localhost|(?:(?:${self.re.get_domain().source})\\.)+${self.re.get_domain_root().source})` +
+          self.re.get_port().source +
+          self.re.get_host_terminator().source +
+          self.re.get_path().source,
 
           'i'
         )
@@ -97,7 +97,7 @@ const defaultSchemas = {
 
       if (!self.re.mailto) {
         self.re.mailto = new RegExp(
-          `^${self.re.src_email_name}@${self.re.src_host_strict}`, 'i'
+          `^${self.re.get_email_name().source}@${self.re.get_host_strict().source}`, 'i'
         )
       }
       if (self.re.mailto.test(tail)) {
@@ -135,7 +135,7 @@ function createNormalizer () {
 //
 function compile (self) {
   // Load & clone RE patterns.
-  const re = self.re = reFactory(self.__opts__)
+  const re = self.re = new REBuilder(self.__opts__)
 
   // Define dynamic patterns
   const tlds = self.__tlds__.slice()
@@ -145,19 +145,19 @@ function compile (self) {
   if (!self.__tlds_replaced__) {
     tlds.push(tlds_2ch_src_re)
   }
-  tlds.push(re.src_xn)
+  tlds.push(re.get_xn().source)
 
-  re.src_tlds = tlds.join('|')
+  const src_tlds = tlds.join('|')
 
-  function untpl (tpl) { return tpl.replace('%TLDS%', re.src_tlds) }
+  function untpl (tpl) { return tpl.source.replace('%TLDS%', src_tlds) }
 
-  re.email_fuzzy = RegExp(untpl(re.tpl_email_fuzzy), 'i')
-  re.email_fuzzy_global = RegExp(untpl(re.tpl_email_fuzzy), 'ig')
-  re.link_fuzzy = RegExp(untpl(re.tpl_link_fuzzy), 'i')
-  re.link_fuzzy_global = RegExp(untpl(re.tpl_link_fuzzy), 'ig')
-  re.link_no_ip_fuzzy = RegExp(untpl(re.tpl_link_no_ip_fuzzy), 'i')
-  re.link_no_ip_fuzzy_global = RegExp(untpl(re.tpl_link_no_ip_fuzzy), 'ig')
-  re.host_fuzzy_test = RegExp(untpl(re.tpl_host_fuzzy_test), 'i')
+  re.email_fuzzy = RegExp(untpl(re.get_tpl_email_fuzzy()), 'i')
+  re.email_fuzzy_global = RegExp(untpl(re.get_tpl_email_fuzzy()), 'ig')
+  re.link_fuzzy = RegExp(untpl(re.get_tpl_link_fuzzy()), 'i')
+  re.link_fuzzy_global = RegExp(untpl(re.get_tpl_link_fuzzy()), 'ig')
+  re.link_no_ip_fuzzy = RegExp(untpl(re.get_tpl_link_no_ip_fuzzy()), 'i')
+  re.link_no_ip_fuzzy_global = RegExp(untpl(re.get_tpl_link_no_ip_fuzzy()), 'ig')
+  re.host_fuzzy_test = RegExp(untpl(re.get_tpl_host_fuzzy_test()), 'i')
 
   //
   // Compile each schema
