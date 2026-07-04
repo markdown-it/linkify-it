@@ -34,7 +34,7 @@ Usage examples
 
 ```js
 import linkifyit from 'linkify-it';
-const linkify = linkifyit();
+const linkify = linkifyit({ fuzzyLink: true });
 
 // Reload full tlds list & add unofficial `.onion` domain.
 linkify
@@ -98,15 +98,16 @@ Can be called without `new` keyword for convenience.
 By default understands:
 
 - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
-- "fuzzy" links and emails (google.com, foo@bar.com).
+- "fuzzy" emails (foo@bar.com).
 
 `options`:
 
-- __fuzzyLink__ - recognize URL-s without `http(s)://` head. Default `true`.
+- __fuzzyLink__ - recognize URL-s without `http(s)://` head. Default `false`.
 - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
   like version numbers. Default `false`.
 - __fuzzyEmail__ - recognize emails without `mailto:` prefix. Default `true`.
 - __---__ - set `true` to terminate link with `---` (if it's considered as long dash).
+  Default `false`.
 
 
 ### .test(text)

@@ -7,7 +7,7 @@ const assert = require('assert')
 
 describe('CJS', () => {
   it('require', () => {
-    const l = linkify()
+    const l = linkify({ fuzzyLink: true })
 
     l.tlds('myroot', true)
 

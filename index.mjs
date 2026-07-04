@@ -10,9 +10,10 @@ function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
 //
 
 const defaultOptions = {
-  fuzzyLink: true,
+  fuzzyLink: false,
   fuzzyEmail: true,
-  fuzzyIP: false
+  fuzzyIP: false,
+  '---': false
 }
 
 const defaultSchemas = {
@@ -245,7 +246,7 @@ function Match (text, schema, index, lastIndex) {
 
 /**
  * new LinkifyIt(options)
- * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
+ * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
  *
  * Creates new linkifier instance.
  * Can be called without `new` keyword for convenience.
@@ -253,14 +254,16 @@ function Match (text, schema, index, lastIndex) {
  * By default understands:
  *
  * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
- * - "fuzzy" links and emails (example.com, foo@bar.com).
+ * - "fuzzy" emails (foo@bar.com).
  *
  * `options`:
  *
- * - __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `true`.
+ * - __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `false`.
  * - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
  *   like version numbers. Default `false`.
  * - __fuzzyEmail__ - recognize emails without `mailto:` prefix.
+ * - __---__ - terminate link with `---` (if it's considered as long dash).
+ *   Default `false`.
  *
  **/
 function LinkifyIt (options) {
@@ -308,7 +311,7 @@ LinkifyIt.prototype.add = function add (schema, definition) {
 
 /** chainable
  * LinkifyIt#set(options)
- * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
+ * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
  *
  * Set recognition options for links without schema.
  **/

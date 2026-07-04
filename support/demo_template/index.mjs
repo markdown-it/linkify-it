@@ -1,5 +1,5 @@
 import linkifyit from '../../index.mjs'
-const linkify = linkifyit({ fuzzyIP: true })
+const linkify = linkifyit({ fuzzyLink: true, fuzzyIP: true })
 let source
 let result
 let permalink

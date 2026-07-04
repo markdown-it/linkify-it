@@ -6,7 +6,7 @@ import linkify from '../index.mjs'
 let lines
 
 describe('links', function () {
-  const l = linkify({ fuzzyIP: true })
+  const l = linkify({ fuzzyLink: true, fuzzyIP: true })
 
   l.normalize = function () {} // kill normalizer
 
@@ -67,7 +67,7 @@ describe('not links', function () {
 
 describe('API', function () {
   it('extend tlds', function () {
-    const l = linkify()
+    const l = linkify({ fuzzyLink: true })
 
     assert.ok(!l.test('google.myroot'))
 
@@ -83,7 +83,7 @@ describe('API', function () {
   })
 
   it('add rule with default normalizer', function () {
-    const l = linkify().add('my:', {
+    const l = linkify({ fuzzyLink: true }).add('my:', {
       validate: function (text, pos) {
         const match = /^\/\/[a-z]+/.exec(text.slice(pos))
 
@@ -98,7 +98,7 @@ describe('API', function () {
   })
 
   it('add rule with normalizer', function () {
-    const l = linkify().add('my:', {
+    const l = linkify({ fuzzyLink: true }).add('my:', {
       validate: function (text, pos) {
         const match = /^\/\/[a-z]+/.exec(text.slice(pos))
 
@@ -169,7 +169,7 @@ describe('API', function () {
   })
 
   it('correct cache value', function () {
-    const l = linkify()
+    const l = linkify({ fuzzyLink: true })
 
     const match = l.match('.com. http://google.com google.com ftp://google.com')
 
@@ -222,7 +222,7 @@ describe('API', function () {
   })
 
   it('set option: fuzzyLink', function () {
-    const l = linkify({ fuzzyLink: false })
+    const l = linkify()
 
     assert.strictEqual(l.test('google.com.'), false)
 
@@ -244,7 +244,7 @@ describe('API', function () {
   })
 
   it('set option: fuzzyIP', function () {
-    const l = linkify()
+    const l = linkify({ fuzzyLink: true })
 
     assert.strictEqual(l.test('1.1.1.1.'), false)
 
