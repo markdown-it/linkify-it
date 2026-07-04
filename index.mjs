@@ -1,25 +1,5 @@
 import REBuilder from './lib/re.mjs'
 
-//
-// Helpers
-//
-
-// Merge objects
-//
-function assign (obj /* from1, from2, from3, ... */) {
-  const sources = Array.prototype.slice.call(arguments, 1)
-
-  sources.forEach(function (source) {
-    if (!source) { return }
-
-    Object.keys(source).forEach(function (key) {
-      obj[key] = source[key]
-    })
-  })
-
-  return obj
-}
-
 function _class (obj) { return Object.prototype.toString.call(obj) }
 function isString (obj) { return _class(obj) === '[object String]' }
 function isObject (obj) { return _class(obj) === '[object Object]' }
@@ -33,13 +13,6 @@ const defaultOptions = {
   fuzzyLink: true,
   fuzzyEmail: true,
   fuzzyIP: false
-}
-
-function isOptionsObj (obj) {
-  return Object.keys(obj || {}).reduce(function (acc, k) {
-    /* eslint-disable-next-line no-prototype-builtins */
-    return acc || defaultOptions.hasOwnProperty(k)
-  }, false)
 }
 
 const defaultSchemas = {
@@ -271,29 +244,16 @@ function Match (text, schema, index, lastIndex) {
  **/
 
 /**
- * new LinkifyIt(schemas, options)
- * - schemas (Object): Optional. Additional schemas to validate (prefix/validator)
+ * new LinkifyIt(options)
  * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP: true|false }
  *
- * Creates new linkifier instance with optional additional schemas.
+ * Creates new linkifier instance.
  * Can be called without `new` keyword for convenience.
  *
  * By default understands:
  *
  * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
  * - "fuzzy" links and emails (example.com, foo@bar.com).
- *
- * `schemas` is an object, where each key/value describes protocol/rule:
- *
- * - __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
- *   for example). `linkify-it` makes shure that prefix is not preceeded with
- *   alphanumeric char and symbols. Only whitespaces and punctuation allowed.
- * - __value__ - rule to check tail after link prefix
- *   - _String_ - just alias to existing rule
- *   - _Object_
- *     - _validate_ - validator function (should return matched length on success).
- *     - _normalize_ - optional function to normalize text & url of matched result
- *       (for example, for @twitter mentions).
  *
  * `options`:
  *
@@ -303,21 +263,14 @@ function Match (text, schema, index, lastIndex) {
  * - __fuzzyEmail__ - recognize emails without `mailto:` prefix.
  *
  **/
-function LinkifyIt (schemas, options) {
+function LinkifyIt (options) {
   if (!(this instanceof LinkifyIt)) {
-    return new LinkifyIt(schemas, options)
+    return new LinkifyIt(options)
   }
 
-  if (!options) {
-    if (isOptionsObj(schemas)) {
-      options = schemas
-      schemas = {}
-    }
-  }
+  this.__opts__ = Object.assign({}, defaultOptions, options)
 
-  this.__opts__ = assign({}, defaultOptions, options)
-
-  this.__schemas__ = assign({}, defaultSchemas, schemas)
+  this.__schemas__ = Object.assign({}, defaultSchemas)
   this.__compiled__ = {}
 
   this.__tlds_src__ = tlds_default_src + '|' + tlds_2ch_src
@@ -332,7 +285,20 @@ function LinkifyIt (schemas, options) {
  * - schema (String): rule name (fixed pattern prefix)
  * - definition (String|Object): schema definition
  *
- * Add new rule definition. See constructor description for details.
+ * Add new rule definition.
+ *
+ * `schema` is a link prefix (usually, protocol name with `:` at the end,
+ * `skype:` for example). `linkify-it` makes shure that prefix is not
+ * preceeded with alphanumeric char and symbols. Only whitespaces and
+ * punctuation allowed.
+ *
+ * `definition` is a rule to check tail after link prefix:
+ *
+ * - _String_ - just alias to existing rule
+ * - _Object_
+ *   - _validate_ - validator function (should return matched length on success).
+ *   - _normalize_ - optional function to normalize text & url of matched result
+ *     (for example, for @twitter mentions).
  **/
 LinkifyIt.prototype.add = function add (schema, definition) {
   this.__schemas__[schema] = definition
@@ -347,7 +313,7 @@ LinkifyIt.prototype.add = function add (schema, definition) {
  * Set recognition options for links without schema.
  **/
 LinkifyIt.prototype.set = function set (options) {
-  this.__opts__ = assign(this.__opts__, options)
+  this.__opts__ = Object.assign(this.__opts__, options)
   return this
 }
 

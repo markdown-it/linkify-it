@@ -268,7 +268,7 @@ describe('API', function () {
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo---bar')
     assert.strictEqual(l.match('text@example.com---foo'), null)
 
-    l = linkify(null, { '---': true })
+    l = linkify({ '---': true })
 
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo')
     assert.strictEqual(l.match('text@example.com---foo')[0].text, 'text@example.com')

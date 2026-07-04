@@ -90,30 +90,15 @@ API
 
 __[API documentation](http://markdown-it.github.io/linkify-it/doc)__
 
-### new LinkifyIt(schemas, options)
+### new LinkifyIt(options)
 
-Creates new linkifier instance with optional additional schemas.
+Creates new linkifier instance.
 Can be called without `new` keyword for convenience.
 
 By default understands:
 
 - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
 - "fuzzy" links and emails (google.com, foo@bar.com).
-
-`schemas` is an object, where each key/value describes protocol/rule:
-
-- __key__ - link prefix (usually, protocol name with `:` at the end, `skype:`
-  for example). `linkify-it` makes sure that prefix is not preceded with
-  alphanumeric char.
-- __value__ - rule to check tail after link prefix
-  - _String_ - just alias to existing rule
-  - _Object_
-    - _validate_ - validator function which, given arguments _text_, _pos_,
-      and _self_, returns the length of a match in _text_ starting at index
-      _pos_.  _pos_ is the index right after the link prefix. _self_ can be
-      used to access the linkify object to cache data.
-    - _normalize_ - optional function to normalize text & url of matched result
-      (for example, for twitter mentions).
 
 `options`:
 
@@ -177,11 +162,24 @@ If that's not enough, you can reload defaults with more detailed zones list.
 
 ### .add(key, value)
 
-Add a new schema to the schemas object.  As described in the constructor
-definition, `key` is a link prefix (`skype:`, for example), and `value`
-is a String to alias to another schema, or an Object with `validate` and
-optionally `normalize` definitions.  To disable an existing rule, use
-`.add(key, null)`.
+Add a new schema to the schemas object.
+
+`key` is a link prefix (usually, protocol name with `:` at the end, `skype:`
+for example). `linkify-it` makes sure that prefix is not preceded with
+alphanumeric char.
+
+`value` is a rule to check tail after link prefix:
+
+- _String_ - just alias to existing rule
+- _Object_
+  - _validate_ - validator function which, given arguments _text_, _pos_, and
+    _self_, returns the length of a match in _text_ starting at index _pos_.
+    _pos_ is the index right after the link prefix. _self_ can be used to
+    access the linkify object to cache data.
+  - _normalize_ - optional function to normalize text & url of matched result
+    (for example, for twitter mentions).
+
+To disable an existing rule, use `.add(key, null)`.
 
 
 ### .set(options)
