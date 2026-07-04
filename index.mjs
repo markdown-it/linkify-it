@@ -63,11 +63,6 @@ const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|inf
 // Schemas compiler. Build regexps.
 //
 function compile (self) {
-  // Load & clone RE patterns.
-  const re = self.re = new REBuilder()
-    .options(self.__opts__)
-    .tld(self.__tlds_src__)
-
   self.onCompile()
 
   //
@@ -92,8 +87,8 @@ function compile (self) {
     .map(escapeRE)
     .join('|')
   // (?!_) cause 1.5x slowdown
-  self.re.schema_test = RegExp(`(^|(?!_)(?:[><\uff5c]|${re.src_ZPCc}))(${slist})`, 'i')
-  self.re.schema_search = RegExp(`(^|(?!_)(?:[><\uff5c]|${re.src_ZPCc}))(${slist})`, 'ig')
+  self.re.schema_test = RegExp(`(^|(?!_)(?:[><\uff5c]|${self.re.src_ZPCc}))(${slist})`, 'i')
+  self.re.schema_search = RegExp(`(^|(?!_)(?:[><\uff5c]|${self.re.src_ZPCc}))(${slist})`, 'ig')
   self.re.schema_at_start = RegExp(`^${self.re.schema_search.source}`, 'i')
 
   self.re.pretest = RegExp(
@@ -186,7 +181,10 @@ function LinkifyIt (options) {
 
   this.__tlds_src__ = tlds_default_src + '|' + tlds_2ch_src
 
-  this.re = {}
+  this.re = new REBuilder({
+    ...this.__opts__,
+    tlds_src: this.__tlds_src__
+  })
 
   compile(this)
 }
@@ -230,6 +228,7 @@ LinkifyIt.prototype.add = function add (schema, definition) {
  **/
 LinkifyIt.prototype.set = function set (options) {
   this.__opts__ = Object.assign(this.__opts__, options)
+  this.re.set(options)
   return this
 }
 
@@ -461,6 +460,7 @@ LinkifyIt.prototype.tlds = function tlds (list, keepOld = false) {
       .join('|')
   }
 
+  this.re.set({ tlds_src: this.__tlds_src__ })
   compile(this)
   return this
 }
