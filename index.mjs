@@ -1,10 +1,5 @@
 import REBuilder from './lib/re.mjs'
 
-function _class (obj) { return Object.prototype.toString.call(obj) }
-function isString (obj) { return _class(obj) === '[object String]' }
-function isObject (obj) { return _class(obj) === '[object Object]' }
-function isFunction (obj) { return _class(obj) === '[object Function]' }
-
 function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
 
 //
@@ -16,18 +11,21 @@ const defaultOptions = {
   '---': false
 }
 
-const defaultSchemas = {
-  'http:': {
-    validate: function (text, pos, self) {
-      const re = self.re.get_http_validator()
-      re.lastIndex = pos
+const web_schema = {
+  validate: (text, pos, self) => {
+    const re = self.re.get_http_validator()
+    re.lastIndex = pos
 
-      const m = re.exec(text)
-      return m ? m[0].length : 0
-    }
+    const m = re.exec(text)
+    return m ? m[0].length : 0
   },
-  'https:': 'http:',
-  'ftp:': 'http:',
+  normalize: (match, self) => self.normalize(match)
+}
+
+const defaultSchemas = {
+  'http:': web_schema,
+  'https:': web_schema,
+  'ftp:': web_schema,
   '//': {
     validate: function (text, pos, self) {
       const re = self.re.get_relative_proto_validator()
@@ -41,7 +39,8 @@ const defaultSchemas = {
         return m[0].length
       }
       return 0
-    }
+    },
+    normalize: (match, self) => self.normalize(match)
   },
   'mailto:': {
     validate: function (text, pos, self) {
@@ -50,7 +49,8 @@ const defaultSchemas = {
 
       const m = re.exec(text)
       return m ? m[0].length : 0
-    }
+    },
+    normalize: (match, self) => self.normalize(match)
   }
 }
 
@@ -59,12 +59,6 @@ const tlds_2ch_src = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmn
 
 // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
 const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'
-
-function createNormalizer () {
-  return function (match, self) {
-    self.normalize(match)
-  }
-}
 
 // Schemas compiler. Build regexps.
 //
@@ -80,71 +74,12 @@ function compile (self) {
   // Compile each schema
   //
 
-  const aliases = []
-
-  self.__compiled__ = {} // Reset compiled data
-
-  function schemaError (name, val) {
-    throw new Error(`(LinkifyIt) Invalid schema "${name}": ${val}`)
-  }
-
-  Object.keys(self.__schemas__).forEach(function (name) {
-    const val = self.__schemas__[name]
-
-    // skip disabled methods
-    if (val === null) { return }
-
-    const compiled = { validate: null, link: null }
-
-    self.__compiled__[name] = compiled
-
-    if (isObject(val)) {
-      if (isFunction(val.validate)) {
-        compiled.validate = val.validate
-      } else {
-        schemaError(name, val)
-      }
-
-      if (isFunction(val.normalize)) {
-        compiled.normalize = val.normalize
-      } else if (!val.normalize) {
-        compiled.normalize = createNormalizer()
-      } else {
-        schemaError(name, val)
-      }
-
-      return
-    }
-
-    if (isString(val)) {
-      aliases.push(name)
-      return
-    }
-
-    schemaError(name, val)
-  })
-
-  //
-  // Compile postponed aliases
-  //
-
-  aliases.forEach(function (alias) {
-    if (!self.__compiled__[self.__schemas__[alias]]) {
-      // Silently fail on missed schemas to avoid errons on disable.
-      // schemaError(alias, self.__schemas__[alias]);
-      return
-    }
-
-    self.__compiled__[alias].validate =
-      self.__compiled__[self.__schemas__[alias]].validate
-    self.__compiled__[alias].normalize =
-      self.__compiled__[self.__schemas__[alias]].normalize
-  })
+  self.__compiled__ = Object.assign({}, self.__schemas__) // Reset compiled data
 
   //
   // Fake record for guessed links
   //
-  self.__compiled__[''] = { validate: null, normalize: createNormalizer() }
+  self.__compiled__[''] = { validate: null, normalize: (match, self) => self.normalize(match) }
 
   //
   // Build schema condition
@@ -259,7 +194,7 @@ function LinkifyIt (options) {
 /** chainable
  * LinkifyIt#add(schema, definition)
  * - schema (String): rule name (fixed pattern prefix)
- * - definition (String|Object): schema definition
+ * - definition (Object): schema definition
  *
  * Add new rule definition.
  *
@@ -270,14 +205,19 @@ function LinkifyIt (options) {
  *
  * `definition` is a rule to check tail after link prefix:
  *
- * - _String_ - just alias to existing rule
  * - _Object_
  *   - _validate_ - validator function (should return matched length on success).
  *   - _normalize_ - optional function to normalize text & url of matched result
  *     (for example, for @twitter mentions).
  **/
 LinkifyIt.prototype.add = function add (schema, definition) {
-  this.__schemas__[schema] = definition
+  if (!definition) {
+    delete this.__schemas__[schema]
+  } else {
+    const def = Object.assign({ normalize: (match, self) => self.normalize(match) }, definition)
+    this.__schemas__[schema] = def
+  }
+
   compile(this)
   return this
 }

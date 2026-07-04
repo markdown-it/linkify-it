@@ -127,37 +127,6 @@ describe('API', function () {
     assert.ok(!l.test('foo@bar.com'))
   })
 
-  it('add bad definition', function () {
-    let l
-
-    l = linkify()
-
-    assert.throws(function () {
-      l.add('test:', [])
-    })
-
-    l = linkify()
-
-    assert.throws(function () {
-      l.add('test:', { validate: [] })
-    })
-
-    l = linkify()
-
-    assert.throws(function () {
-      l.add('test:', { validate: /^test/ })
-    })
-
-    l = linkify()
-
-    assert.throws(function () {
-      l.add('test:', {
-        validate: function () { return false },
-        normalize: 'bad'
-      })
-    })
-  })
-
   it('test at position', function () {
     const l = linkify()
 

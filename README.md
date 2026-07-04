@@ -40,7 +40,6 @@ const linkify = linkifyit({ fuzzyLink: true });
 linkify
   .tlds(require('tlds'))          // Reload with full tlds list
   .tlds('onion', true)            // Add unofficial `.onion` domain
-  .add('git:', 'http:')           // Add `git:` protocol as "alias"
   .add('ftp:', null)              // Disable `ftp:` protocol
   .set({ fuzzyIP: true });        // Enable IPs in fuzzy links (without schema)
 
@@ -171,7 +170,6 @@ alphanumeric char.
 
 `value` is a rule to check tail after link prefix:
 
-- _String_ - just alias to existing rule
 - _Object_
   - _validate_ - validator function which, given arguments _text_, _pos_, and
     _self_, returns the length of a match in _text_ starting at index _pos_.
