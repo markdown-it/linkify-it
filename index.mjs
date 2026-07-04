@@ -1,7 +1,5 @@
 import REBuilder from './lib/re.mjs'
 
-function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
-
 //
 
 const defaultOptions = {
@@ -60,7 +58,7 @@ const tlds_2ch_src = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmn
 // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
 const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'
 
-// Schemas compiler. Build regexps.
+// Schemas compiler.
 //
 function compile (self) {
   self.onCompile()
@@ -75,26 +73,6 @@ function compile (self) {
   // Fake record for guessed links
   //
   self.__compiled__[''] = { validate: null, normalize: (match, self) => self.normalize(match) }
-
-  //
-  // Build schema condition
-  //
-  const slist = Object.keys(self.__compiled__)
-    .filter(function (name) {
-      // Filter disabled & fake schemas
-      return name.length > 0 && self.__compiled__[name]
-    })
-    .map(escapeRE)
-    .join('|')
-  // (?!_) cause 1.5x slowdown
-  self.re.schema_test = RegExp(`(^|(?!_)(?:[><\uff5c]|${self.re.src_ZPCc}))(${slist})`, 'i')
-  self.re.schema_search = RegExp(`(^|(?!_)(?:[><\uff5c]|${self.re.src_ZPCc}))(${slist})`, 'ig')
-  self.re.schema_at_start = RegExp(`^${self.re.schema_search.source}`, 'i')
-
-  self.re.pretest = RegExp(
-    `(${self.re.schema_test.source})|(${self.re.get_host_fuzzy_test().source})|@`,
-    'i'
-  )
 }
 
 /**
@@ -183,7 +161,8 @@ function LinkifyIt (options) {
 
   this.re = new REBuilder({
     ...this.__opts__,
-    tlds_src: this.__tlds_src__
+    tlds_src: this.__tlds_src__,
+    schema_names: Object.keys(this.__schemas__)
   })
 
   compile(this)
@@ -216,6 +195,7 @@ LinkifyIt.prototype.add = function add (schema, definition) {
     this.__schemas__[schema] = def
   }
 
+  this.re.set({ schema_names: Object.keys(this.__schemas__) })
   compile(this)
   return this
 }
@@ -243,8 +223,8 @@ LinkifyIt.prototype.test = function test (text) {
   let m, re
 
   // try to scan for link with schema - that's the most simple rule
-  if (this.re.schema_test.test(text)) {
-    re = this.re.schema_search
+  if (this.re.get_schema_test().test(text)) {
+    re = this.re.get_schema_search()
     re.lastIndex = 0
     while ((m = re.exec(text)) !== null) {
       if (this.testSchemaAt(text, m[2], re.lastIndex)) { return true }
@@ -280,7 +260,7 @@ LinkifyIt.prototype.test = function test (text) {
  * link NOT exists.
  **/
 LinkifyIt.prototype.pretest = function pretest (text) {
-  return this.re.pretest.test(text)
+  return this.re.get_pretest().test(text)
 }
 
 /**
@@ -333,8 +313,8 @@ LinkifyIt.prototype.match = function match (text) {
   if (!text.length) { return null }
 
   // scan for links with schema
-  if (this.re.schema_test.test(text)) {
-    re = this.re.schema_search
+  if (this.re.get_schema_test().test(text)) {
+    re = this.re.get_schema_search()
     re.lastIndex = 0
     while ((m = re.exec(text)) !== null) {
       len = this.testSchemaAt(text, m[2], re.lastIndex)
@@ -418,7 +398,7 @@ LinkifyIt.prototype.match = function match (text) {
 LinkifyIt.prototype.matchAtStart = function matchAtStart (text) {
   if (!text.length) return null
 
-  const m = this.re.schema_at_start.exec(text)
+  const m = this.re.get_schema_at_start().exec(text)
   if (!m) return null
 
   const len = this.testSchemaAt(text, m[2], m[0].length)
