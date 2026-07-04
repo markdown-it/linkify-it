@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-import { execFileSync } from 'child_process'
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { readFileSync } from 'fs'
+import { build } from 'vite'
+import { viteSingleFile } from 'vite-plugin-singlefile'
 
 function escape (input) {
   return input
@@ -11,14 +12,6 @@ function escape (input) {
     .replaceAll('"', '&quot;')
     // .replaceAll("'", '&#039;');
 }
-
-rmSync('demo', { force: true, recursive: true })
-mkdirSync('demo')
-
-copyFileSync('support/demo_template/index.css', 'demo/index.css')
-
-// Read html template and inject escaped sample
-const html = readFileSync('support/demo_template/index.html', 'utf8')
 
 let sample_links = readFileSync('test/fixtures/links.txt', 'utf8')
 
@@ -60,7 +53,18 @@ const sample =
 
 ${sample_not_links}`
 
-const output = html.replace('<!--SAMPLE-->', escape(sample))
-writeFileSync('demo/index.html', output)
-
-execFileSync('node_modules/.bin/rollup', ['-c', 'support/demo_template/rollup.config.mjs'], { stdio: 'inherit' })
+await build({
+  root: 'support/demo_template',
+  configFile: false,
+  plugins: [
+    {
+      name: 'inject-sample',
+      transformIndexHtml: html => html.replace('<!--SAMPLE-->', escape(sample))
+    },
+    viteSingleFile({ removeViteModuleLoader: true })
+  ],
+  build: {
+    outDir: '../../demo',
+    emptyOutDir: true
+  }
+})
