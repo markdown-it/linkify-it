@@ -4,9 +4,9 @@
 // Simple CLI helper for quick-check patterns
 //
 
-import linkifyit from '../index.mjs'
+import { LinkifyIt } from '../index.mjs'
 import { inspect } from 'node:util'
-const linkify = linkifyit()
+const linkify = new LinkifyIt()
 
 const text = [].concat(process.argv.slice(2)).join(' ')
 

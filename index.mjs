@@ -1,4 +1,4 @@
-import REBuilder from './lib/re.mjs'
+import { REBuilder } from './lib/re.mjs'
 
 //
 
@@ -113,7 +113,6 @@ function Match (text, schema, index, lastIndex) {
  * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
  *
  * Creates new linkifier instance.
- * Can be called without `new` keyword for convenience.
  *
  * By default understands:
  *
@@ -130,317 +129,319 @@ function Match (text, schema, index, lastIndex) {
  *   Default `false`.
  *
  **/
-function LinkifyIt (options) {
-  if (!(this instanceof LinkifyIt)) {
-    return new LinkifyIt(options)
+export class LinkifyIt {
+  constructor (options) {
+    this.__opts__ = Object.assign({}, defaultOptions, options)
+
+    this.__schemas__ = Object.assign({}, defaultSchemas)
+
+    this.__tlds_src__ = tlds_default_src + '|' + tlds_2ch_src
+
+    this.re = new REBuilder({
+      ...this.__opts__,
+      tlds_src: this.__tlds_src__,
+      schema_names: Object.keys(this.__schemas__)
+    })
   }
 
-  this.__opts__ = Object.assign({}, defaultOptions, options)
-
-  this.__schemas__ = Object.assign({}, defaultSchemas)
-
-  this.__tlds_src__ = tlds_default_src + '|' + tlds_2ch_src
-
-  this.re = new REBuilder({
-    ...this.__opts__,
-    tlds_src: this.__tlds_src__,
-    schema_names: Object.keys(this.__schemas__)
-  })
-}
-
-/** chainable
- * LinkifyIt#add(schema, definition)
- * - schema (String): rule name (fixed pattern prefix)
- * - definition (Object): schema definition
- *
- * Add new rule definition.
- *
- * `schema` is a link prefix (usually, protocol name with `:` at the end,
- * `skype:` for example). `linkify-it` makes shure that prefix is not
- * preceeded with alphanumeric char and symbols. Only whitespaces and
- * punctuation allowed.
- *
- * `definition` is a rule to check tail after link prefix:
- *
- * - _Object_
- *   - _validate_ - validator function (should return matched length on success).
- *   - _normalize_ - optional function to normalize text & url of matched result
- *     (for example, for @twitter mentions).
- **/
-LinkifyIt.prototype.add = function add (schema, definition) {
-  if (!definition) {
-    delete this.__schemas__[schema]
-  } else {
-    const def = Object.assign({ normalize: (match, self) => self.normalize(match) }, definition)
-    this.__schemas__[schema] = def
-  }
-
-  this.re.set({ schema_names: Object.keys(this.__schemas__) })
-  return this
-}
-
-/** chainable
- * LinkifyIt#set(options)
- * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
- *
- * Set recognition options for links without schema.
- **/
-LinkifyIt.prototype.set = function set (options) {
-  this.__opts__ = Object.assign(this.__opts__, options)
-  this.re.set(options)
-  return this
-}
-
-/**
- * LinkifyIt#test(text) -> Boolean
- *
- * Searches linkifiable pattern and returns `true` on success or `false` on fail.
- **/
-LinkifyIt.prototype.test = function test (text) {
-  if (!text.length) { return false }
-
-  let m, re
-
-  // try to scan for link with schema - that's the most simple rule
-  if (this.re.get_schema_test().test(text)) {
-    re = this.re.get_schema_search()
-    re.lastIndex = 0
-    while ((m = re.exec(text)) !== null) {
-      if (this.testSchemaAt(text, m[2], re.lastIndex)) { return true }
+  /** chainable
+   * LinkifyIt#add(schema, definition)
+   * - schema (String): rule name (fixed pattern prefix)
+   * - definition (Object): schema definition
+   *
+   * Add new rule definition.
+   *
+   * `schema` is a link prefix (usually, protocol name with `:` at the end,
+   * `skype:` for example). `linkify-it` makes shure that prefix is not
+   * preceeded with alphanumeric char and symbols. Only whitespaces and
+   * punctuation allowed.
+   *
+   * `definition` is a rule to check tail after link prefix:
+   *
+   * - _Object_
+   *   - _validate_ - validator function (should return matched length on success).
+   *   - _normalize_ - optional function to normalize text & url of matched result
+   *     (for example, for @twitter mentions).
+   **/
+  add (schema, definition) {
+    if (!definition) {
+      delete this.__schemas__[schema]
+    } else {
+      const def = Object.assign({ normalize: (match, self) => self.normalize(match) }, definition)
+      this.__schemas__[schema] = def
     }
+
+    this.re.set({ schema_names: Object.keys(this.__schemas__) })
+    return this
   }
 
-  if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
-    // guess schemaless links
-    if (text.search(this.re.get_host_fuzzy_test()) >= 0) {
-      if (text.match(this.__opts__.fuzzyIP ? this.re.get_link_fuzzy() : this.re.get_link_no_ip_fuzzy()) !== null) {
-        return true
+  /** chainable
+   * LinkifyIt#set(options)
+   * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
+   *
+   * Set recognition options for links without schema.
+   **/
+  set (options) {
+    this.__opts__ = Object.assign(this.__opts__, options)
+    this.re.set(options)
+    return this
+  }
+
+  /**
+   * LinkifyIt#test(text) -> Boolean
+   *
+   * Searches linkifiable pattern and returns `true` on success or `false` on fail.
+   **/
+  test (text) {
+    if (!text.length) { return false }
+
+    let m, re
+
+    // try to scan for link with schema - that's the most simple rule
+    if (this.re.get_schema_test().test(text)) {
+      re = this.re.get_schema_search()
+      re.lastIndex = 0
+      while ((m = re.exec(text)) !== null) {
+        if (this.testSchemaAt(text, m[2], re.lastIndex)) { return true }
       }
     }
-  }
 
-  if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
-    // guess schemaless emails
-    if (text.indexOf('@') >= 0) {
-      // We can't skip this check, because this cases are possible:
-      // 192.168.1.1@gmail.com, my.in@example.com
-      if (text.match(this.re.get_email_fuzzy()) !== null) { return true }
+    if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
+      // guess schemaless links
+      if (text.search(this.re.get_host_fuzzy_test()) >= 0) {
+        if (text.match(this.__opts__.fuzzyIP ? this.re.get_link_fuzzy() : this.re.get_link_no_ip_fuzzy()) !== null) {
+          return true
+        }
+      }
     }
+
+    if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
+      // guess schemaless emails
+      if (text.indexOf('@') >= 0) {
+        // We can't skip this check, because this cases are possible:
+        // 192.168.1.1@gmail.com, my.in@example.com
+        if (text.match(this.re.get_email_fuzzy()) !== null) { return true }
+      }
+    }
+
+    return false
   }
 
-  return false
-}
-
-/**
- * LinkifyIt#pretest(text) -> Boolean
- *
- * Very quick check, that can give false positives. Returns true if link MAY BE
- * can exists. Can be used for speed optimization, when you need to check that
- * link NOT exists.
- **/
-LinkifyIt.prototype.pretest = function pretest (text) {
-  return this.re.get_pretest().test(text)
-}
-
-/**
- * LinkifyIt#testSchemaAt(text, name, position) -> Number
- * - text (String): text to scan
- * - name (String): rule (schema) name
- * - position (Number): text offset to check from
- *
- * Similar to [[LinkifyIt#test]] but checks only specific protocol tail exactly
- * at given position. Returns length of found pattern (0 on fail).
- **/
-LinkifyIt.prototype.testSchemaAt = function testSchemaAt (text, schema, pos) {
-  // If not supported schema check requested - terminate
-  if (!this.__schemas__[schema.toLowerCase()]) {
-    return 0
-  }
-  return this.__schemas__[schema.toLowerCase()].validate(text, pos, this)
-}
-
-/**
- * LinkifyIt#match(text) -> Array|null
- *
- * Returns array of found link descriptions or `null` on fail. We strongly
- * recommend to use [[LinkifyIt#test]] first, for best speed.
- *
- * ##### Result match description
- *
- * - __schema__ - link schema, can be empty for fuzzy links, or `//` for
- *   protocol-neutral  links.
- * - __index__ - offset of matched text
- * - __lastIndex__ - index of next char after mathch end
- * - __raw__ - matched text
- * - __text__ - normalized text
- * - __url__ - link, generated from matched text
- **/
-LinkifyIt.prototype.match = function match (text) {
-  const result = []
-  const type_schemed = []
-  const type_fuzzy_link = []
-  const type_fuzzy_email = []
-  let m, len, re
-
-  function choose (a, b) {
-    if (!a) { return b }
-    if (!b) { return a }
-    if (a.index !== b.index) { return a.index < b.index ? a : b }
-    return a.lastIndex >= b.lastIndex ? a : b
+  /**
+   * LinkifyIt#pretest(text) -> Boolean
+   *
+   * Very quick check, that can give false positives. Returns true if link MAY BE
+   * can exists. Can be used for speed optimization, when you need to check that
+   * link NOT exists.
+   **/
+  pretest (text) {
+    return this.re.get_pretest().test(text)
   }
 
-  if (!text.length) { return null }
+  /**
+   * LinkifyIt#testSchemaAt(text, name, position) -> Number
+   * - text (String): text to scan
+   * - name (String): rule (schema) name
+   * - position (Number): text offset to check from
+   *
+   * Similar to [[LinkifyIt#test]] but checks only specific protocol tail exactly
+   * at given position. Returns length of found pattern (0 on fail).
+   **/
+  testSchemaAt (text, schema, pos) {
+    // If not supported schema check requested - terminate
+    if (!this.__schemas__[schema.toLowerCase()]) {
+      return 0
+    }
+    return this.__schemas__[schema.toLowerCase()].validate(text, pos, this)
+  }
 
-  // scan for links with schema
-  if (this.re.get_schema_test().test(text)) {
-    re = this.re.get_schema_search()
-    re.lastIndex = 0
-    while ((m = re.exec(text)) !== null) {
-      len = this.testSchemaAt(text, m[2], re.lastIndex)
-      if (len) {
-        type_schemed.push({
-          schema: m[2],
+  /**
+   * LinkifyIt#match(text) -> Array|null
+   *
+   * Returns array of found link descriptions or `null` on fail. We strongly
+   * recommend to use [[LinkifyIt#test]] first, for best speed.
+   *
+   * ##### Result match description
+   *
+   * - __schema__ - link schema, can be empty for fuzzy links, or `//` for
+   *   protocol-neutral  links.
+   * - __index__ - offset of matched text
+   * - __lastIndex__ - index of next char after mathch end
+   * - __raw__ - matched text
+   * - __text__ - normalized text
+   * - __url__ - link, generated from matched text
+   **/
+  match (text) {
+    const result = []
+    const type_schemed = []
+    const type_fuzzy_link = []
+    const type_fuzzy_email = []
+    let m, len, re
+
+    function choose (a, b) {
+      if (!a) { return b }
+      if (!b) { return a }
+      if (a.index !== b.index) { return a.index < b.index ? a : b }
+      return a.lastIndex >= b.lastIndex ? a : b
+    }
+
+    if (!text.length) { return null }
+
+    // scan for links with schema
+    if (this.re.get_schema_test().test(text)) {
+      re = this.re.get_schema_search()
+      re.lastIndex = 0
+      while ((m = re.exec(text)) !== null) {
+        len = this.testSchemaAt(text, m[2], re.lastIndex)
+        if (len) {
+          type_schemed.push({
+            schema: m[2],
+            index: m.index + m[1].length,
+            lastIndex: m.index + m[0].length + len
+          })
+        }
+      }
+    }
+
+    if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
+      re = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_global() : this.re.get_link_no_ip_fuzzy_global()
+      re.lastIndex = 0
+      while ((m = re.exec(text)) !== null) {
+        type_fuzzy_link.push({
+          schema: '',
           index: m.index + m[1].length,
-          lastIndex: m.index + m[0].length + len
+          lastIndex: m.index + m[0].length
         })
       }
     }
-  }
 
-  if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
-    re = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_global() : this.re.get_link_no_ip_fuzzy_global()
-    re.lastIndex = 0
-    while ((m = re.exec(text)) !== null) {
-      type_fuzzy_link.push({
-        schema: '',
-        index: m.index + m[1].length,
-        lastIndex: m.index + m[0].length
-      })
+    if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
+      re = this.re.get_email_fuzzy_global()
+      re.lastIndex = 0
+      while ((m = re.exec(text)) !== null) {
+        type_fuzzy_email.push({
+          schema: 'mailto:',
+          index: m.index + m[1].length,
+          lastIndex: m.index + m[0].length
+        })
+      }
     }
-  }
 
-  if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
-    re = this.re.get_email_fuzzy_global()
-    re.lastIndex = 0
-    while ((m = re.exec(text)) !== null) {
-      type_fuzzy_email.push({
-        schema: 'mailto:',
-        index: m.index + m[1].length,
-        lastIndex: m.index + m[0].length
-      })
+    const indexes = [0, 0, 0]
+    let lastIndex = 0
+
+    for (;;) {
+      const candidates = [
+        type_schemed[indexes[0]],
+        type_fuzzy_email[indexes[1]],
+        type_fuzzy_link[indexes[2]]
+      ]
+
+      const candidate = choose(choose(candidates[0], candidates[1]), candidates[2])
+
+      if (!candidate) { break }
+
+      if (candidate === candidates[0]) {
+        indexes[0]++
+      } else if (candidate === candidates[1]) {
+        indexes[1]++
+      } else {
+        indexes[2]++
+      }
+
+      if (candidate.index < lastIndex) { continue }
+
+      const match = new Match(text, candidate.schema, candidate.index, candidate.lastIndex)
+      if (match.schema) {
+        this.__schemas__[match.schema].normalize(match, this)
+      } else {
+        this.normalize(match)
+      }
+      result.push(match)
+      lastIndex = candidate.lastIndex
     }
+
+    if (result.length) {
+      return result
+    }
+
+    return null
   }
 
-  const indexes = [0, 0, 0]
-  let lastIndex = 0
+  /**
+   * LinkifyIt#matchAtStart(text) -> Match|null
+   *
+   * Returns fully-formed (not fuzzy) link if it starts at the beginning
+   * of the string, and null otherwise.
+   **/
+  matchAtStart (text) {
+    if (!text.length) return null
 
-  for (;;) {
-    const candidates = [
-      type_schemed[indexes[0]],
-      type_fuzzy_email[indexes[1]],
-      type_fuzzy_link[indexes[2]]
-    ]
+    const m = this.re.get_schema_at_start().exec(text)
+    if (!m) return null
 
-    const candidate = choose(choose(candidates[0], candidates[1]), candidates[2])
+    const len = this.testSchemaAt(text, m[2], m[0].length)
+    if (!len) return null
 
-    if (!candidate) { break }
+    const match = new Match(text, m[2], m.index + m[1].length, m.index + m[0].length + len)
 
-    if (candidate === candidates[0]) {
-      indexes[0]++
-    } else if (candidate === candidates[1]) {
-      indexes[1]++
+    this.__schemas__[match.schema].normalize(match, this)
+    return match
+  }
+
+  /** chainable
+   * LinkifyIt#tlds(list [, keepOld]) -> this
+   * - list (Array): list of tlds
+   * - keepOld (Boolean): merge with current list if `true` (`false` by default)
+   *
+   * Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
+   * to avoid false positives. By default this algorythm used:
+   *
+   * - hostname with any 2-letter root zones are ok.
+   * - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
+   *   are ok.
+   * - encoded (`xn--...`) root zones are ok.
+   *
+   * If list is replaced, then exact match for 2-chars root zones will be checked.
+   **/
+  tlds (list, keepOld = false) {
+    list = Array.isArray(list) ? list : [list]
+
+    if (!keepOld) {
+      this.__tlds_src__ = list.join('|')
     } else {
-      indexes[2]++
+      this.__tlds_src__ += '|' + list.slice()
+        .sort()
+        .filter(function (el, idx, arr) {
+          return el !== arr[idx - 1]
+        })
+        .reverse()
+        .join('|')
     }
 
-    if (candidate.index < lastIndex) { continue }
+    this.re.set({ tlds_src: this.__tlds_src__ })
+    return this
+  }
 
-    const match = new Match(text, candidate.schema, candidate.index, candidate.lastIndex)
-    if (match.schema) {
-      this.__schemas__[match.schema].normalize(match, this)
-    } else {
-      this.normalize(match)
+  /**
+   * LinkifyIt#normalize(match)
+   *
+   * Default normalizer (if schema does not define it's own).
+   **/
+  normalize (match) {
+    // Do minimal possible changes by default. Need to collect feedback prior
+    // to move forward https://github.com/markdown-it/linkify-it/issues/1
+
+    if (!match.schema) { match.url = `http://${match.url}` }
+
+    if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
+      match.url = `mailto:${match.url}`
     }
-    result.push(match)
-    lastIndex = candidate.lastIndex
-  }
-
-  if (result.length) {
-    return result
-  }
-
-  return null
-}
-
-/**
- * LinkifyIt#matchAtStart(text) -> Match|null
- *
- * Returns fully-formed (not fuzzy) link if it starts at the beginning
- * of the string, and null otherwise.
- **/
-LinkifyIt.prototype.matchAtStart = function matchAtStart (text) {
-  if (!text.length) return null
-
-  const m = this.re.get_schema_at_start().exec(text)
-  if (!m) return null
-
-  const len = this.testSchemaAt(text, m[2], m[0].length)
-  if (!len) return null
-
-  const match = new Match(text, m[2], m.index + m[1].length, m.index + m[0].length + len)
-
-  this.__schemas__[match.schema].normalize(match, this)
-  return match
-}
-
-/** chainable
- * LinkifyIt#tlds(list [, keepOld]) -> this
- * - list (Array): list of tlds
- * - keepOld (Boolean): merge with current list if `true` (`false` by default)
- *
- * Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
- * to avoid false positives. By default this algorythm used:
- *
- * - hostname with any 2-letter root zones are ok.
- * - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
- *   are ok.
- * - encoded (`xn--...`) root zones are ok.
- *
- * If list is replaced, then exact match for 2-chars root zones will be checked.
- **/
-LinkifyIt.prototype.tlds = function tlds (list, keepOld = false) {
-  list = Array.isArray(list) ? list : [list]
-
-  if (!keepOld) {
-    this.__tlds_src__ = list.join('|')
-  } else {
-    this.__tlds_src__ += '|' + list.slice()
-      .sort()
-      .filter(function (el, idx, arr) {
-        return el !== arr[idx - 1]
-      })
-      .reverse()
-      .join('|')
-  }
-
-  this.re.set({ tlds_src: this.__tlds_src__ })
-  return this
-}
-
-/**
- * LinkifyIt#normalize(match)
- *
- * Default normalizer (if schema does not define it's own).
- **/
-LinkifyIt.prototype.normalize = function normalize (match) {
-  // Do minimal possible changes by default. Need to collect feedback prior
-  // to move forward https://github.com/markdown-it/linkify-it/issues/1
-
-  if (!match.schema) { match.url = `http://${match.url}` }
-
-  if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
-    match.url = `mailto:${match.url}`
   }
 }
 
-export default LinkifyIt
+function linkifyit (options) {
+  return new LinkifyIt(options)
+}
+
+export { linkifyit, REBuilder }

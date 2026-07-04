@@ -1,5 +1,5 @@
-import linkifyit from '../../../index.mjs'
-const linkify = linkifyit()
+import { LinkifyIt } from '../../../index.mjs'
+const linkify = new LinkifyIt()
 
 linkify.test('')
 

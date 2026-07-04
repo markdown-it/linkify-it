@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { readFileSync } from 'fs'
-import linkifyit from '../index.mjs'
+import { LinkifyIt } from '../index.mjs'
 
-const linkify = linkifyit()
+const linkify = new LinkifyIt()
 
 // Force compilation
 linkify.test('')

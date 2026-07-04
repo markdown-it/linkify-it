@@ -33,8 +33,8 @@ Usage examples
 ##### Example 1
 
 ```js
-import linkifyit from 'linkify-it';
-const linkify = linkifyit({ fuzzyLink: true });
+import { LinkifyIt } from 'linkify-it';
+const linkify = new LinkifyIt({ fuzzyLink: true });
 
 // Reload full tlds list & add unofficial `.onion` domain.
 linkify
@@ -92,7 +92,6 @@ __[API documentation](http://markdown-it.github.io/linkify-it/doc)__
 ### new LinkifyIt(options)
 
 Creates new linkifier instance.
-Can be called without `new` keyword for convenience.
 
 By default understands:
 

@@ -1,12 +1,12 @@
 import { readFileSync } from 'fs'
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
-import linkify from '../index.mjs'
+import { LinkifyIt } from '../index.mjs'
 
 let lines
 
 describe('links', function () {
-  const l = linkify({ fuzzyLink: true, fuzzyIP: true })
+  const l = new LinkifyIt({ fuzzyLink: true, fuzzyIP: true })
 
   l.normalize = function () {} // kill normalizer
 
@@ -46,7 +46,7 @@ describe('links', function () {
 })
 
 describe('not links', function () {
-  const l = linkify()
+  const l = new LinkifyIt()
 
   l.normalize = function () {} // kill normalizer
 
@@ -67,7 +67,7 @@ describe('not links', function () {
 
 describe('API', function () {
   it('extend tlds', function () {
-    const l = linkify({ fuzzyLink: true })
+    const l = new LinkifyIt({ fuzzyLink: true })
 
     assert.ok(!l.test('google.myroot'))
 
@@ -83,7 +83,7 @@ describe('API', function () {
   })
 
   it('add rule with default normalizer', function () {
-    const l = linkify({ fuzzyLink: true }).add('my:', {
+    const l = new LinkifyIt({ fuzzyLink: true }).add('my:', {
       validate: function (text, pos) {
         const match = /^\/\/[a-z]+/.exec(text.slice(pos))
 
@@ -98,7 +98,7 @@ describe('API', function () {
   })
 
   it('add rule with normalizer', function () {
-    const l = linkify({ fuzzyLink: true }).add('my:', {
+    const l = new LinkifyIt({ fuzzyLink: true }).add('my:', {
       validate: function (text, pos) {
         const match = /^\/\/[a-z]+/.exec(text.slice(pos))
 
@@ -117,7 +117,7 @@ describe('API', function () {
   })
 
   it('disable rule', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
 
     assert.ok(l.test('http://google.com'))
     assert.ok(l.test('foo@bar.com'))
@@ -128,7 +128,7 @@ describe('API', function () {
   })
 
   it('test at position', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
 
     assert.ok(l.testSchemaAt('http://google.com', 'http:', 5))
     assert.ok(l.testSchemaAt('http://google.com', 'HTTP:', 5))
@@ -138,7 +138,7 @@ describe('API', function () {
   })
 
   it('correct cache value', function () {
-    const l = linkify({ fuzzyLink: true })
+    const l = new LinkifyIt({ fuzzyLink: true })
 
     const match = l.match('.com. http://google.com google.com ftp://google.com')
 
@@ -148,7 +148,7 @@ describe('API', function () {
   })
 
   it('normalize', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
 
     let m = l.match('mailto:foo@bar.com')[0]
 
@@ -162,7 +162,7 @@ describe('API', function () {
   })
 
   it('test @twitter rule', function () {
-    const l = linkify().add('@', {
+    const l = new LinkifyIt().add('@', {
       validate: function (text, pos, self) {
         const tail = text.slice(pos)
 
@@ -191,7 +191,7 @@ describe('API', function () {
   })
 
   it('set option: fuzzyLink', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
 
     assert.strictEqual(l.test('google.com.'), false)
 
@@ -202,7 +202,7 @@ describe('API', function () {
   })
 
   it('set option: fuzzyEmail', function () {
-    const l = linkify({ fuzzyEmail: false })
+    const l = new LinkifyIt({ fuzzyEmail: false })
 
     assert.strictEqual(l.test('foo@bar.com.'), false)
 
@@ -213,7 +213,7 @@ describe('API', function () {
   })
 
   it('set option: fuzzyIP', function () {
-    const l = linkify({ fuzzyLink: true })
+    const l = new LinkifyIt({ fuzzyLink: true })
 
     assert.strictEqual(l.test('1.1.1.1.'), false)
 
@@ -224,7 +224,7 @@ describe('API', function () {
   })
 
   it('should not hang in fuzzy mode with sequences of astrals', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
 
     l.set({ fuzzyLink: true })
 
@@ -232,19 +232,19 @@ describe('API', function () {
   })
 
   it('should accept `---` if enabled', function () {
-    let l = linkify()
+    let l = new LinkifyIt()
 
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo---bar')
     assert.strictEqual(l.match('text@example.com---foo'), null)
 
-    l = linkify({ '---': true })
+    l = new LinkifyIt({ '---': true })
 
     assert.strictEqual(l.match('http://e.com/foo---bar')[0].text, 'http://e.com/foo')
     assert.strictEqual(l.match('text@example.com---foo')[0].text, 'text@example.com')
   })
 
   it('should find a match at the start', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
 
     l.set({ fuzzyLink: true })
 
@@ -254,7 +254,7 @@ describe('API', function () {
   })
 
   it('matchAtStart should not interfere with normal match', function () {
-    const l = linkify()
+    const l = new LinkifyIt()
     let str
 
     str = 'http://google.com http://google.com'
@@ -268,7 +268,7 @@ describe('API', function () {
 
   it('should not match incomplete links', function () {
     // regression test for https://github.com/markdown-it/markdown-it/issues/868
-    const l = linkify()
+    const l = new LinkifyIt()
 
     assert.ok(!l.matchAtStart('http://'))
     assert.ok(!l.matchAtStart('https://'))
