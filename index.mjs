@@ -19,64 +19,37 @@ const defaultOptions = {
 const defaultSchemas = {
   'http:': {
     validate: function (text, pos, self) {
-      const tail = text.slice(pos)
+      const re = self.re.get_http_validator()
+      re.lastIndex = pos
 
-      if (!self.re.http) {
-        // compile lazily, because "host"-containing variables can change on tlds update.
-        self.re.http = new RegExp(
-          `^\\/\\/${self.re.get_auth().source}${self.re.get_host_port_strict().source}${self.re.get_path().source}`, 'i'
-        )
-      }
-      if (self.re.http.test(tail)) {
-        return tail.match(self.re.http)[0].length
-      }
-      return 0
+      const m = re.exec(text)
+      return m ? m[0].length : 0
     }
   },
   'https:': 'http:',
   'ftp:': 'http:',
   '//': {
     validate: function (text, pos, self) {
-      const tail = text.slice(pos)
+      const re = self.re.get_relative_proto_validator()
+      re.lastIndex = pos
 
-      if (!self.re.no_http) {
-      // compile lazily, because "host"-containing variables can change on tlds update.
-        self.re.no_http = new RegExp(
-          '^' +
-          self.re.get_auth().source +
-          // Don't allow single-level domains, because of false positives like '//test'
-          // with code comments
-          `(?:localhost|(?:(?:${self.re.get_domain().source})\\.)+${self.re.get_domain_root().source})` +
-          self.re.get_port().source +
-          self.re.get_host_terminator().source +
-          self.re.get_path().source,
-
-          'i'
-        )
-      }
-
-      if (self.re.no_http.test(tail)) {
+      const m = re.exec(text)
+      if (m) {
         // should not be `://` & `///`, that protects from errors in protocol name
         if (pos >= 3 && text[pos - 3] === ':') { return 0 }
         if (pos >= 3 && text[pos - 3] === '/') { return 0 }
-        return tail.match(self.re.no_http)[0].length
+        return m[0].length
       }
       return 0
     }
   },
   'mailto:': {
     validate: function (text, pos, self) {
-      const tail = text.slice(pos)
+      const re = self.re.get_mailto_validator()
+      re.lastIndex = pos
 
-      if (!self.re.mailto) {
-        self.re.mailto = new RegExp(
-          `^${self.re.get_email_name().source}@${self.re.get_host_strict().source}`, 'i'
-        )
-      }
-      if (self.re.mailto.test(tail)) {
-        return tail.match(self.re.mailto)[0].length
-      }
-      return 0
+      const m = re.exec(text)
+      return m ? m[0].length : 0
     }
   }
 }
