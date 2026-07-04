@@ -108,11 +108,10 @@ By default understands:
 - __value__ - rule to check tail after link prefix
   - _String_ - just alias to existing rule
   - _Object_
-    - _validate_ - either a `RegExp` (start with `^`, and don't include the
-      link prefix itself), or a validator function which, given arguments
-      _text_, _pos_, and _self_, returns the length of a match in _text_
-      starting at index _pos_.  _pos_ is the index right after the link prefix.
-      _self_ can be used to access the linkify object to cache data.
+    - _validate_ - validator function which, given arguments _text_, _pos_,
+      and _self_, returns the length of a match in _text_ starting at index
+      _pos_.  _pos_ is the index right after the link prefix. _self_ can be
+      used to access the linkify object to cache data.
     - _normalize_ - optional function to normalize text & url of matched result
       (for example, for twitter mentions).
 

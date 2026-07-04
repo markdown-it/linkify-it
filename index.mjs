@@ -23,7 +23,6 @@ function assign (obj /* from1, from2, from3, ... */) {
 function _class (obj) { return Object.prototype.toString.call(obj) }
 function isString (obj) { return _class(obj) === '[object String]' }
 function isObject (obj) { return _class(obj) === '[object Object]' }
-function isRegExp (obj) { return _class(obj) === '[object RegExp]' }
 function isFunction (obj) { return _class(obj) === '[object Function]' }
 
 function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
@@ -114,17 +113,6 @@ const tlds_2ch_src = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmn
 // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
 const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'
 
-function createValidator (re) {
-  return function (text, pos) {
-    const tail = text.slice(pos)
-
-    if (re.test(tail)) {
-      return tail.match(re)[0].length
-    }
-    return 0
-  }
-}
-
 function createNormalizer () {
   return function (match, self) {
     self.normalize(match)
@@ -164,9 +152,7 @@ function compile (self) {
     self.__compiled__[name] = compiled
 
     if (isObject(val)) {
-      if (isRegExp(val.validate)) {
-        compiled.validate = createValidator(val.validate)
-      } else if (isFunction(val.validate)) {
+      if (isFunction(val.validate)) {
         compiled.validate = val.validate
       } else {
         schemaError(name, val)
@@ -305,8 +291,7 @@ function Match (text, schema, index, lastIndex) {
  * - __value__ - rule to check tail after link prefix
  *   - _String_ - just alias to existing rule
  *   - _Object_
- *     - _validate_ - validator function (should return matched length on success),
- *       or `RegExp`.
+ *     - _validate_ - validator function (should return matched length on success).
  *     - _normalize_ - optional function to normalize text & url of matched result
  *       (for example, for @twitter mentions).
  *
@@ -345,7 +330,7 @@ function LinkifyIt (schemas, options) {
 /** chainable
  * LinkifyIt#add(schema, definition)
  * - schema (String): rule name (fixed pattern prefix)
- * - definition (String|RegExp|Object): schema definition
+ * - definition (String|Object): schema definition
  *
  * Add new rule definition. See constructor description for details.
  **/

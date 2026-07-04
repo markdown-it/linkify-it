@@ -82,9 +82,13 @@ describe('API', function () {
     assert.ok(!l.test('google.myroot'))
   })
 
-  it('add rule as regexp, with default normalizer', function () {
+  it('add rule with default normalizer', function () {
     const l = linkify().add('my:', {
-      validate: /^\/\/[a-z]+/
+      validate: function (text, pos) {
+        const match = /^\/\/[a-z]+/.exec(text.slice(pos))
+
+        return match ? match[0].length : 0
+      }
     })
 
     const match = l.match('google.com. my:// my://asdf!')
@@ -95,7 +99,11 @@ describe('API', function () {
 
   it('add rule with normalizer', function () {
     const l = linkify().add('my:', {
-      validate: /^\/\/[a-z]+/,
+      validate: function (text, pos) {
+        const match = /^\/\/[a-z]+/.exec(text.slice(pos))
+
+        return match ? match[0].length : 0
+      },
       normalize: function (m) {
         m.text = m.text.replace(/^my:\/\//, '').toUpperCase()
         m.url = m.url.toUpperCase()
@@ -132,6 +140,12 @@ describe('API', function () {
 
     assert.throws(function () {
       l.add('test:', { validate: [] })
+    })
+
+    l = linkify()
+
+    assert.throws(function () {
+      l.add('test:', { validate: /^test/ })
     })
 
     l = linkify()
