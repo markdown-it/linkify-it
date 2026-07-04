@@ -58,23 +58,6 @@ const tlds_2ch_src = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmn
 // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
 const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'
 
-// Schemas compiler.
-//
-function compile (self) {
-  self.onCompile()
-
-  //
-  // Compile each schema
-  //
-
-  self.__compiled__ = Object.assign({}, self.__schemas__) // Reset compiled data
-
-  //
-  // Fake record for guessed links
-  //
-  self.__compiled__[''] = { validate: null, normalize: (match, self) => self.normalize(match) }
-}
-
 /**
  * class Match
  *
@@ -155,7 +138,6 @@ function LinkifyIt (options) {
   this.__opts__ = Object.assign({}, defaultOptions, options)
 
   this.__schemas__ = Object.assign({}, defaultSchemas)
-  this.__compiled__ = {}
 
   this.__tlds_src__ = tlds_default_src + '|' + tlds_2ch_src
 
@@ -164,8 +146,6 @@ function LinkifyIt (options) {
     tlds_src: this.__tlds_src__,
     schema_names: Object.keys(this.__schemas__)
   })
-
-  compile(this)
 }
 
 /** chainable
@@ -196,7 +176,6 @@ LinkifyIt.prototype.add = function add (schema, definition) {
   }
 
   this.re.set({ schema_names: Object.keys(this.__schemas__) })
-  compile(this)
   return this
 }
 
@@ -231,7 +210,7 @@ LinkifyIt.prototype.test = function test (text) {
     }
   }
 
-  if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
+  if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
     // guess schemaless links
     if (text.search(this.re.get_host_fuzzy_test()) >= 0) {
       if (text.match(this.__opts__.fuzzyIP ? this.re.get_link_fuzzy() : this.re.get_link_no_ip_fuzzy()) !== null) {
@@ -240,7 +219,7 @@ LinkifyIt.prototype.test = function test (text) {
     }
   }
 
-  if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
+  if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
     // guess schemaless emails
     if (text.indexOf('@') >= 0) {
       // We can't skip this check, because this cases are possible:
@@ -274,10 +253,10 @@ LinkifyIt.prototype.pretest = function pretest (text) {
  **/
 LinkifyIt.prototype.testSchemaAt = function testSchemaAt (text, schema, pos) {
   // If not supported schema check requested - terminate
-  if (!this.__compiled__[schema.toLowerCase()]) {
+  if (!this.__schemas__[schema.toLowerCase()]) {
     return 0
   }
-  return this.__compiled__[schema.toLowerCase()].validate(text, pos, this)
+  return this.__schemas__[schema.toLowerCase()].validate(text, pos, this)
 }
 
 /**
@@ -328,7 +307,7 @@ LinkifyIt.prototype.match = function match (text) {
     }
   }
 
-  if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
+  if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
     re = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_global() : this.re.get_link_no_ip_fuzzy_global()
     re.lastIndex = 0
     while ((m = re.exec(text)) !== null) {
@@ -340,7 +319,7 @@ LinkifyIt.prototype.match = function match (text) {
     }
   }
 
-  if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
+  if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
     re = this.re.get_email_fuzzy_global()
     re.lastIndex = 0
     while ((m = re.exec(text)) !== null) {
@@ -377,7 +356,11 @@ LinkifyIt.prototype.match = function match (text) {
     if (candidate.index < lastIndex) { continue }
 
     const match = new Match(text, candidate.schema, candidate.index, candidate.lastIndex)
-    this.__compiled__[match.schema].normalize(match, this)
+    if (match.schema) {
+      this.__schemas__[match.schema].normalize(match, this)
+    } else {
+      this.normalize(match)
+    }
     result.push(match)
     lastIndex = candidate.lastIndex
   }
@@ -406,7 +389,7 @@ LinkifyIt.prototype.matchAtStart = function matchAtStart (text) {
 
   const match = new Match(text, m[2], m.index + m[1].length, m.index + m[0].length + len)
 
-  this.__compiled__[match.schema].normalize(match, this)
+  this.__schemas__[match.schema].normalize(match, this)
   return match
 }
 
@@ -441,7 +424,6 @@ LinkifyIt.prototype.tlds = function tlds (list, keepOld = false) {
   }
 
   this.re.set({ tlds_src: this.__tlds_src__ })
-  compile(this)
   return this
 }
 
@@ -459,14 +441,6 @@ LinkifyIt.prototype.normalize = function normalize (match) {
   if (match.schema === 'mailto:' && !/^mailto:/i.test(match.url)) {
     match.url = `mailto:${match.url}`
   }
-}
-
-/**
- * LinkifyIt#onCompile()
- *
- * Override to modify basic RegExp-s.
- **/
-LinkifyIt.prototype.onCompile = function onCompile () {
 }
 
 export default LinkifyIt
