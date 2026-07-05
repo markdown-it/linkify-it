@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "demo/doc",
+  "includeVersion": true,
+  "markdownLinkExternal": true,
+  "sourceLinkExternal": true,
+  "sourceLinkTemplate": "https://github.com/markdown-it/linkify-it/blob/{gitRevision:short}/{path}#L{line}",
+  "navigationLinks": {
+    "GitHub": "https://github.com/markdown-it/linkify-it"
+  },
+  "defaultCategory": "linkify-it",
+  "categoryOrder": ["linkify-it", "*"],
+  "sort": ["source-order"],
+  "navigation": {
+    "includeCategories": true
+  }
+}
