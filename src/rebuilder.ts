@@ -91,11 +91,11 @@ export class REBuilder {
         '[/?#]' +
           '(?:' +
             `(?!${this.src_ZCc}|${this.get_text_separators().source}|[()[\\]{}.,"'?!\\-;]).|` +
-            `\\[(?:(?!${this.src_ZCc}|\\]).)*\\]|` +
-            `\\((?:(?!${this.src_ZCc}|[)]).)*\\)|` +
-            `\\{(?:(?!${this.src_ZCc}|[}]).)*\\}|` +
-            `\\"(?:(?!${this.src_ZCc}|["]).)+\\"|` +
-            `\\'(?:(?!${this.src_ZCc}|[']).)+\\'|` +
+            `\\[(?:(?!${this.src_ZCc}|\\]).){0,100}\\]|` +
+            `\\((?:(?!${this.src_ZCc}|[)]).){0,100}\\)|` +
+            `\\{(?:(?!${this.src_ZCc}|[}]).){0,100}\\}|` +
+            `\\"(?:(?!${this.src_ZCc}|["]).){1,100}\\"|` +
+            `\\'(?:(?!${this.src_ZCc}|[']).){1,100}\\'|` +
 
             // allow `I'm_king` if no pair found
             `\\'(?=${this.get_pseudo_letter().source}|[-])|` +
