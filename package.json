@@ -16,10 +16,7 @@
       "require": "./build/index.cjs.js",
       "import": "./build/index.mjs"
     },
-    "./*": {
-      "require": "./*",
-      "import": "./*"
-    }
+    "./package.json": "./package.json"
   },
   "files": [
     "build/"
