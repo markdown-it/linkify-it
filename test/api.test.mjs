@@ -173,7 +173,7 @@ describe('API', function () {
         }
         if (self.re.twitter.test(tail)) {
           if (pos >= 2 && tail[pos - 2] === '@') {
-            return false
+            return 0
           }
           return tail.match(self.re.twitter)[0].length
         }

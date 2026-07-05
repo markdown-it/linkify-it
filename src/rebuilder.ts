@@ -1,26 +1,34 @@
-// @ts-nocheck
 /* eslint-disable no-return-assign, prefer-regex-literals */
 
 import { Any, Cc, Z, P } from 'uc.micro'
 
-function escapeRE (str) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
+interface REBuilderOptions {
+  '---'?: boolean
+  schema_names?: string[]
+  tlds_src?: string
+}
+
+type REBuilderCache = Record<string, RegExp | undefined>
+
+function escapeRE (str: string) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
 
 export class REBuilder {
-  constructor (opts = {}) {
-    this.src_Any = Any.source
-    this.src_Cc = Cc.source
-    this.src_Z = Z.source
-    this.src_P = P.source
-    // \p{\Z\P\Cc\CF} (white spaces + control + format + punctuation)
-    this.src_ZPCc = [this.src_Z, this.src_P, this.src_Cc].join('|')
-    // \p{\Z\Cc} (white spaces + control)
-    this.src_ZCc = [this.src_Z, this.src_Cc].join('|')
+  src_Any = Any.source
+  src_Cc = Cc.source
+  src_Z = Z.source
+  src_P = P.source
+  // \p{\Z\P\Cc\CF} (white spaces + control + format + punctuation)
+  src_ZPCc = [this.src_Z, this.src_P, this.src_Cc].join('|')
+  // \p{\Z\Cc} (white spaces + control)
+  src_ZCc = [this.src_Z, this.src_Cc].join('|')
+  cache: REBuilderCache = {}
+  opts: REBuilderOptions = { schema_names: [] }
 
-    this.opts = Object.assign({ schema_names: [] }, opts)
-    this.cache = {}
+  constructor (opts: REBuilderOptions = {}) {
+    Object.assign(this.opts, opts)
   }
 
-  set (opts = {}) {
+  set (opts: REBuilderOptions = {}) {
     Object.assign(this.opts, opts)
 
     this.cache = {}
@@ -335,14 +343,14 @@ export class REBuilder {
     )
   }
 
-  get_schema_names_src () {
-    return this.cache.schema_names_src ??= this.opts.schema_names.map(escapeRE).join('|')
+  get_schema_names () {
+    return this.cache.schema_names ??= new RegExp((this.opts.schema_names || []).map(escapeRE).join('|'))
   }
 
   get_schema_test () {
     return this.cache.schema_test ??= new RegExp(
 
-      `(^|(?!_)(?:[><\uff5c]|${this.src_ZPCc}))(${this.get_schema_names_src()})`,
+      `(^|(?!_)(?:[><\uff5c]|${this.src_ZPCc}))(${this.get_schema_names().source})`,
       'i'
     )
   }

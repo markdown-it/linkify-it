@@ -71,7 +71,7 @@ linkify.add('@', {
       // Linkifier allows punctuation chars before prefix,
       // but we additionally disable `@` ("@@mention" is invalid)
       if (pos >= 2 && tail[pos - 2] === '@') {
-        return false;
+        return 0;
       }
       return tail.match(self.re.twitter)[0].length;
     }

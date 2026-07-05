@@ -1,32 +1,51 @@
-// @ts-nocheck
 import { REBuilder } from './rebuilder.ts'
 
 //
 
-const defaultOptions = {
+interface LinkifyItOptions {
+  fuzzyLink?: boolean
+  fuzzyEmail?: boolean
+  fuzzyIP?: boolean
+  '---'?: boolean
+}
+
+interface SchemaOpts {
+  validate: (text: string, pos: number, self: LinkifyIt) => number
+  normalize?: (match: Match, self: LinkifyIt) => void
+}
+
+type Schema = Required<SchemaOpts>
+
+interface MatchCandidate {
+  schema: string
+  index: number
+  lastIndex: number
+}
+
+const defaultOptions: Required<LinkifyItOptions> = {
   fuzzyLink: false,
   fuzzyEmail: true,
   fuzzyIP: false,
   '---': false
 }
 
-const web_schema = {
-  validate: (text, pos, self) => {
+const web_schema: Schema = {
+  validate: (text: string, pos: number, self: LinkifyIt) => {
     const re = self.re.get_http_validator()
     re.lastIndex = pos
 
     const m = re.exec(text)
     return m ? m[0].length : 0
   },
-  normalize: (match, self) => self.normalize(match)
+  normalize: (match: Match, self: LinkifyIt) => self.normalize(match)
 }
 
-const defaultSchemas = {
+const defaultSchemas: Record<string, Schema> = {
   'http:': web_schema,
   'https:': web_schema,
   'ftp:': web_schema,
   '//': {
-    validate: function (text, pos, self) {
+    validate: function (text: string, pos: number, self: LinkifyIt) {
       const re = self.re.get_relative_proto_validator()
       re.lastIndex = pos
 
@@ -39,17 +58,17 @@ const defaultSchemas = {
       }
       return 0
     },
-    normalize: (match, self) => self.normalize(match)
+    normalize: (match: Match, self: LinkifyIt) => self.normalize(match)
   },
   'mailto:': {
-    validate: function (text, pos, self) {
+    validate: function (text: string, pos: number, self: LinkifyIt) {
       const re = self.re.get_mailto_validator()
       re.lastIndex = pos
 
       const m = re.exec(text)
       return m ? m[0].length : 0
     },
-    normalize: (match, self) => self.normalize(match)
+    normalize: (match: Match, self: LinkifyIt) => self.normalize(match)
   }
 }
 
@@ -64,45 +83,54 @@ const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|inf
  *
  * Match result. Single element of array, returned by [[LinkifyIt#match]]
  **/
-function Match (text, schema, index, lastIndex) {
-  const raw = text.slice(index, lastIndex)
+class Match {
+  schema: string
+  index: number
+  lastIndex: number
+  raw: string
+  text: string
+  url: string
 
-  /**
-   * Match#schema -> String
-   *
-   * Prefix (protocol) for matched string.
-   **/
-  this.schema = schema.toLowerCase()
-  /**
-   * Match#index -> Number
-   *
-   * First position of matched string.
-   **/
-  this.index = index
-  /**
-   * Match#lastIndex -> Number
-   *
-   * Next position after matched string.
-   **/
-  this.lastIndex = lastIndex
-  /**
-   * Match#raw -> String
-   *
-   * Matched string.
-   **/
-  this.raw = raw
-  /**
-   * Match#text -> String
-   *
-   * Notmalized text of matched string.
-   **/
-  this.text = raw
-  /**
-   * Match#url -> String
-   *
-   * Normalized url of matched string.
-   **/
-  this.url = raw
+  constructor (text: string, schema: string, index: number, lastIndex: number) {
+    const raw = text.slice(index, lastIndex)
+
+    /**
+     * Match#schema -> String
+     *
+     * Prefix (protocol) for matched string.
+     **/
+    this.schema = schema.toLowerCase()
+    /**
+     * Match#index -> Number
+     *
+     * First position of matched string.
+     **/
+    this.index = index
+    /**
+     * Match#lastIndex -> Number
+     *
+     * Next position after matched string.
+     **/
+    this.lastIndex = lastIndex
+    /**
+     * Match#raw -> String
+     *
+     * Matched string.
+     **/
+    this.raw = raw
+    /**
+     * Match#text -> String
+     *
+     * Notmalized text of matched string.
+     **/
+    this.text = raw
+    /**
+     * Match#url -> String
+     *
+     * Normalized url of matched string.
+     **/
+    this.url = raw
+  }
 }
 
 /**
@@ -131,7 +159,12 @@ function Match (text, schema, index, lastIndex) {
  *
  **/
 export class LinkifyIt {
-  constructor (options) {
+  __opts__: Required<LinkifyItOptions>
+  __schemas__: Record<string, Schema>
+  __tlds_src__: string
+  re: REBuilder
+
+  constructor (options: LinkifyItOptions = {}) {
     this.__opts__ = Object.assign({}, defaultOptions, options)
 
     this.__schemas__ = Object.assign({}, defaultSchemas)
@@ -164,11 +197,14 @@ export class LinkifyIt {
    *   - _normalize_ - optional function to normalize text & url of matched result
    *     (for example, for @twitter mentions).
    **/
-  add (schema, definition) {
+  add (schema: string, definition: SchemaOpts | null = null): this {
     if (!definition) {
       delete this.__schemas__[schema]
     } else {
-      const def = Object.assign({ normalize: (match, self) => self.normalize(match) }, definition)
+      const def = Object.assign(
+        { normalize: (match: Match, self: LinkifyIt) => self.normalize(match) },
+        definition
+      )
       this.__schemas__[schema] = def
     }
 
@@ -182,7 +218,7 @@ export class LinkifyIt {
    *
    * Set recognition options for links without schema.
    **/
-  set (options) {
+  set (options: LinkifyItOptions = {}): this {
     this.__opts__ = Object.assign(this.__opts__, options)
     this.re.set(options)
     return this
@@ -193,7 +229,7 @@ export class LinkifyIt {
    *
    * Searches linkifiable pattern and returns `true` on success or `false` on fail.
    **/
-  test (text) {
+  test (text: string): boolean {
     if (!text.length) { return false }
 
     let m, re
@@ -235,7 +271,7 @@ export class LinkifyIt {
    * can exists. Can be used for speed optimization, when you need to check that
    * link NOT exists.
    **/
-  pretest (text) {
+  pretest (text: string): boolean {
     return this.re.get_pretest().test(text)
   }
 
@@ -248,7 +284,7 @@ export class LinkifyIt {
    * Similar to [[LinkifyIt#test]] but checks only specific protocol tail exactly
    * at given position. Returns length of found pattern (0 on fail).
    **/
-  testSchemaAt (text, schema, pos) {
+  testSchemaAt (text: string, schema: string, pos: number): number {
     // If not supported schema check requested - terminate
     if (!this.__schemas__[schema.toLowerCase()]) {
       return 0
@@ -272,14 +308,16 @@ export class LinkifyIt {
    * - __text__ - normalized text
    * - __url__ - link, generated from matched text
    **/
-  match (text) {
-    const result = []
-    const type_schemed = []
-    const type_fuzzy_link = []
-    const type_fuzzy_email = []
-    let m, len, re
+  match (text: string): Match[] | null {
+    const result: Match[] = []
+    const type_schemed: MatchCandidate[] = []
+    const type_fuzzy_link: MatchCandidate[] = []
+    const type_fuzzy_email: MatchCandidate[] = []
+    let m: RegExpExecArray | null
+    let len: number
+    let re: RegExp
 
-    function choose (a, b) {
+    function choose (a: MatchCandidate | undefined, b: MatchCandidate | undefined) {
       if (!a) { return b }
       if (!b) { return a }
       if (a.index !== b.index) { return a.index < b.index ? a : b }
@@ -375,7 +413,7 @@ export class LinkifyIt {
    * Returns fully-formed (not fuzzy) link if it starts at the beginning
    * of the string, and null otherwise.
    **/
-  matchAtStart (text) {
+  matchAtStart (text: string): Match | null {
     if (!text.length) return null
 
     const m = this.re.get_schema_at_start().exec(text)
@@ -405,7 +443,7 @@ export class LinkifyIt {
    *
    * If list is replaced, then exact match for 2-chars root zones will be checked.
    **/
-  tlds (list, keepOld = false) {
+  tlds (list: string | string[], keepOld = false): this {
     list = Array.isArray(list) ? list : [list]
 
     if (!keepOld) {
@@ -413,7 +451,7 @@ export class LinkifyIt {
     } else {
       this.__tlds_src__ += '|' + list.slice()
         .sort()
-        .filter(function (el, idx, arr) {
+        .filter(function (el: string, idx: number, arr: string[]) {
           return el !== arr[idx - 1]
         })
         .reverse()
@@ -429,7 +467,7 @@ export class LinkifyIt {
    *
    * Default normalizer (if schema does not define it's own).
    **/
-  normalize (match) {
+  normalize (match: Match): void {
     // Do minimal possible changes by default. Need to collect feedback prior
     // to move forward https://github.com/markdown-it/linkify-it/issues/1
 
@@ -441,7 +479,7 @@ export class LinkifyIt {
   }
 }
 
-function linkifyit (options) {
+function linkifyit (options: LinkifyItOptions = {}): LinkifyIt {
   return new LinkifyIt(options)
 }
 
