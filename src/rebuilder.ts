@@ -2,13 +2,14 @@
 
 import { Any, Cc, Z, P } from 'uc.micro'
 
-interface REBuilderOptions {
+/**
+ * @category types
+ */
+export interface REBuilderOptions {
   '---'?: boolean
   schema_names?: string[]
   tlds_src?: string
 }
-
-type REBuilderCache = Record<string, RegExp | undefined>
 
 function escapeRE (str: string) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
 
@@ -21,7 +22,7 @@ export class REBuilder {
   src_ZPCc = [this.src_Z, this.src_P, this.src_Cc].join('|')
   // \p{\Z\Cc} (white spaces + control)
   src_ZCc = [this.src_Z, this.src_Cc].join('|')
-  cache: REBuilderCache = {}
+  cache: Record<string, RegExp | undefined> = {}
   opts: REBuilderOptions = { schema_names: [] }
 
   constructor (opts: REBuilderOptions = {}) {

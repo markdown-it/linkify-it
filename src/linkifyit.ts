@@ -2,14 +2,20 @@ import { REBuilder } from './rebuilder.ts'
 
 //
 
-interface LinkifyItOptions {
+/**
+ * @category types
+ */
+export interface LinkifyItOptions {
   fuzzyLink?: boolean
   fuzzyEmail?: boolean
   fuzzyIP?: boolean
   '---'?: boolean
 }
 
-interface SchemaOpts {
+/**
+ * @category types
+ */
+export interface SchemaOpts {
   validate: (text: string, pos: number, self: LinkifyIt) => number
   normalize?: (match: Match, self: LinkifyIt) => void
 }
@@ -82,8 +88,10 @@ const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|inf
  * class Match
  *
  * Match result. Single element of array, returned by [[LinkifyIt#match]]
+ *
+ * @category types
  **/
-class Match {
+export class Match {
   schema: string
   index: number
   lastIndex: number
@@ -160,7 +168,7 @@ class Match {
  **/
 export class LinkifyIt {
   __opts__: Required<LinkifyItOptions>
-  __schemas__: Record<string, Schema>
+  private __schemas__: Record<string, Schema>
   __tlds_src__: string
   re: REBuilder
 
@@ -195,7 +203,7 @@ export class LinkifyIt {
    * - _Object_
    *   - _validate_ - validator function (should return matched length on success).
    *   - _normalize_ - optional function to normalize text & url of matched result
-   *     (for example, for @twitter mentions).
+   *     (for example, for `@twitter` mentions).
    **/
   add (schema: string, definition: SchemaOpts | null = null): this {
     if (!definition) {
