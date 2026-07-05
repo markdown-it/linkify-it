@@ -2,6 +2,8 @@
 
 import { createRequire } from 'node:module'
 import { rmSync } from 'node:fs'
+import { rollup } from 'rollup'
+import dts from 'rollup-plugin-dts'
 import { build } from 'vite'
 
 const require = createRequire(import.meta.url)
@@ -47,3 +49,14 @@ await build({
     }
   }
 })
+
+const bundle = await rollup({
+  input: 'src/index.ts',
+  plugins: [dts({ tsconfig: './tsconfig.json' })]
+})
+
+try {
+  await bundle.write({ file: 'build/index.d.ts', format: 'es' })
+} finally {
+  await bundle.close()
+}

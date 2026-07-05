@@ -11,8 +11,10 @@
   "repository": "markdown-it/linkify-it",
   "main": "build/index.cjs.js",
   "module": "build/index.mjs",
+  "types": "build/index.d.ts",
   "exports": {
     ".": {
+      "types": "./build/index.d.ts",
       "require": "./build/index.cjs.js",
       "import": "./build/index.mjs"
     },
@@ -50,8 +52,10 @@
     "eslint": "^9.39.3",
     "gh-pages": "^6.1.0",
     "mitata": "^1.0.34",
-    "neostandard": "^0.13.0",
     "ndoc": "^6.0.0",
+    "neostandard": "^0.13.0",
+    "rollup": "^4.62.2",
+    "rollup-plugin-dts": "^6.4.1",
     "typescript": "^6.0.3",
     "vite": "^8.1.2",
     "vite-plugin-singlefile": "^2.3.3"
