@@ -208,29 +208,7 @@ export class LinkifyIt {
    * @param schema Rule name (fixed pattern prefix).
    * @param definition Schema definition, or `null` to disable the rule.
    *
-   * @example
-   * ```javascript
-   * linkify.add('@', {
-   *   validate (text, pos, self) {
-   *     const tail = text.slice(pos)
-   *     const twitter = new RegExp(
-   *       `^([a-zA-Z0-9_]){1,15}(?!_)(?=$|${self.re.src_ZPCc})`
-   *     )
-   *
-   *     const match = tail.match(twitter)
-   *     if (!match) return 0
-   *
-   *     // Linkifier allows punctuation chars before prefix,
-   *     // but we additionally disable `@` (`@@mention` is invalid).
-   *     if (pos >= 2 && text[pos - 2] === '@') return 0
-   *
-   *     return match[0].length
-   *   },
-   *   normalize (match) {
-   *     match.url = `https://twitter.com/${match.url.replace(/^@/, '')}`
-   *   }
-   * })
-   * ```
+   * See [twitter mentions example](https://github.com/markdown-it/linkify-it/blob/master/examples/twitter.mjs).
    */
   add (schema: string, definition: SchemaOpts | null = null): this {
     if (!definition) {

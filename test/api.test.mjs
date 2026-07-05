@@ -162,24 +162,27 @@ describe('API', function () {
   })
 
   it('test @twitter rule', function () {
-    const l = new LinkifyIt().add('@', {
-      validate: function (text, pos, self) {
-        const tail = text.slice(pos)
+    const l = new LinkifyIt()
 
-        if (!self.re.twitter) {
-          self.re.twitter = new RegExp(
-            `^([a-zA-Z0-9_]){1,15}(?!_)(?=$|${self.re.src_ZPCc})`
-          )
+    const twitter = new RegExp(
+      `([a-zA-Z0-9_]){1,15}(?!_)(?=$|${l.re.src_ZPCc})`,
+      'y'
+    )
+
+    l.add('@', {
+      validate: (text, pos) => {
+        twitter.lastIndex = pos
+
+        const match = twitter.exec(text)
+        if (!match) return 0
+
+        if (pos >= 2 && text[pos - 2] === '@') {
+          return 0
         }
-        if (self.re.twitter.test(tail)) {
-          if (pos >= 2 && tail[pos - 2] === '@') {
-            return 0
-          }
-          return tail.match(self.re.twitter)[0].length
-        }
-        return 0
+
+        return match[0].length
       },
-      normalize: function (m) {
+      normalize: m => {
         m.url = `https://twitter.com/${m.url.replace(/^@/, '')}`
       }
     })
