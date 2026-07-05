@@ -1,4 +1,4 @@
-import { LinkifyIt } from '../../../index.mjs'
+import { LinkifyIt } from '../../../src/index.ts'
 const linkify = new LinkifyIt()
 
 linkify.test('')

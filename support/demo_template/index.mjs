@@ -1,4 +1,4 @@
-import { LinkifyIt } from '../../index.mjs'
+import { LinkifyIt } from '../../src/index.ts'
 import './index.css'
 
 const linkify = new LinkifyIt({ fuzzyLink: true, fuzzyIP: true })

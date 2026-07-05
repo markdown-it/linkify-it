@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { LinkifyIt } from '../index.mjs'
+import { LinkifyIt } from '../src/index.ts'
 
 let lines
 

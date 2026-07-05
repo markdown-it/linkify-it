@@ -4,7 +4,7 @@
 // Simple CLI helper for quick-check patterns
 //
 
-import { LinkifyIt } from '../index.mjs'
+import { LinkifyIt } from '../src/index.ts'
 import { inspect } from 'node:util'
 const linkify = new LinkifyIt()
 

@@ -10,11 +10,11 @@
   ],
   "repository": "markdown-it/linkify-it",
   "main": "build/index.cjs.js",
-  "module": "index.mjs",
+  "module": "build/index.mjs",
   "exports": {
     ".": {
       "require": "./build/index.cjs.js",
-      "import": "./index.mjs"
+      "import": "./build/index.mjs"
     },
     "./*": {
       "require": "./*",
@@ -22,8 +22,6 @@
     }
   },
   "files": [
-    "index.mjs",
-    "lib/",
     "build/"
   ],
   "license": "MIT",
@@ -39,7 +37,8 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint && npm run build && c8 --exclude build --exclude test -r text -r html -r lcov node --test",
+    "type-check": "tsc --noEmit",
+    "test": "npm run lint && npm run build && npm run type-check && c8 --exclude build --exclude test -r text -r html -r lcov node --test",
     "doc": "node support/build_doc.mjs",
     "build": "node support/build_dist.mjs && node support/build_demo.mjs",
     "gh-pages": "npm run build && npm run doc && gh-pages -d demo -f",
@@ -56,6 +55,7 @@
     "mitata": "^1.0.34",
     "neostandard": "^0.13.0",
     "ndoc": "^6.0.0",
+    "typescript": "^6.0.3",
     "vite": "^8.1.2",
     "vite-plugin-singlefile": "^2.3.3"
   }

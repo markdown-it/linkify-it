@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test'
-import { LinkifyIt } from '../index.mjs'
+import { LinkifyIt } from '../src/index.ts'
 
 describe('pathological cases', function () {
   it('should not hang on fuzzy links followed by an email marker', { timeout: 10000 }, function () {

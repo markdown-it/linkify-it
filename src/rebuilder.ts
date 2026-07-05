@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-return-assign, prefer-regex-literals */
 
 import { Any, Cc, Z, P } from 'uc.micro'

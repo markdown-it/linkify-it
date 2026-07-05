@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from 'fs'
-import { LinkifyIt } from '../index.mjs'
+import { LinkifyIt } from '../src/index.ts'
 
 const linkify = new LinkifyIt()
 

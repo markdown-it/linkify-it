@@ -1,4 +1,5 @@
-import { REBuilder } from './lib/re.mjs'
+// @ts-nocheck
+import { REBuilder } from './rebuilder.ts'
 
 //
 
@@ -444,4 +445,4 @@ function linkifyit (options) {
   return new LinkifyIt(options)
 }
 
-export { linkifyit, REBuilder }
+export { linkifyit }
