@@ -3,20 +3,41 @@ import { REBuilder } from './rebuilder.ts'
 //
 
 /**
+ * Recognition options for schemaless links.
+ *
  * @category types
  */
 export interface LinkifyItOptions {
+  /** Recognize URLs without `http(s)://` prefix. Default `false`. */
   fuzzyLink?: boolean
+  /** Recognize emails without `mailto:` prefix. Default `true`. */
   fuzzyEmail?: boolean
+  /**
+   * Allow IPs in fuzzy links. Can conflict with some texts, like version
+   * numbers. Default `false`.
+   */
   fuzzyIP?: boolean
+  /**
+   * Terminate link with `---` if it is considered a long dash. Default `false`.
+   */
   '---'?: boolean
 }
 
 /**
+ * Custom schema definition.
+ *
  * @category types
  */
 export interface SchemaOpts {
+  /**
+   * Checks text after the schema prefix. Should return matched tail length on
+   * success, or `0` on fail.
+   */
   validate: (text: string, pos: number, self: LinkifyIt) => number
+  /**
+   * Optional function to normalize `text` and `url` of matched result, for
+   * example for `@twitter` mentions.
+   */
   normalize?: (match: Match, self: LinkifyIt) => void
 }
 
@@ -85,93 +106,72 @@ const tlds_2ch_src = 'a[cdefgilmnoqrstuwxz]|b[abdefghijmnorstvwyz]|c[acdfghiklmn
 const tlds_default_src = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'
 
 /**
- * class Match
- *
- * Match result. Single element of array, returned by [[LinkifyIt#match]]
+ * Match result returned by {@link LinkifyIt.match} and
+ * {@link LinkifyIt.matchAtStart}.
  *
  * @category types
- **/
+ */
 export class Match {
+  /** Prefix (protocol) for matched string. Empty for fuzzy links. */
   schema: string
+  /** First position of matched string. */
   index: number
+  /** Next position after matched string. */
   lastIndex: number
+  /** Matched string. */
   raw: string
+  /** Normalized text of matched string. */
   text: string
+  /** Normalized URL of matched string. */
   url: string
 
   constructor (text: string, schema: string, index: number, lastIndex: number) {
     const raw = text.slice(index, lastIndex)
 
-    /**
-     * Match#schema -> String
-     *
-     * Prefix (protocol) for matched string.
-     **/
     this.schema = schema.toLowerCase()
-    /**
-     * Match#index -> Number
-     *
-     * First position of matched string.
-     **/
     this.index = index
-    /**
-     * Match#lastIndex -> Number
-     *
-     * Next position after matched string.
-     **/
     this.lastIndex = lastIndex
-    /**
-     * Match#raw -> String
-     *
-     * Matched string.
-     **/
     this.raw = raw
-    /**
-     * Match#text -> String
-     *
-     * Notmalized text of matched string.
-     **/
     this.text = raw
-    /**
-     * Match#url -> String
-     *
-     * Normalized url of matched string.
-     **/
     this.url = raw
   }
 }
 
-/**
- * class LinkifyIt
- **/
-
-/**
- * new LinkifyIt(options)
- * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
- *
- * Creates new linkifier instance.
- *
- * By default understands:
- *
- * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
- * - "fuzzy" emails (foo@bar.com).
- *
- * `options`:
- *
- * - __fuzzyLink__ - recognige URL-s without `http(s):` prefix. Default `false`.
- * - __fuzzyIP__ - allow IPs in fuzzy links above. Can conflict with some texts
- *   like version numbers. Default `false`.
- * - __fuzzyEmail__ - recognize emails without `mailto:` prefix.
- * - __---__ - terminate link with `---` (if it's considered as long dash).
- *   Default `false`.
- *
- **/
+/** Linkifier instance. */
 export class LinkifyIt {
   __opts__: Required<LinkifyItOptions>
   private __schemas__: Record<string, Schema>
   __tlds_src__: string
   re: REBuilder
 
+  /**
+   * Creates new linkifier instance.
+   *
+   * By default understands:
+   *
+   * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
+   * - "fuzzy" emails (foo@bar.com).
+   *
+   * See {@link LinkifyItOptions} for available options.
+   *
+   * @param options Recognition options.
+   *
+   * @example
+   * ```javascript
+   * import { LinkifyIt } from 'linkify-it'
+   *
+   * const linkify = new LinkifyIt({ fuzzyLink: true })
+   *
+   * linkify
+   *   .tlds(require('tlds'))       // Reload with full TLD list
+   *   .tlds('onion', true)         // Add unofficial `.onion` domain
+   *   .add('ftp:', null)           // Disable `ftp:` protocol
+   *   .set({ fuzzyIP: true })      // Enable IPs in fuzzy links
+   *
+   * console.log(linkify.test('Site github.com!')) // true
+   * console.log(linkify.match('Site github.com!'))
+   * ```
+   */
   constructor (options: LinkifyItOptions = {}) {
     this.__opts__ = Object.assign({}, defaultOptions, options)
 
@@ -186,25 +186,44 @@ export class LinkifyIt {
     })
   }
 
-  /** chainable
-   * LinkifyIt#add(schema, definition)
-   * - schema (String): rule name (fixed pattern prefix)
-   * - definition (Object): schema definition
-   *
+  /**
    * Add new rule definition.
    *
    * `schema` is a link prefix (usually, protocol name with `:` at the end,
-   * `skype:` for example). `linkify-it` makes shure that prefix is not
-   * preceeded with alphanumeric char and symbols. Only whitespaces and
+   * `skype:` for example). `linkify-it` makes sure that prefix is not
+   * preceded with alphanumeric char and symbols. Only whitespaces and
    * punctuation allowed.
    *
-   * `definition` is a rule to check tail after link prefix:
+   * `definition` is a rule to check tail after link prefix. To disable an
+   * existing rule, pass `null`.
    *
-   * - _Object_
-   *   - _validate_ - validator function (should return matched length on success).
-   *   - _normalize_ - optional function to normalize text & url of matched result
-   *     (for example, for `@twitter` mentions).
-   **/
+   * @param schema Rule name (fixed pattern prefix).
+   * @param definition Schema definition, or `null` to disable the rule.
+   *
+   * @example
+   * ```javascript
+   * linkify.add('@', {
+   *   validate (text, pos, self) {
+   *     const tail = text.slice(pos)
+   *     const twitter = new RegExp(
+   *       `^([a-zA-Z0-9_]){1,15}(?!_)(?=$|${self.re.src_ZPCc})`
+   *     )
+   *
+   *     const match = tail.match(twitter)
+   *     if (!match) return 0
+   *
+   *     // Linkifier allows punctuation chars before prefix,
+   *     // but we additionally disable `@` (`@@mention` is invalid).
+   *     if (pos >= 2 && text[pos - 2] === '@') return 0
+   *
+   *     return match[0].length
+   *   },
+   *   normalize (match) {
+   *     match.url = `https://twitter.com/${match.url.replace(/^@/, '')}`
+   *   }
+   * })
+   * ```
+   */
   add (schema: string, definition: SchemaOpts | null = null): this {
     if (!definition) {
       delete this.__schemas__[schema]
@@ -220,12 +239,11 @@ export class LinkifyIt {
     return this
   }
 
-  /** chainable
-   * LinkifyIt#set(options)
-   * - options (Object): { fuzzyLink|fuzzyEmail|fuzzyIP|'---': true|false }
-   *
+  /**
    * Set recognition options for links without schema.
-   **/
+   *
+   * @param options Recognition options.
+   */
   set (options: LinkifyItOptions = {}): this {
     this.__opts__ = Object.assign(this.__opts__, options)
     this.re.set(options)
@@ -233,10 +251,10 @@ export class LinkifyIt {
   }
 
   /**
-   * LinkifyIt#test(text) -> Boolean
-   *
    * Searches linkifiable pattern and returns `true` on success or `false` on fail.
-   **/
+   *
+   * @param text Text to scan.
+   */
   test (text: string): boolean {
     if (!text.length) { return false }
 
@@ -273,25 +291,24 @@ export class LinkifyIt {
   }
 
   /**
-   * LinkifyIt#pretest(text) -> Boolean
-   *
    * Very quick check, that can give false positives. Returns true if link MAY BE
    * can exists. Can be used for speed optimization, when you need to check that
    * link NOT exists.
-   **/
+   *
+   * @param text Text to scan.
+   */
   pretest (text: string): boolean {
     return this.re.get_pretest().test(text)
   }
 
   /**
-   * LinkifyIt#testSchemaAt(text, name, position) -> Number
-   * - text (String): text to scan
-   * - name (String): rule (schema) name
-   * - position (Number): text offset to check from
-   *
-   * Similar to [[LinkifyIt#test]] but checks only specific protocol tail exactly
+   * Similar to {@link LinkifyIt.test} but checks only specific protocol tail exactly
    * at given position. Returns length of found pattern (0 on fail).
-   **/
+   *
+   * @param text Text to scan.
+   * @param schema Rule (schema) name.
+   * @param pos Text offset to check from.
+   */
   testSchemaAt (text: string, schema: string, pos: number): number {
     // If not supported schema check requested - terminate
     if (!this.__schemas__[schema.toLowerCase()]) {
@@ -301,21 +318,11 @@ export class LinkifyIt {
   }
 
   /**
-   * LinkifyIt#match(text) -> Array|null
-   *
    * Returns array of found link descriptions or `null` on fail. We strongly
-   * recommend to use [[LinkifyIt#test]] first, for best speed.
+   * recommend to use {@link LinkifyIt.test} first, for best speed.
    *
-   * ##### Result match description
-   *
-   * - __schema__ - link schema, can be empty for fuzzy links, or `//` for
-   *   protocol-neutral  links.
-   * - __index__ - offset of matched text
-   * - __lastIndex__ - index of next char after mathch end
-   * - __raw__ - matched text
-   * - __text__ - normalized text
-   * - __url__ - link, generated from matched text
-   **/
+   * @param text Text to scan.
+   */
   match (text: string): Match[] | null {
     const result: Match[] = []
     const type_schemed: MatchCandidate[] = []
@@ -416,11 +423,11 @@ export class LinkifyIt {
   }
 
   /**
-   * LinkifyIt#matchAtStart(text) -> Match|null
-   *
    * Returns fully-formed (not fuzzy) link if it starts at the beginning
    * of the string, and null otherwise.
-   **/
+   *
+   * @param text Text to scan.
+   */
   matchAtStart (text: string): Match | null {
     if (!text.length) return null
 
@@ -436,13 +443,9 @@ export class LinkifyIt {
     return match
   }
 
-  /** chainable
-   * LinkifyIt#tlds(list [, keepOld]) -> this
-   * - list (Array): list of tlds
-   * - keepOld (Boolean): merge with current list if `true` (`false` by default)
-   *
-   * Load (or merge) new tlds list. Those are user for fuzzy links (without prefix)
-   * to avoid false positives. By default this algorythm used:
+  /**
+   * Load (or merge) new TLDs list. Those are used for fuzzy links (without
+   * prefix) to avoid false positives. By default this algorithm is used:
    *
    * - hostname with any 2-letter root zones are ok.
    * - biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф
@@ -450,7 +453,10 @@ export class LinkifyIt {
    * - encoded (`xn--...`) root zones are ok.
    *
    * If list is replaced, then exact match for 2-chars root zones will be checked.
-   **/
+   *
+   * @param list List of TLDs.
+   * @param keepOld Merge with current list if `true` (`false` by default).
+   */
   tlds (list: string | string[], keepOld = false): this {
     list = Array.isArray(list) ? list : [list]
 
@@ -471,10 +477,10 @@ export class LinkifyIt {
   }
 
   /**
-   * LinkifyIt#normalize(match)
+   * Default normalizer (if schema does not define its own).
    *
-   * Default normalizer (if schema does not define it's own).
-   **/
+   * @param match Match to normalize.
+   */
   normalize (match: Match): void {
     // Do minimal possible changes by default. Need to collect feedback prior
     // to move forward https://github.com/markdown-it/linkify-it/issues/1
