@@ -106,6 +106,7 @@ By default understands:
 - __fuzzyEmail__ - recognize emails without `mailto:` prefix. Default `true`.
 - __---__ - set `true` to terminate link with `---` (if it's considered as long dash).
   Default `false`.
+- __rebuilder__ - custom `REBuilder` instance for patched regex fragments.
 
 
 ### .test(text)

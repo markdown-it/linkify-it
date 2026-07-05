@@ -7,7 +7,7 @@ import { REBuilder } from './rebuilder.ts'
  *
  * @category types
  */
-export interface LinkifyItOptions {
+export interface LinkifyOptions {
   /** Recognize URLs without `http(s)://` prefix. Default `false`. */
   fuzzyLink?: boolean
   /** Recognize emails without `mailto:` prefix. Default `true`. */
@@ -21,6 +21,18 @@ export interface LinkifyItOptions {
    * Terminate link with `---` if it is considered a long dash. Default `false`.
    */
   '---'?: boolean
+}
+
+export interface LinkifyConstructorOptions extends LinkifyOptions {
+  /** Custom regular expression builder. */
+  rebuilder?: REBuilder
+}
+
+const defaultOptions: Required<LinkifyOptions> = {
+  fuzzyLink: false,
+  fuzzyEmail: true,
+  fuzzyIP: false,
+  '---': false
 }
 
 /**
@@ -47,13 +59,6 @@ interface MatchCandidate {
   schema: string
   index: number
   lastIndex: number
-}
-
-const defaultOptions: Required<LinkifyItOptions> = {
-  fuzzyLink: false,
-  fuzzyEmail: true,
-  fuzzyIP: false,
-  '---': false
 }
 
 const web_schema: Schema = {
@@ -139,7 +144,7 @@ export class Match {
 
 /** Linkifier instance. */
 export class LinkifyIt {
-  __opts__: Required<LinkifyItOptions>
+  __opts__: Required<LinkifyOptions>
   private __schemas__: Record<string, Schema>
   __tlds_src__: string
   re: REBuilder
@@ -152,7 +157,7 @@ export class LinkifyIt {
    * - `http(s)://...` , `ftp://...`, `mailto:...` & `//...` links
    * - "fuzzy" emails (foo@bar.com).
    *
-   * See {@link LinkifyItOptions} for available options.
+   * See {@link LinkifyConstructorOptions} for available options.
    *
    * @param options Recognition options.
    *
@@ -172,14 +177,17 @@ export class LinkifyIt {
    * console.log(linkify.match('Site github.com!'))
    * ```
    */
-  constructor (options: LinkifyItOptions = {}) {
-    this.__opts__ = Object.assign({}, defaultOptions, options)
+  constructor (options: LinkifyConstructorOptions = {}) {
+    const { rebuilder, ...linkifyOptions } = options
+
+    this.__opts__ = Object.assign({}, defaultOptions, linkifyOptions)
 
     this.__schemas__ = Object.assign({}, defaultSchemas)
 
     this.__tlds_src__ = tlds_default_src + '|' + tlds_2ch_src
 
-    this.re = new REBuilder({
+    this.re = rebuilder || new REBuilder()
+    this.re.set({
       ...this.__opts__,
       tlds_src: this.__tlds_src__,
       schema_names: Object.keys(this.__schemas__)
@@ -244,7 +252,7 @@ export class LinkifyIt {
    *
    * @param options Recognition options.
    */
-  set (options: LinkifyItOptions = {}): this {
+  set (options: LinkifyOptions = {}): this {
     this.__opts__ = Object.assign(this.__opts__, options)
     this.re.set(options)
     return this
@@ -493,7 +501,7 @@ export class LinkifyIt {
   }
 }
 
-function linkifyit (options: LinkifyItOptions = {}): LinkifyIt {
+function linkifyit (options: LinkifyConstructorOptions = {}): LinkifyIt {
   return new LinkifyIt(options)
 }
 
