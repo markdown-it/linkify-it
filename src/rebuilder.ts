@@ -89,6 +89,10 @@ export class REBuilder {
     )
   }
 
+  get_path_extra () {
+    return this.cache.src_path_extra ??= new RegExp('')
+  }
+
   get_path () {
     return this.cache.src_path ??= new RegExp(
       '(?:' +
@@ -128,6 +132,8 @@ export class REBuilder {
             `\\!+(?!${this.src_ZCc}|[!]|$)|` +
 
             `\\?(?!${this.src_ZCc}|[?]|$)|` +
+
+            this.get_path_extra().source +
 
             // if no special rules matched, consume all chars except terminators.
             `(?!${this.get_path_terminator().source}).` +
