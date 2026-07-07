@@ -139,12 +139,12 @@ export class REBuilder {
             // - parts of file path
             // - params separator
             // until more examples found.
-            '\\.{2,}[a-zA-Z0-9%/&]|' +
+            '\\.{2,20}[a-zA-Z0-9%/&]|' +
 
             `\\.(?!${this.src_ZCc}|[.]|$)|` +
             (this.opts['---']
-              ? '\\-(?!--(?:[^-]|$))(?:-*)|' // `---` => long dash, terminate
-              : '\\-+|'
+              ? '\\-(?!--(?:[^-]|$))(?:-{0,19})|' // `---` => long dash, terminate
+              : '\\-{1,20}|'
             ) +
             // allow `,,,` in paths
             `,(?!${this.src_ZCc}|$)|` +
@@ -153,7 +153,7 @@ export class REBuilder {
             `;(?!${this.src_ZCc}|$)|` +
 
             // allow `!!!` in paths, but not at the end
-            `\\!+(?!${this.src_ZCc}|[!]|$)|` +
+            `\\!{1,20}(?!${this.src_ZCc}|[!]|$)|` +
 
             `\\?(?!${this.src_ZCc}|[?]|$)|` +
 
@@ -164,7 +164,7 @@ export class REBuilder {
 
             // if no special rules matched, consume all chars except terminators.
             `(?!${this.get_path_terminator().source}).` +
-          ')+' +
+          '){1,10000}' +
         '|\\/' +
       ')?'
     )
@@ -226,7 +226,7 @@ export class REBuilder {
       // Don't need IP check, because digits are already allowed in normal domain names
       //   src_ip4 +
       // '|' +
-        `(?:(?:(?:${this.get_domain().source})\\.)*${this.get_domain().source})`/* _root */ +
+        `(?:(?:(?:${this.get_domain().source})\\.){0,10}${this.get_domain().source})`/* _root */ +
       ')'
     )
   }
@@ -236,7 +236,7 @@ export class REBuilder {
       '(?:' +
         `\\[IPv6:${this.get_ip6_addr().source}\\]` +
       '|' +
-        `(?:(?:(?:${this.get_domain().source})\\.)*${this.get_domain().source})` +
+        `(?:(?:(?:${this.get_domain().source})\\.){0,10}${this.get_domain().source})` +
       ')'
     )
   }
@@ -246,7 +246,7 @@ export class REBuilder {
       '(?:' +
         this.get_ip4_host().source +
       '|' +
-        `(?:(?:(?:${this.get_domain().source})\\.)+(?:${this.get_tld().source}))` +
+        `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))` +
       ')'
     )
   }
@@ -254,7 +254,7 @@ export class REBuilder {
   get_host_no_ip_fuzzy () {
     return this.cache.host_no_ip_fuzzy ??= new RegExp(
 
-      `(?:(?:(?:${this.get_domain().source})\\.)+(?:${this.get_tld().source}))`
+      `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))`
     )
   }
 
@@ -371,7 +371,7 @@ export class REBuilder {
       this.get_auth().source +
       // Don't allow single-level domains, because of false positives like '//test'
       // with code comments.
-      `(?:localhost|${this.get_ip6_host().source}|(?:(?:${this.get_domain().source})\\.)+${this.get_domain_root().source})` +
+      `(?:localhost|${this.get_ip6_host().source}|(?:(?:${this.get_domain().source})\\.){1,10}${this.get_domain_root().source})` +
       this.get_port().source +
       this.get_host_terminator().source +
       this.get_path().source,
