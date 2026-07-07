@@ -83,9 +83,8 @@ export class REBuilder {
 
   get_path_terminator () {
     return this.cache.src_path_terminator ??= new RegExp(
-      // Probably worth replace with
-      // `${this.src_ZPCc}|${this.get_text_separators().source}`
-      `${this.src_ZCc}|${this.get_text_separators().source}|[()[\\]{}.,"'?!\\-;]`
+      `${this.src_ZPCc}|${this.get_text_separators().source}`
+      // `${this.src_ZCc}|${this.get_text_separators().source}|[()[\\]{}.,"'?!\\-;]`
     )
   }
 
@@ -134,6 +133,9 @@ export class REBuilder {
             `\\?(?!${this.src_ZCc}|[?]|$)|` +
 
             this.get_path_extra().source +
+
+            // allowed punctuation chars in path.
+            '[/:%@#&=_~*]|' +
 
             // if no special rules matched, consume all chars except terminators.
             `(?!${this.get_path_terminator().source}).` +
