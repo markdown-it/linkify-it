@@ -11,8 +11,6 @@ export interface REBuilderOptions {
   tlds_src?: string
 }
 
-function escapeRE (str: string) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
-
 export class REBuilder {
   src_Any = Any.source
   src_Cc = Cc.source
@@ -34,6 +32,22 @@ export class REBuilder {
 
     this.cache = {}
     return this
+  }
+
+  escapeRE (str: string) { return str.replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&') }
+
+  nestedPairRE (open: string, close: string, depth = 4) {
+    const openRE = this.escapeRE(open)
+    const closeRE = this.escapeRE(close)
+    const atom = `(?:(?!${this.src_ZCc}|${openRE}|${closeRE}).)`
+
+    let pair = `${openRE}${atom}{0,1000}${closeRE}`
+
+    for (let level = 2; level <= depth; level++) {
+      pair = `${openRE}(?:${atom}|${pair}){0,1000}${closeRE}`
+    }
+
+    return pair
   }
 
   // Partials
@@ -122,9 +136,9 @@ export class REBuilder {
       '(?:' +
         '[/?#]' +
           '(?:' +
-            `\\[(?:(?!${this.src_ZCc}|\\]).){0,100}\\]|` +
-            `\\((?:(?!${this.src_ZCc}|[)]).){0,100}\\)|` +
-            `\\{(?:(?!${this.src_ZCc}|[}]).){0,100}\\}|` +
+            `${this.nestedPairRE('[', ']')}|` +
+            `${this.nestedPairRE('(', ')')}|` +
+            `${this.nestedPairRE('{', '}')}|` +
             `\\"(?:(?!${this.src_ZCc}|["]).){1,100}\\"|` +
             `\\'(?:(?!${this.src_ZCc}|[']).){1,100}\\'|` +
 
@@ -163,7 +177,7 @@ export class REBuilder {
             this.get_path_extra().source +
 
             // allowed punctuation chars in path.
-            '[/:%@#&=_~*]|' +
+            '[\\\\/:%@#&=_~*]|' +
 
             // if no special rules matched, consume all chars except terminators.
             `(?!${this.get_path_terminator().source}).` +
@@ -392,7 +406,7 @@ export class REBuilder {
   }
 
   get_schema_names () {
-    return this.cache.schema_names ??= new RegExp((this.opts.schema_names || []).map(escapeRE).join('|'))
+    return this.cache.schema_names ??= new RegExp((this.opts.schema_names || []).map(name => this.escapeRE(name)).join('|'))
   }
 
   get_schema_test () {

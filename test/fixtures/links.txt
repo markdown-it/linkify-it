@@ -252,6 +252,12 @@ user@domain.com
 <mailto:user@domain.com>
 mailto:user@domain.com
 
+% nested scopes in path (up to 4)
+https://latex.codecogs.com/svg.latex?{logReturnWap_{t}}=\log\frac{{{wap_{t}}}}{{{wap_{t-1}}}}
+
+http://sv-t-vnl-forge-metrics:5601/?#/dashboard/Logs-Marmotte?_a=(filters:!(),panels:!((col:1,columns:!(message,host,tags),id:Marmotte-logs,row:1,size_x:12,size_y:8,sort:!('@timestamp',asc),type:search)),query:(query_string:(analyze_wildcard:!t,query:'*')),title:'Logs%20Marmotte')&_g=(refreshInterval:(display:'10%20seconds',pause:!f,section:1,value:10000),time:(from:now-15m,mode:quick,to:now))
+
+http://ncase.me/loopy/v1.1/?data=[[[1,198,285,0,%22depression%22,0],[2,531,282,0,%22doing%2520things%22,4],[3,367,115,0,%22de-motivation%22,1],[4,702,116,0,%22fear%2520of%2520mistakes%22,1],[5,860,289,0,%22anxiety%22,0],[6,699,468,0,%22accepting%2520mistakes%22,4],[7,364,473,0,%22feeling%2520good%22,4]],[[2,7,59,1,0],[2,6,-61,1,0],[6,5,-59,-1,0],[5,4,-57,1,0],[4,2,-53,-1,0],[3,2,56,-1,0],[1,3,66,1,0],[7,1,63,-1,0]],[[365,296,%22a%2520possible%250Asystems-level%250Aexplanation%2520for%250Awhy%2520depression%2520%2526%250Aanxiety%2520are%2520not%2520just%250Aco-morbid%252C%2520but%250AMUTUALLY%2520SELF-%250AREINFORCING%22],[695,300,%22CHALLENGE%253A%250A%250Adraw%2520%2526%2520simulate%250Ayour%2520OWN%2520mental%250Afeedback%2520loops%22]],7]
 
 %
 % Emails

@@ -56,6 +56,7 @@ See more in examples folder:
 
 - [twitter mentions](examples/twitter.mjs)
 - [CJK paired brackets in URL paths](examples/cjk-paired-brackets.mjs)
+- [increased nested scopes depth](examples/nested-scopes-depth.mjs)
 
 
 API
