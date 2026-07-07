@@ -131,7 +131,7 @@ export class REBuilder {
             // allow `I'm_king` if no pair found
             `\\'(?=${this.get_pseudo_letter().source}|[-])|` +
 
-            // google has many dots in "google search" links (#66, #81).
+            // 1. google has many dots in "google search" links (#66, #81).
             // github has ... in commit range links,
             // Restrict to
             // - english
@@ -139,7 +139,10 @@ export class REBuilder {
             // - parts of file path
             // - params separator
             // until more examples found.
-            '\\.{2,20}[a-zA-Z0-9%/&]|' +
+            //
+            // 2. Allow `..:XX` for Odysee links (optional `:`), #100
+            // This may be narrowed down later via separate rule.
+            '\\.{2,20}[:]?[a-zA-Z0-9%/&]|' +
 
             `\\.(?!${this.src_ZCc}|[.]|$)|` +
             (this.opts['---']
