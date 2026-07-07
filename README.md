@@ -52,7 +52,10 @@ console.log(linkify.match('Site github.com!'));
 // } ]
 ```
 
-See more in [examples](examples/) folder.
+See more in examples folder:
+
+- [twitter mentions](examples/twitter.mjs)
+- [CJK paired brackets in URL paths](examples/cjk-paired-brackets.mjs)
 
 
 API
