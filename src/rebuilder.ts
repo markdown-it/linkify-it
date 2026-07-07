@@ -55,7 +55,6 @@ export class REBuilder {
 
   get_ip4 () {
     return this.cache.src_ip4 ??= new RegExp(
-
       '(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
     )
   }
@@ -71,26 +70,30 @@ export class REBuilder {
 
   get_port () {
     return this.cache.src_port ??= new RegExp(
-
       '(?::(?:6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))|[1-5]?\\d{1,4}))?'
     )
   }
 
   get_host_terminator () {
     return this.cache.src_host_terminator ??= new RegExp(
-
       `(?=$|${this.get_text_separators().source}|${this.src_ZPCc})` +
       `(?!${this.opts['---'] ? '-(?!--)|' : '-|'}_|:\\d|\\.-|\\.(?!$|${this.src_ZPCc}))`
     )
   }
 
+  get_path_terminator () {
+    return this.cache.src_path_terminator ??= new RegExp(
+      // Probably worth replace with
+      // `${this.src_ZPCc}|${this.get_text_separators().source}`
+      `${this.src_ZCc}|${this.get_text_separators().source}|[()[\\]{}.,"'?!\\-;]`
+    )
+  }
+
   get_path () {
     return this.cache.src_path ??= new RegExp(
-
       '(?:' +
         '[/?#]' +
           '(?:' +
-            `(?!${this.src_ZCc}|${this.get_text_separators().source}|[()[\\]{}.,"'?!\\-;]).|` +
             `\\[(?:(?!${this.src_ZCc}|\\]).){0,100}\\]|` +
             `\\((?:(?!${this.src_ZCc}|[)]).){0,100}\\)|` +
             `\\{(?:(?!${this.src_ZCc}|[}]).){0,100}\\}|` +
@@ -124,7 +127,10 @@ export class REBuilder {
             // allow `!!!` in paths, but not at the end
             `\\!+(?!${this.src_ZCc}|[!]|$)|` +
 
-            `\\?(?!${this.src_ZCc}|[?]|$)` +
+            `\\?(?!${this.src_ZCc}|[?]|$)|` +
+
+            // if no special rules matched, consume all chars except terminators.
+            `(?!${this.get_path_terminator().source}).` +
           ')+' +
         '|\\/' +
       ')?'
@@ -133,7 +139,6 @@ export class REBuilder {
 
   get_email_name () {
     return this.cache.src_email_name ??= new RegExp(
-
       // Allow anything in markdown spec, forbid quote (") at the first position
       // because emails enclosed in quotes are far more common
       // Max name length capped to 64 chars (RFC 5321). This also prevents O(n^2)
@@ -144,21 +149,18 @@ export class REBuilder {
 
   get_xn () {
     return this.cache.src_xn ??= new RegExp(
-
       'xn--[a-z0-9\\-]{1,59}'
     )
   }
 
   get_tld () {
     return this.cache.tld ??= new RegExp(
-
       `${this.opts.tlds_src}|${this.get_xn().source}`
     )
   }
 
   get_domain_root () {
     return this.cache.src_domain_root ??= new RegExp(
-
       // More to read about domain names
       // http://serverfault.com/questions/638260/
 
@@ -173,7 +175,6 @@ export class REBuilder {
 
   get_domain () {
     return this.cache.src_domain ??= new RegExp(
-
       '(?:' +
         this.get_xn().source +
         '|' +
@@ -186,7 +187,6 @@ export class REBuilder {
 
   get_host () {
     return this.cache.src_host ??= new RegExp(
-
       '(?:' +
       // Don't need IP check, because digits are already allowed in normal domain names
       //   src_ip4 +
@@ -198,7 +198,6 @@ export class REBuilder {
 
   get_host_fuzzy () {
     return this.cache.host_fuzzy ??= new RegExp(
-
       '(?:' +
         this.get_ip4().source +
       '|' +
