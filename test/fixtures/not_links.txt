@@ -44,9 +44,15 @@ path:to:file.pm
 1000.2.3.4
 a1.2.3.4
 1.2.3.4a
+http://[202:NaN]/api
+http://[202:NaN/api/v1/node
+http://[2001:db8:::1]/
+http://[1:2:3:4:5:6:7:8:9]/
 
 %
 % Not email
 %
 foo@bar     % Should be at second level domain & with correct tld
 mailto:bar
+mailto:user@[::1]
+mailto:user@[IPv6:202:NaN]

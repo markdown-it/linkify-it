@@ -53,9 +53,34 @@ export class REBuilder {
     )
   }
 
-  get_ip4 () {
+  get_ip4_host () {
     return this.cache.src_ip4 ??= new RegExp(
       '(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+    )
+  }
+
+  get_ip6_addr () {
+    const h16 = '[0-9A-Fa-f]{1,4}'
+    const ls32 = `(?:(?:${h16}:${h16})|${this.get_ip4_host().source})`
+
+    return this.cache.src_ip6_addr ??= new RegExp(
+      '(?:' +
+        `(?:${h16}:){6}${ls32}|` +
+        `::(?:${h16}:){5}${ls32}|` +
+        `(?:${h16})?::(?:${h16}:){4}${ls32}|` +
+        `(?:(?:${h16}:){0,1}${h16})?::(?:${h16}:){3}${ls32}|` +
+        `(?:(?:${h16}:){0,2}${h16})?::(?:${h16}:){2}${ls32}|` +
+        `(?:(?:${h16}:){0,3}${h16})?::${h16}:${ls32}|` +
+        `(?:(?:${h16}:){0,4}${h16})?::${ls32}|` +
+        `(?:(?:${h16}:){0,5}${h16})?::${h16}|` +
+        `(?:(?:${h16}:){0,6}${h16})?::` +
+      ')'
+    )
+  }
+
+  get_ip6_host () {
+    return this.cache.src_ip6_host ??= new RegExp(
+      `\\[${this.get_ip6_addr().source}\\]`
     )
   }
 
@@ -196,6 +221,8 @@ export class REBuilder {
   get_host () {
     return this.cache.src_host ??= new RegExp(
       '(?:' +
+        this.get_ip6_host().source +
+      '|' +
       // Don't need IP check, because digits are already allowed in normal domain names
       //   src_ip4 +
       // '|' +
@@ -204,10 +231,20 @@ export class REBuilder {
     )
   }
 
+  get_mail_host () {
+    return this.cache.src_mail_host ??= new RegExp(
+      '(?:' +
+        `\\[IPv6:${this.get_ip6_addr().source}\\]` +
+      '|' +
+        `(?:(?:(?:${this.get_domain().source})\\.)*${this.get_domain().source})` +
+      ')'
+    )
+  }
+
   get_host_fuzzy () {
     return this.cache.host_fuzzy ??= new RegExp(
       '(?:' +
-        this.get_ip4().source +
+        this.get_ip4_host().source +
       '|' +
         `(?:(?:(?:${this.get_domain().source})\\.)+(?:${this.get_tld().source}))` +
       ')'
@@ -221,10 +258,10 @@ export class REBuilder {
     )
   }
 
-  get_host_strict () {
-    return this.cache.src_host_strict ??= new RegExp(
+  get_mail_host_strict () {
+    return this.cache.src_mail_host_strict ??= new RegExp(
 
-      this.get_host().source + this.get_host_terminator().source
+      this.get_mail_host().source + this.get_host_terminator().source
     )
   }
 
@@ -334,7 +371,7 @@ export class REBuilder {
       this.get_auth().source +
       // Don't allow single-level domains, because of false positives like '//test'
       // with code comments.
-      `(?:localhost|(?:(?:${this.get_domain().source})\\.)+${this.get_domain_root().source})` +
+      `(?:localhost|${this.get_ip6_host().source}|(?:(?:${this.get_domain().source})\\.)+${this.get_domain_root().source})` +
       this.get_port().source +
       this.get_host_terminator().source +
       this.get_path().source,
@@ -346,7 +383,7 @@ export class REBuilder {
   get_mailto_validator () {
     return this.cache.mailto_validator ??= new RegExp(
 
-      `${this.get_email_name().source}@${this.get_host_strict().source}`,
+      `${this.get_email_name().source}@${this.get_mail_host_strict().source}`,
       'iy'
     )
   }

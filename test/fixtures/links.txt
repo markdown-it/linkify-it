@@ -89,6 +89,16 @@ My ssl //example.com site
 
 192.168.1.1/abc
 
+http://[::1]
+
+http://[::1]:8080/path?query=1
+
+https://[2001:db8::1]/abc
+
+ftp://[::ffff:192.168.1.1]/
+
+//[2001:db8:0:0:0:0:2:1]/abc
+
 
 %
 % Fuzzy
@@ -268,6 +278,10 @@ foo+bar@gmail.com
 
 mailto:foo@bar      % explicit protocol make it valid
 mailto:foo@bar
+
+mailto:user@[IPv6:::1]
+
+mailto:user@[IPv6:2001:db8::1]
 
 (foobar email@example.com)
 email@example.com
