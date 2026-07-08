@@ -1,3 +1,24 @@
+6.0.0 / Unpublished
+-------------------
+
+- [breaking] `fuzzyLink` is now disabled by default.
+- [breaking] Unicode punctuation characters (`{P}` class) now terminate links
+  by default. This should improve CJK support significantly. This may also cause
+  temporary regressions, which will be fixed as reported.
+- [breaking] Switched to class and named exports. Use
+  `import { LinkifyIt } from 'linkify-it'` and `new LinkifyIt(...)`.
+- [breaking] Migrated regexp internals to `REBuilder`; removed constructor
+  schemas, schema aliases, regexp schema definitions, `.compile()` and
+  `.onCompile()`.
+- Added TypeScript sources and bundled declarations.
+- Added `rebuilder` option for custom regexp fragments/hooks.
+- Added advanced usage examples.
+- Added IPv6 host support (#117).
+- Added nested scopes support in paths (#23).
+- Optimized test/match logic.
+- Migrated from Rollup/ndoc to Vite/TypeDoc.
+
+
 5.0.2 / 2026-07-02
 ------------------
 
