@@ -247,12 +247,10 @@ export class LinkifyIt {
     let m, re
 
     // try to scan for link with schema - that's the most simple rule
-    if (this.re.get_schema_test().test(text)) {
-      re = this.re.get_schema_search()
-      re.lastIndex = 0
-      while ((m = re.exec(text)) !== null) {
-        if (this.testSchemaAt(text, m[2], re.lastIndex)) { return true }
-      }
+    re = this.re.get_schema_search()
+    re.lastIndex = 0
+    while ((m = re.exec(text)) !== null) {
+      if (this.testSchemaAt(text, m[2], re.lastIndex)) { return true }
     }
 
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
@@ -311,85 +309,149 @@ export class LinkifyIt {
    */
   match (text: string): Match[] | null {
     const result: Match[] = []
-    const type_schemed: MatchCandidate[] = []
-    const type_fuzzy_link: MatchCandidate[] = []
-    const type_fuzzy_email: MatchCandidate[] = []
-    let m: RegExpExecArray | null
-    let len: number
-    let re: RegExp
-
-    function choose (a: MatchCandidate | undefined, b: MatchCandidate | undefined) {
-      if (!a) { return b }
-      if (!b) { return a }
-      if (a.index !== b.index) { return a.index < b.index ? a : b }
-      return a.lastIndex >= b.lastIndex ? a : b
-    }
+    const schemaRe = this.re.get_schema_search()
+    let fuzzyLinkRe: RegExp | undefined
+    let fuzzyEmailRe: RegExp | undefined
+    let fuzzyLinkCandidate: MatchCandidate | undefined
+    let fuzzyEmailCandidate: MatchCandidate | undefined
+    let schemaPrefix: MatchCandidate | undefined
+    let schemaDone = false
+    let fuzzyLinkDone = false
+    let fuzzyEmailDone = false
+    let pos = 0
 
     if (!text.length) { return null }
 
-    // scan for links with schema
-    if (this.re.get_schema_test().test(text)) {
-      re = this.re.get_schema_search()
-      re.lastIndex = 0
-      while ((m = re.exec(text)) !== null) {
-        len = this.testSchemaAt(text, m[2], re.lastIndex)
-        if (len) {
-          type_schemed.push({
-            schema: m[2],
-            index: m.index + m[1].length,
-            lastIndex: m.index + m[0].length + len
-          })
-        }
-      }
-    }
+    schemaRe.lastIndex = 0
 
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
-      re = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_global() : this.re.get_link_no_ip_fuzzy_global()
-      re.lastIndex = 0
-      while ((m = re.exec(text)) !== null) {
-        type_fuzzy_link.push({
-          schema: '',
-          index: m.index + m[1].length,
-          lastIndex: m.index + m[0].length
-        })
-      }
+      fuzzyLinkRe = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_global() : this.re.get_link_no_ip_fuzzy_global()
+      fuzzyLinkRe.lastIndex = 0
     }
 
     if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
-      re = this.re.get_email_fuzzy_global()
-      re.lastIndex = 0
-      while ((m = re.exec(text)) !== null) {
-        type_fuzzy_email.push({
-          schema: 'mailto:',
-          index: m.index + m[1].length,
-          lastIndex: m.index + m[0].length
-        })
-      }
+      fuzzyEmailRe = this.re.get_email_fuzzy_global()
+      fuzzyEmailRe.lastIndex = 0
     }
 
-    const indexes = [0, 0, 0]
-    let lastIndex = 0
-
     for (;;) {
-      const candidates = [
-        type_schemed[indexes[0]],
-        type_fuzzy_email[indexes[1]],
-        type_fuzzy_link[indexes[2]]
-      ]
+      const scanFrom = Math.max(pos - 1, 0)
 
-      const candidate = choose(choose(candidates[0], candidates[1]), candidates[2])
+      if (fuzzyEmailRe && !fuzzyEmailDone && (!fuzzyEmailCandidate || fuzzyEmailCandidate.index < pos)) {
+        if (fuzzyEmailRe.lastIndex < scanFrom) { fuzzyEmailRe.lastIndex = scanFrom }
+
+        for (;;) {
+          const m = fuzzyEmailRe.exec(text)
+          if (!m) {
+            fuzzyEmailDone = true
+            fuzzyEmailCandidate = undefined
+            break
+          }
+
+          fuzzyEmailCandidate = {
+            schema: 'mailto:',
+            index: m.index + m[1].length,
+            lastIndex: m.index + m[0].length
+          }
+
+          if (fuzzyEmailCandidate.index >= pos) { break }
+          if (fuzzyEmailRe.lastIndex < scanFrom) { fuzzyEmailRe.lastIndex = scanFrom }
+        }
+      }
+
+      if (fuzzyLinkRe && !fuzzyLinkDone && (!fuzzyLinkCandidate || fuzzyLinkCandidate.index < pos)) {
+        if (fuzzyLinkRe.lastIndex < scanFrom) { fuzzyLinkRe.lastIndex = scanFrom }
+
+        for (;;) {
+          const m = fuzzyLinkRe.exec(text)
+          if (!m) {
+            fuzzyLinkDone = true
+            fuzzyLinkCandidate = undefined
+            break
+          }
+
+          fuzzyLinkCandidate = {
+            schema: '',
+            index: m.index + m[1].length,
+            lastIndex: m.index + m[0].length
+          }
+
+          if (fuzzyLinkCandidate.index >= pos) { break }
+          if (fuzzyLinkRe.lastIndex < scanFrom) { fuzzyLinkRe.lastIndex = scanFrom }
+        }
+      }
+
+      let fuzzyCandidate = fuzzyEmailCandidate
+      if (!fuzzyCandidate ||
+        (fuzzyLinkCandidate &&
+          (fuzzyLinkCandidate.index < fuzzyCandidate.index ||
+            (fuzzyLinkCandidate.index === fuzzyCandidate.index && fuzzyLinkCandidate.lastIndex > fuzzyCandidate.lastIndex)))) {
+        fuzzyCandidate = fuzzyLinkCandidate
+      }
+
+      let schemaCandidate: MatchCandidate | undefined
+
+      if (!schemaDone) {
+        for (;;) {
+          if (!schemaPrefix) {
+            if (schemaRe.lastIndex < scanFrom) { schemaRe.lastIndex = scanFrom }
+
+            const m = schemaRe.exec(text)
+            if (!m) {
+              schemaDone = true
+              break
+            }
+
+            schemaPrefix = {
+              schema: m[2],
+              index: m.index + m[1].length,
+              lastIndex: m.index + m[0].length
+            }
+          }
+
+          if (schemaPrefix.index < pos) {
+            schemaPrefix = undefined
+            continue
+          }
+
+          if (fuzzyCandidate && schemaPrefix.index > fuzzyCandidate.index) { break }
+
+          const prefix = schemaPrefix
+          schemaPrefix = undefined
+
+          const len = this.testSchemaAt(text, prefix.schema, prefix.lastIndex)
+          if (len) {
+            schemaCandidate = {
+              schema: prefix.schema,
+              index: prefix.index,
+              lastIndex: prefix.lastIndex + len
+            }
+            break
+          }
+        }
+      }
+
+      let candidate = schemaCandidate
+      if (!candidate ||
+        (fuzzyEmailCandidate &&
+          (fuzzyEmailCandidate.index < candidate.index ||
+            (fuzzyEmailCandidate.index === candidate.index && fuzzyEmailCandidate.lastIndex > candidate.lastIndex)))) {
+        candidate = fuzzyEmailCandidate
+      }
+      if (!candidate ||
+        (fuzzyLinkCandidate &&
+          (fuzzyLinkCandidate.index < candidate.index ||
+            (fuzzyLinkCandidate.index === candidate.index && fuzzyLinkCandidate.lastIndex > candidate.lastIndex)))) {
+        candidate = fuzzyLinkCandidate
+      }
 
       if (!candidate) { break }
 
-      if (candidate === candidates[0]) {
-        indexes[0]++
-      } else if (candidate === candidates[1]) {
-        indexes[1]++
-      } else {
-        indexes[2]++
+      if (candidate === fuzzyEmailCandidate) {
+        fuzzyEmailCandidate = undefined
+      } else if (candidate === fuzzyLinkCandidate) {
+        fuzzyLinkCandidate = undefined
       }
-
-      if (candidate.index < lastIndex) { continue }
 
       const match = new Match(text, candidate.schema, candidate.index, candidate.lastIndex)
       if (match.schema) {
@@ -398,7 +460,7 @@ export class LinkifyIt {
         this.normalize(match)
       }
       result.push(match)
-      lastIndex = candidate.lastIndex
+      pos = candidate.lastIndex
     }
 
     if (result.length) {
