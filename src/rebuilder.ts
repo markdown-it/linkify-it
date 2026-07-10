@@ -394,11 +394,4 @@ export class REBuilder {
       'i'
     )
   }
-
-  get_pretest () {
-    return this.cache.pretest ??= new RegExp(
-      `(${this.get_schema_search().source})|(${this.get_host_fuzzy_test().source})|@`,
-      'i'
-    )
-  }
 }

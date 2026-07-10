@@ -28,7 +28,6 @@ describe('links', function () {
 
     if (next.trim()) {
       it(`line ${idx + 1}`, function () {
-        assert.ok(l.pretest(line), `(pretest failed in \`${line}\`)`)
         assert.ok(l.test(`\n${line}\n`), `(link not found in \`\\n${line}\\n\`)`)
         assert.ok(l.test(line), `(link not found in \`${line}\`)`)
         assert.strictEqual(l.match(line)[0].url, next)
@@ -36,7 +35,6 @@ describe('links', function () {
       skipNext = true
     } else {
       it(`line ${idx + 1}`, function () {
-        assert.ok(l.pretest(line), `(pretest failed in \`${line}\`)`)
         assert.ok(l.test(`\n${line}\n`), `(link not found in \`\\n${line}\\n\`)`)
         assert.ok(l.test(line), `(link not found in \`${line}\`)`)
         assert.strictEqual(l.match(line)[0].url, line)

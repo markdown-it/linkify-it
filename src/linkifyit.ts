@@ -300,17 +300,6 @@ export class LinkifyIt {
   }
 
   /**
-   * Very quick check, that can give false positives. Returns true if link MAY BE
-   * can exists. Can be used for speed optimization, when you need to check that
-   * link NOT exists.
-   *
-   * @param text Text to scan.
-   */
-  pretest (text: string): boolean {
-    return this.re.get_pretest().test(text)
-  }
-
-  /**
    * Similar to {@link LinkifyIt.test} but checks only specific protocol tail exactly
    * at given position. Returns length of found pattern (0 on fail).
    *
