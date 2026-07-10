@@ -8,7 +8,7 @@ import { Any, Cc, Z, P } from 'uc.micro'
 export interface REBuilderOptions {
   '---'?: boolean
   schema_names?: string[]
-  tlds_src?: string
+  tlds?: string[]
 }
 
 export class REBuilder {
@@ -24,11 +24,11 @@ export class REBuilder {
   opts: REBuilderOptions = { schema_names: [] }
 
   constructor (opts: REBuilderOptions = {}) {
-    Object.assign(this.opts, opts)
+    this.opts = { ...this.opts, ...opts }
   }
 
   set (opts: REBuilderOptions = {}) {
-    Object.assign(this.opts, opts)
+    this.opts = { ...this.opts, ...opts }
 
     this.cache = {}
     return this
@@ -204,9 +204,15 @@ export class REBuilder {
   }
 
   get_tld () {
-    return this.cache.tld ??= new RegExp(
-      `${this.opts.tlds_src}|${this.get_xn().source}`
+    if (this.cache.tld) return this.cache.tld
+
+    const tlds_src = [...new Set(this.opts.tlds || [])].sort().reverse()
+      .join('|')
+
+    this.cache.tld = new RegExp(
+      `${tlds_src || '$#none#$'}|${this.get_xn().source}`
     )
+    return this.cache.tld
   }
 
   get_domain_root () {
