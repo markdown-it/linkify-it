@@ -277,7 +277,9 @@ export class LinkifyIt {
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
       // guess schemaless links
       if (text.search(this.re.get_host_fuzzy_test()) >= 0) {
-        if (text.match(this.__opts__.fuzzyIP ? this.re.get_link_fuzzy() : this.re.get_link_no_ip_fuzzy()) !== null) {
+        re = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_search() : this.re.get_link_no_ip_fuzzy_search()
+        re.lastIndex = 0
+        if (re.exec(text) !== null) {
           return true
         }
       }
@@ -288,7 +290,9 @@ export class LinkifyIt {
       if (text.indexOf('@') >= 0) {
         // We can't skip this check, because this cases are possible:
         // 192.168.1.1@gmail.com, my.in@example.com
-        if (text.match(this.re.get_email_fuzzy()) !== null) { return true }
+        re = this.re.get_email_fuzzy_search()
+        re.lastIndex = 0
+        if (re.exec(text) !== null) { return true }
       }
     }
 
@@ -346,12 +350,12 @@ export class LinkifyIt {
     schemaRe.lastIndex = 0
 
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
-      fuzzyLinkRe = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_global() : this.re.get_link_no_ip_fuzzy_global()
+      fuzzyLinkRe = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_search() : this.re.get_link_no_ip_fuzzy_search()
       fuzzyLinkRe.lastIndex = 0
     }
 
     if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
-      fuzzyEmailRe = this.re.get_email_fuzzy_global()
+      fuzzyEmailRe = this.re.get_email_fuzzy_search()
       fuzzyEmailRe.lastIndex = 0
     }
 

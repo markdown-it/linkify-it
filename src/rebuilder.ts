@@ -276,35 +276,30 @@ export class REBuilder {
 
   get_host_no_ip_fuzzy () {
     return this.cache.host_no_ip_fuzzy ??= new RegExp(
-
       `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))`
     )
   }
 
   get_mail_host_strict () {
     return this.cache.src_mail_host_strict ??= new RegExp(
-
       this.get_mail_host().source + this.get_host_terminator().source
     )
   }
 
   get_host_fuzzy_strict () {
     return this.cache.host_fuzzy_strict ??= new RegExp(
-
       this.get_host_fuzzy().source + this.get_host_terminator().source
     )
   }
 
   get_host_port_strict () {
     return this.cache.src_host_port_strict ??= new RegExp(
-
       this.get_host().source + this.get_port().source + this.get_host_terminator().source
     )
   }
 
   get_host_port_fuzzy_strict () {
     return this.cache.host_port_fuzzy_strict ??= new RegExp(
-
       this.get_host_fuzzy().source + this.get_port().source + this.get_host_terminator().source
     )
   }
@@ -320,69 +315,42 @@ export class REBuilder {
 
   get_host_fuzzy_test () {
     return this.cache.host_fuzzy_test ??= new RegExp(
-
       // Rude test fuzzy links by host, for quick deny
       `localhost|www\\.|\\.\\d{1,3}\\.|(?:\\.(?:${this.get_tld().source})(?:${this.src_ZPCc}|>|$))`,
       'i'
     )
   }
 
-  get_email_fuzzy () {
-    return this.cache.email_fuzzy ??= new RegExp(
-
+  get_email_fuzzy_search () {
+    return this.cache.email_fuzzy_search ??= new RegExp(
         `(^|${this.get_text_separators().source}|"|\\(|${this.src_ZCc})` +
         `(${this.get_email_name().source}@${this.get_host_fuzzy_strict().source})`,
-        'i'
-    )
-  }
-
-  get_email_fuzzy_global () {
-    return this.cache.email_fuzzy_global ??= new RegExp(
-
-      this.get_email_fuzzy().source,
       'ig'
     )
   }
 
-  get_link_fuzzy () {
-    return this.cache.link_fuzzy ??= new RegExp(
+  get_link_fuzzy_search () {
+    return this.cache.link_fuzzy_search ??= new RegExp(
         // Fuzzy link can't be prepended with .:/\- and non punctuation.
         // but can start with > (markdown blockquote)
         `(^|(?![.:/\\-_@])(?:[$+<=>^\`|\uff5c]|${this.src_ZPCc}))` +
         `((?![$+<=>^\`|\uff5c])${this.get_host_port_fuzzy_strict().source}${this.get_path().source})`,
-        'i'
-    )
-  }
-
-  get_link_fuzzy_global () {
-    return this.cache.link_fuzzy_global ??= new RegExp(
-
-      this.get_link_fuzzy().source,
       'ig'
     )
   }
 
-  get_link_no_ip_fuzzy () {
-    return this.cache.link_no_ip_fuzzy ??= new RegExp(
+  get_link_no_ip_fuzzy_search () {
+    return this.cache.link_no_ip_fuzzy_search ??= new RegExp(
         // Fuzzy link can't be prepended with .:/\- and non punctuation.
         // but can start with > (markdown blockquote)
         `(^|(?![.:/\\-_@])(?:[$+<=>^\`|\uff5c]|${this.src_ZPCc}))` +
         `((?![$+<=>^\`|\uff5c])${this.get_host_port_no_ip_fuzzy_strict().source}${this.get_path().source})`,
-        'i'
-    )
-  }
-
-  get_link_no_ip_fuzzy_global () {
-    return this.cache.link_no_ip_fuzzy_global ??= new RegExp(
-
-      this.get_link_no_ip_fuzzy().source,
       'ig'
     )
   }
 
   get_http_validator () {
     return this.cache.http_validator ??= new RegExp(
-
       `\\/\\/${this.get_auth().source}${this.get_host_port_strict().source}${this.get_path().source}`,
       'iy'
     )
@@ -390,7 +358,6 @@ export class REBuilder {
 
   get_relative_proto_validator () {
     return this.cache.relative_proto_validator ??= new RegExp(
-
       this.get_auth().source +
       // Don't allow single-level domains, because of false positives like '//test'
       // with code comments.
@@ -405,7 +372,6 @@ export class REBuilder {
 
   get_mailto_validator () {
     return this.cache.mailto_validator ??= new RegExp(
-
       `${this.get_email_name().source}@${this.get_mail_host_strict().source}`,
       'iy'
     )
@@ -415,25 +381,15 @@ export class REBuilder {
     return this.cache.schema_names ??= new RegExp((this.opts.schema_names || []).map(name => this.escapeRE(name)).join('|'))
   }
 
-  get_schema_test () {
-    return this.cache.schema_test ??= new RegExp(
-
-      `(^|(?!_)(?:[><\uff5c]|${this.src_ZPCc}))(${this.get_schema_names().source})`,
-      'i'
-    )
-  }
-
   get_schema_search () {
     return this.cache.schema_search ??= new RegExp(
-
-      this.get_schema_test().source,
+      `(^|(?!_)(?:[><\uff5c]|${this.src_ZPCc}))(${this.get_schema_names().source})`,
       'ig'
     )
   }
 
   get_schema_at_start () {
     return this.cache.schema_at_start ??= new RegExp(
-
       `^${this.get_schema_search().source}`,
       'i'
     )
@@ -441,8 +397,7 @@ export class REBuilder {
 
   get_pretest () {
     return this.cache.pretest ??= new RegExp(
-
-      `(${this.get_schema_test().source})|(${this.get_host_fuzzy_test().source})|@`,
+      `(${this.get_schema_search().source})|(${this.get_host_fuzzy_test().source})|@`,
       'i'
     )
   }
