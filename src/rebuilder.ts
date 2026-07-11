@@ -7,6 +7,7 @@ import { Any, Cc, Z, P } from 'uc.micro'
  */
 export interface REBuilderOptions {
   '---'?: boolean
+  fuzzyIP?: boolean
   schema_names?: string[]
   tlds?: string[]
 }
@@ -241,11 +242,10 @@ export class REBuilder {
   get_host () {
     return this.cache.src_host ??= new RegExp(
       '(?:' +
+        // Don't need IP v4 check, because digits are already allowed
+        // in normal domain names
         this.get_ip6_host().source +
-      '|' +
-      // Don't need IP check, because digits are already allowed in normal domain names
-      //   src_ip4 +
-      // '|' +
+        '|' +
         `(?:(?:(?:${this.get_domain().source})\\.){0,10}${this.get_domain().source})`/* _root */ +
       ')'
     )
@@ -255,7 +255,7 @@ export class REBuilder {
     return this.cache.src_mail_host ??= new RegExp(
       '(?:' +
         `\\[IPv6:${this.get_ip6_addr().source}\\]` +
-      '|' +
+        '|' +
         `(?:(?:(?:${this.get_domain().source})\\.){0,10}${this.get_domain().source})` +
       ')'
     )
@@ -264,16 +264,9 @@ export class REBuilder {
   get_host_fuzzy () {
     return this.cache.host_fuzzy ??= new RegExp(
       '(?:' +
-        this.get_ip4_host().source +
-      '|' +
+        (this.opts.fuzzyIP ? this.get_ip4_host().source + '|' : '') +
         `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))` +
       ')'
-    )
-  }
-
-  get_host_no_ip_fuzzy () {
-    return this.cache.host_no_ip_fuzzy ??= new RegExp(
-      `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))`
     )
   }
 
@@ -301,22 +294,7 @@ export class REBuilder {
     )
   }
 
-  get_host_port_no_ip_fuzzy_strict () {
-    return this.cache.host_port_no_ip_fuzzy_strict ??= new RegExp(
-
-      this.get_host_no_ip_fuzzy().source + this.get_port().source + this.get_host_terminator().source
-    )
-  }
-
   // Main rules
-
-  get_host_fuzzy_test () {
-    return this.cache.host_fuzzy_test ??= new RegExp(
-      // Rude test fuzzy links by host, for quick deny
-      `localhost|www\\.|\\.\\d{1,3}\\.|(?:\\.(?:${this.get_tld().source})(?:${this.src_ZPCc}|>|$))`,
-      'i'
-    )
-  }
 
   get_mail_fuzzy_host_search () {
     return this.cache.mail_fuzzy_host_search ??= new RegExp(
@@ -337,16 +315,6 @@ export class REBuilder {
         // but can start with > (markdown blockquote)
         `(^|(?![.:/\\-_@])(?:[$+<=>^\`|\uff5c]|${this.src_ZPCc}))` +
         `((?![$+<=>^\`|\uff5c])${this.get_host_port_fuzzy_strict().source}${this.get_path().source})`,
-      'ig'
-    )
-  }
-
-  get_link_no_ip_fuzzy_search () {
-    return this.cache.link_no_ip_fuzzy_search ??= new RegExp(
-        // Fuzzy link can't be prepended with .:/\- and non punctuation.
-        // but can start with > (markdown blockquote)
-        `(^|(?![.:/\\-_@])(?:[$+<=>^\`|\uff5c]|${this.src_ZPCc}))` +
-        `((?![$+<=>^\`|\uff5c])${this.get_host_port_no_ip_fuzzy_strict().source}${this.get_path().source})`,
       'ig'
     )
   }

@@ -276,13 +276,9 @@ export class LinkifyIt {
 
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
       // guess schemaless links
-      if (text.search(this.re.get_host_fuzzy_test()) >= 0) {
-        re = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_search() : this.re.get_link_no_ip_fuzzy_search()
-        re.lastIndex = 0
-        if (re.exec(text) !== null) {
-          return true
-        }
-      }
+      re = this.re.get_link_fuzzy_search()
+      re.lastIndex = 0
+      if (re.exec(text) !== null) { return true }
     }
 
     if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
@@ -345,7 +341,7 @@ export class LinkifyIt {
     schemaRe.lastIndex = 0
 
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
-      fuzzyLinkRe = this.__opts__.fuzzyIP ? this.re.get_link_fuzzy_search() : this.re.get_link_no_ip_fuzzy_search()
+      fuzzyLinkRe = this.re.get_link_fuzzy_search()
       fuzzyLinkRe.lastIndex = 0
     }
 
