@@ -10,6 +10,7 @@ export interface REBuilderOptions {
   fuzzyIP?: boolean
   schema_names?: string[]
   tlds?: string[]
+  urlAuth?: boolean
   maxLength?: number
 }
 
@@ -23,7 +24,7 @@ export class REBuilder {
   // \p{\Z\Cc} (white spaces + control)
   src_ZCc = [this.src_Z, this.src_Cc].join('|')
   cache: Record<string, RegExp | undefined> = {}
-  opts: REBuilderOptions = { maxLength: 10000, schema_names: [] }
+  opts: REBuilderOptions = { maxLength: 10000, urlAuth: false, schema_names: [] }
 
   constructor (opts: REBuilderOptions = {}) {
     this.opts = { ...this.opts, ...opts }
@@ -328,14 +329,17 @@ export class REBuilder {
 
   get_http_validator () {
     return this.cache.http_validator ??= new RegExp(
-      `\\/\\/${this.get_auth().source}${this.get_url_host_port().source}${this.get_path().source}`,
+      '\\/\\/' +
+      (this.opts.urlAuth ? this.get_auth().source : '') +
+      this.get_url_host_port().source +
+      this.get_path().source,
       'iy'
     )
   }
 
   get_relative_proto_validator () {
     return this.cache.relative_proto_validator ??= new RegExp(
-      this.get_auth().source +
+      (this.opts.urlAuth ? this.get_auth().source : '') +
       // Don't allow single-level domains, because of false positives like '//test'
       // with code comments.
       `(?:localhost|${this.get_ipv6_url_host().source}|(?:(?:${this.get_domain().source})[.]){1,10}${this.get_domain_root().source})` +

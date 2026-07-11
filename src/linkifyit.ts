@@ -23,6 +23,8 @@ export interface LinkifyOptions {
   '---'?: boolean
   /** Allowed TLDs list for fuzzy links. Replaces the default list when set. */
   tlds?: string[]
+  /** Recognize authentication data in URLs. Default `false`. */
+  urlAuth?: boolean
   /** Maximum link length. Default `10000`. */
   maxLength?: number
 }
@@ -129,6 +131,7 @@ const defaultOptions: Required<LinkifyOptions> = {
   fuzzyIP: false,
   '---': false,
   tlds: unpackTlds(),
+  urlAuth: false,
   maxLength: 10000
 }
 

@@ -1,7 +1,7 @@
 import { LinkifyIt } from '../../src/index.ts'
 import './index.css'
 
-const linkify = new LinkifyIt({ fuzzyLink: true, fuzzyIP: true })
+const linkify = new LinkifyIt({ fuzzyLink: true, fuzzyIP: true, urlAuth: true })
 let source
 let result
 let permalink

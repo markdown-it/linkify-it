@@ -6,7 +6,7 @@ import { LinkifyIt } from '../src/index.ts'
 let lines
 
 describe('links', function () {
-  const l = new LinkifyIt({ fuzzyLink: true, fuzzyIP: true })
+  const l = new LinkifyIt({ fuzzyLink: true, fuzzyIP: true, urlAuth: true })
 
   l.normalize = function () {} // kill normalizer
 
