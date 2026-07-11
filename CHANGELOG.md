@@ -1,5 +1,5 @@
-6.0.0 / Unpublished
--------------------
+6.0.0 / 2026-07-11
+------------------
 
 - [breaking] `fuzzyLink` is now disabled by default.
 - [breaking] Unicode punctuation characters (`{P}` class) now terminate links
@@ -10,12 +10,16 @@
 - [breaking] Migrated regexp internals to `REBuilder`; removed constructor
   schemas, schema aliases, regexp schema definitions, `.compile()` and
   `.onCompile()`.
+- [breaking] Removed `.pretest()` (use `.test()` instead).
+- [breaking] Disabled URL authentication scan by default. See new `urlAuth`
+  option.
 - Added TypeScript sources and bundled declarations.
 - Added `rebuilder` option for custom regexp fragments/hooks.
 - Added advanced usage examples.
 - Added IPv6 host support (#117).
 - Added nested scopes support in paths (#23).
-- Optimized test/match logic.
+- Significant perfonamce boost.
+- Restricted links with schema to `maxLength` characters (10000 by default).
 - Migrated from Rollup/ndoc to Vite/TypeDoc.
 
 
