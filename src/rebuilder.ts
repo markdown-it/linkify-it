@@ -10,6 +10,7 @@ export interface REBuilderOptions {
   fuzzyIP?: boolean
   schema_names?: string[]
   tlds?: string[]
+  maxLength?: number
 }
 
 export class REBuilder {
@@ -22,7 +23,7 @@ export class REBuilder {
   // \p{\Z\Cc} (white spaces + control)
   src_ZCc = [this.src_Z, this.src_Cc].join('|')
   cache: Record<string, RegExp | undefined> = {}
-  opts: REBuilderOptions = { schema_names: [] }
+  opts: REBuilderOptions = { maxLength: 10000, schema_names: [] }
 
   constructor (opts: REBuilderOptions = {}) {
     this.opts = { ...this.opts, ...opts }
@@ -188,7 +189,7 @@ export class REBuilder {
 
             // if no special rules matched, consume all chars except terminators.
             `(?!${this.get_path_terminator().source}).` +
-          '){1,10000}' +
+          `){1,${this.opts.maxLength}}` +
         '|\\/' +
       ')?'
     )

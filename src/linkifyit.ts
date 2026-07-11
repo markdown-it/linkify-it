@@ -23,6 +23,8 @@ export interface LinkifyOptions {
   '---'?: boolean
   /** Allowed TLDs list for fuzzy links. Replaces the default list when set. */
   tlds?: string[]
+  /** Maximum link length. Default `10000`. */
+  maxLength?: number
 }
 
 export interface LinkifyConstructorOptions extends LinkifyOptions {
@@ -126,7 +128,8 @@ const defaultOptions: Required<LinkifyOptions> = {
   fuzzyEmail: true,
   fuzzyIP: false,
   '---': false,
-  tlds: unpackTlds()
+  tlds: unpackTlds(),
+  maxLength: 10000
 }
 
 /**
@@ -310,10 +313,13 @@ export class LinkifyIt {
    */
   testSchemaAt (text: string, schema: string, pos: number): number {
     // If not supported schema check requested - terminate
-    if (!this.__schemas__[schema.toLowerCase()]) {
-      return 0
-    }
-    return this.__schemas__[schema.toLowerCase()].validate(text, pos, this)
+    if (!this.__schemas__[schema.toLowerCase()]) { return 0 }
+
+    return this.__schemas__[schema.toLowerCase()].validate(
+      text.slice(0, pos + this.__opts__.maxLength),
+      pos,
+      this
+    )
   }
 
   /**
