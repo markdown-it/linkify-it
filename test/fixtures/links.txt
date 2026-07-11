@@ -263,9 +263,6 @@ http://ncase.me/loopy/v1.1/?data=[[[1,198,285,0,%22depression%22,0],[2,531,282,0
 % Emails
 %
 
-test."foo".bar@gmail.co.uk!
-test."foo".bar@gmail.co.uk
-
 "test@example.com"
 test@example.com
 

@@ -290,9 +290,14 @@ export class LinkifyIt {
       if (text.indexOf('@') >= 0) {
         // We can't skip this check, because this cases are possible:
         // 192.168.1.1@gmail.com, my.in@example.com
-        re = this.re.get_email_fuzzy_search()
-        re.lastIndex = 0
-        if (re.exec(text) !== null) { return true }
+        const mailHostRe = this.re.get_mail_fuzzy_host_search()
+        const mailNameRe = this.re.get_mail_name_validator()
+        mailHostRe.lastIndex = 0
+
+        while ((m = mailHostRe.exec(text)) !== null) {
+          const name = text.slice(Math.max(0, m.index - 65), m.index)
+          if (mailNameRe.test(name)) { return true }
+        }
       }
     }
 
@@ -325,7 +330,8 @@ export class LinkifyIt {
     const result: Match[] = []
     const schemaRe = this.re.get_schema_search()
     let fuzzyLinkRe: RegExp | undefined
-    let fuzzyEmailRe: RegExp | undefined
+    let mailHostRe: RegExp | undefined
+    let mailNameRe: RegExp | undefined
     let fuzzyLinkCandidate: MatchCandidate | undefined
     let fuzzyEmailCandidate: MatchCandidate | undefined
     let schemaPrefix: MatchCandidate | undefined
@@ -344,32 +350,36 @@ export class LinkifyIt {
     }
 
     if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
-      fuzzyEmailRe = this.re.get_email_fuzzy_search()
-      fuzzyEmailRe.lastIndex = 0
+      mailHostRe = this.re.get_mail_fuzzy_host_search()
+      mailHostRe.lastIndex = 0
+      mailNameRe = this.re.get_mail_name_validator()
     }
 
     for (;;) {
       const scanFrom = Math.max(pos - 1, 0)
 
-      if (fuzzyEmailRe && !fuzzyEmailDone && (!fuzzyEmailCandidate || fuzzyEmailCandidate.index < pos)) {
-        if (fuzzyEmailRe.lastIndex < scanFrom) { fuzzyEmailRe.lastIndex = scanFrom }
+      if (mailHostRe && mailNameRe && !fuzzyEmailDone && (!fuzzyEmailCandidate || fuzzyEmailCandidate.index < pos)) {
+        if (mailHostRe.lastIndex < scanFrom) { mailHostRe.lastIndex = scanFrom }
 
         for (;;) {
-          const m = fuzzyEmailRe.exec(text)
+          const m = mailHostRe.exec(text)
           if (!m) {
             fuzzyEmailDone = true
             fuzzyEmailCandidate = undefined
             break
           }
 
+          const name = mailNameRe.exec(text.slice(Math.max(0, m.index - 65), m.index))
+          if (!name) { continue }
+
           fuzzyEmailCandidate = {
             schema: 'mailto:',
-            index: m.index + m[1].length,
+            index: m.index - name[1].length,
             lastIndex: m.index + m[0].length
           }
 
           if (fuzzyEmailCandidate.index >= pos) { break }
-          if (fuzzyEmailRe.lastIndex < scanFrom) { fuzzyEmailRe.lastIndex = scanFrom }
+          if (mailHostRe.lastIndex < scanFrom) { mailHostRe.lastIndex = scanFrom }
         }
       }
 

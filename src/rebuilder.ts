@@ -187,13 +187,10 @@ export class REBuilder {
     )
   }
 
-  get_email_name () {
-    return this.cache.src_email_name ??= new RegExp(
-      // Allow anything in markdown spec, forbid quote (") at the first position
-      // because emails enclosed in quotes are far more common
-      // Max name length capped to 64 chars (RFC 5321). This also prevents O(n^2)
-      // rescans to the end on inputs like `mailto:mailto:...`
-      '[\\-;:&=\\+\\$,\\.a-zA-Z0-9_][\\-;:&=\\+\\$,\\"\\.a-zA-Z0-9_]{0,63}'
+  get_mail_name () {
+    return this.cache.src_mail_name ??= new RegExp(
+      // RFC 5321 dot-string only (no quoted-string), max 64 ASCII characters.
+      "[-!#$%&'*+/=?^_`{|}~a-zA-Z0-9](?:[-!#$%&'*+/=?^_`{|}~a-zA-Z0-9]|[.](?=[-!#$%&'*+/=?^_`{|}~a-zA-Z0-9])){0,63}"
     )
   }
 
@@ -321,10 +318,15 @@ export class REBuilder {
     )
   }
 
-  get_email_fuzzy_search () {
-    return this.cache.email_fuzzy_search ??= new RegExp(
-        `(^|${this.get_text_separators().source}|"|\\(|${this.src_ZCc})` +
-        `(${this.get_email_name().source}@${this.get_host_fuzzy_strict().source})`,
+  get_mail_fuzzy_host_search () {
+    return this.cache.mail_fuzzy_host_search ??= new RegExp(
+      '@' +
+      '(?:' +
+        `\\[IPv6:${this.get_ip6_addr().source}\\]` +
+        '|' +
+        `(?:(?:(?:${this.get_domain().source})[.]){1,4}${this.get_domain_root().source})` +
+      ')' +
+      this.get_host_terminator().source,
       'ig'
     )
   }
@@ -370,9 +372,17 @@ export class REBuilder {
     )
   }
 
+  get_mail_name_validator () {
+    return this.cache.mail_name_validator ??= new RegExp(
+      `(?:^|${this.get_text_separators().source}|"|\\(|${this.src_ZCc})` +
+      `(${this.get_mail_name().source})$`,
+      'i'
+    )
+  }
+
   get_mailto_validator () {
     return this.cache.mailto_validator ??= new RegExp(
-      `${this.get_email_name().source}@${this.get_mail_host_strict().source}`,
+      `${this.get_mail_name().source}@${this.get_mail_host_strict().source}`,
       'iy'
     )
   }
