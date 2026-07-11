@@ -70,7 +70,10 @@ export class REBuilder {
 
   get_ipv4_addr () {
     return this.cache.src_ip4 ??= new RegExp(
-      '(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+      '(?:' +
+        '(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])[.]' +
+      '){3}' +
+      '(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])'
     )
   }
 
@@ -305,19 +308,19 @@ export class REBuilder {
 
   // "Public" rules
 
-  get_mail_fuzzy_host_search () {
+  get_fuzzy_mail_host_search () {
     return this.cache.mail_fuzzy_host_search ??= new RegExp(
       `@${this.get_fuzzy_mail_host().source}`,
       'ig'
     )
   }
 
-  get_link_fuzzy_search () {
+  get_fuzzy_link_search () {
     return this.cache.link_fuzzy_search ??= new RegExp(
         // Fuzzy link can't be prepended with .:/\- and non punctuation.
         // but can start with > (markdown blockquote)
         `(^|(?![.:/\\-_@])(?:[$+<=>^\`|\uff5c]|${this.src_ZPCc}))` +
-        `((?![$+<=>^\`|\uff5c])${this.get_fuzzy_url_host_port().source}${this.get_path().source})`,
+        `(?:(?![$+<=>^\`|\uff5c])${this.get_fuzzy_url_host_port().source}${this.get_path().source})`,
       'ig'
     )
   }
@@ -346,8 +349,7 @@ export class REBuilder {
   get_mail_name_validator () {
     return this.cache.mail_name_validator ??= new RegExp(
       `(?:^|${this.get_text_separators().source}|"|\\(|${this.src_ZCc})` +
-      `(${this.get_mail_name().source})$`,
-      'i'
+      `(${this.get_mail_name().source})$`
     )
   }
 
