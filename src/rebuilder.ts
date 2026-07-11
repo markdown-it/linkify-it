@@ -68,15 +68,15 @@ export class REBuilder {
     )
   }
 
-  get_ip4_host () {
+  get_ipv4_addr () {
     return this.cache.src_ip4 ??= new RegExp(
       '(?:(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
     )
   }
 
-  get_ip6_addr () {
+  get_ipv6_addr () {
     const h16 = '[0-9A-Fa-f]{1,4}'
-    const ls32 = `(?:(?:${h16}:${h16})|${this.get_ip4_host().source})`
+    const ls32 = `(?:(?:${h16}:${h16})|${this.get_ipv4_addr().source})`
 
     return this.cache.src_ip6_addr ??= new RegExp(
       '(?:' +
@@ -93,9 +93,15 @@ export class REBuilder {
     )
   }
 
-  get_ip6_host () {
+  get_ipv6_url_host () {
     return this.cache.src_ip6_host ??= new RegExp(
-      `\\[${this.get_ip6_addr().source}\\]`
+      `\\[${this.get_ipv6_addr().source}\\]`
+    )
+  }
+
+  get_ipv6_mail_host () {
+    return this.cache.src_ipv6_mail_host ??= new RegExp(
+      `\\[IPv6:${this.get_ipv6_addr().source}\\]`
     )
   }
 
@@ -115,6 +121,7 @@ export class REBuilder {
   }
 
   get_host_terminator () {
+    // Force greedy fetch, we should not stop earlier than host part is fully fetched.
     return this.cache.src_host_terminator ??= new RegExp(
       `(?=$|${this.get_text_separators().source}|${this.src_ZPCc})` +
       `(?!${this.opts['---'] ? '-(?!--)|' : '-|'}_|:\\d|\\.-|\\.(?!$|${this.src_ZPCc}))`
@@ -126,10 +133,6 @@ export class REBuilder {
       `${this.src_ZPCc}|${this.get_text_separators().source}`
       // `${this.src_ZCc}|${this.get_text_separators().source}|[()[\\]{}.,"'?!\\-;]`
     )
-  }
-
-  get_path_extra () {
-    return this.cache.src_path_extra ??= new RegExp('')
   }
 
   get_path () {
@@ -239,72 +242,72 @@ export class REBuilder {
     )
   }
 
-  get_host () {
-    return this.cache.src_host ??= new RegExp(
+  // Host rules, depending on the type
+
+  get_url_host_port () {
+    return this.cache.url_host_port ??= new RegExp(
       '(?:' +
         // Don't need IP v4 check, because digits are already allowed
         // in normal domain names
-        this.get_ip6_host().source +
+        this.get_ipv6_url_host().source +
         '|' +
         `(?:(?:(?:${this.get_domain().source})\\.){0,10}${this.get_domain().source})`/* _root */ +
-      ')'
+      ')' +
+      this.get_port().source +
+      this.get_host_terminator().source
+    )
+  }
+
+  get_fuzzy_url_host_port () {
+    // - TLD as anchor
+    // - No local domains
+    return this.cache.fuzzy_url_host_port ??= new RegExp(
+      '(?:' +
+        (this.opts.fuzzyIP ? this.get_ipv4_addr().source + '|' : '') +
+        `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))` +
+      ')' +
+      // No port in fuzzy links to reduce search
+      this.get_host_terminator().source
     )
   }
 
   get_mail_host () {
+    // Similar to normal url host, but
+    // - with different ipv6 format (and without port).
+    // - with reduced max subdomains
     return this.cache.src_mail_host ??= new RegExp(
       '(?:' +
-        `\\[IPv6:${this.get_ip6_addr().source}\\]` +
+        this.get_ipv6_mail_host().source +
         '|' +
-        `(?:(?:(?:${this.get_domain().source})\\.){0,10}${this.get_domain().source})` +
-      ')'
+        `(?:(?:(?:${this.get_domain().source})\\.){0,4}${this.get_domain().source})` +
+      ')' +
+      this.get_host_terminator().source
     )
   }
 
-  get_host_fuzzy () {
-    return this.cache.host_fuzzy ??= new RegExp(
+  get_fuzzy_mail_host () {
+    // Similar to normal mail host, but without local domains.
+    return this.cache.src_fuzzy_mail_host ??= new RegExp(
       '(?:' +
-        (this.opts.fuzzyIP ? this.get_ip4_host().source + '|' : '') +
-        `(?:(?:(?:${this.get_domain().source})\\.){1,10}(?:${this.get_tld().source}))` +
-      ')'
-    )
-  }
-
-  get_mail_host_strict () {
-    return this.cache.src_mail_host_strict ??= new RegExp(
-      this.get_mail_host().source + this.get_host_terminator().source
-    )
-  }
-
-  get_host_fuzzy_strict () {
-    return this.cache.host_fuzzy_strict ??= new RegExp(
-      this.get_host_fuzzy().source + this.get_host_terminator().source
-    )
-  }
-
-  get_host_port_strict () {
-    return this.cache.src_host_port_strict ??= new RegExp(
-      this.get_host().source + this.get_port().source + this.get_host_terminator().source
-    )
-  }
-
-  get_host_port_fuzzy_strict () {
-    return this.cache.host_port_fuzzy_strict ??= new RegExp(
-      this.get_host_fuzzy().source + this.get_port().source + this.get_host_terminator().source
-    )
-  }
-
-  // Main rules
-
-  get_mail_fuzzy_host_search () {
-    return this.cache.mail_fuzzy_host_search ??= new RegExp(
-      '@' +
-      '(?:' +
-        `\\[IPv6:${this.get_ip6_addr().source}\\]` +
+        this.get_ipv6_mail_host().source +
         '|' +
         `(?:(?:(?:${this.get_domain().source})[.]){1,4}${this.get_domain_root().source})` +
       ')' +
-      this.get_host_terminator().source,
+      this.get_host_terminator().source
+    )
+  }
+
+  // Hooks
+
+  get_path_extra () {
+    return this.cache.src_path_extra ??= new RegExp('')
+  }
+
+  // "Public" rules
+
+  get_mail_fuzzy_host_search () {
+    return this.cache.mail_fuzzy_host_search ??= new RegExp(
+      `@${this.get_fuzzy_mail_host().source}`,
       'ig'
     )
   }
@@ -314,14 +317,14 @@ export class REBuilder {
         // Fuzzy link can't be prepended with .:/\- and non punctuation.
         // but can start with > (markdown blockquote)
         `(^|(?![.:/\\-_@])(?:[$+<=>^\`|\uff5c]|${this.src_ZPCc}))` +
-        `((?![$+<=>^\`|\uff5c])${this.get_host_port_fuzzy_strict().source}${this.get_path().source})`,
+        `((?![$+<=>^\`|\uff5c])${this.get_fuzzy_url_host_port().source}${this.get_path().source})`,
       'ig'
     )
   }
 
   get_http_validator () {
     return this.cache.http_validator ??= new RegExp(
-      `\\/\\/${this.get_auth().source}${this.get_host_port_strict().source}${this.get_path().source}`,
+      `\\/\\/${this.get_auth().source}${this.get_url_host_port().source}${this.get_path().source}`,
       'iy'
     )
   }
@@ -331,7 +334,7 @@ export class REBuilder {
       this.get_auth().source +
       // Don't allow single-level domains, because of false positives like '//test'
       // with code comments.
-      `(?:localhost|${this.get_ip6_host().source}|(?:(?:${this.get_domain().source})\\.){1,10}${this.get_domain_root().source})` +
+      `(?:localhost|${this.get_ipv6_url_host().source}|(?:(?:${this.get_domain().source})[.]){1,10}${this.get_domain_root().source})` +
       this.get_port().source +
       this.get_host_terminator().source +
       this.get_path().source,
@@ -350,7 +353,7 @@ export class REBuilder {
 
   get_mailto_validator () {
     return this.cache.mailto_validator ??= new RegExp(
-      `${this.get_mail_name().source}@${this.get_mail_host_strict().source}`,
+      `${this.get_mail_name().source}@${this.get_mail_host().source}`,
       'iy'
     )
   }
