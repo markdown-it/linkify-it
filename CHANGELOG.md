@@ -1,3 +1,11 @@
+6.1.0 / 2026-07-23
+------------------
+
+- Updated `uc.micro` to 3.0.0 and switched to its bundled TypeScript
+  declarations.
+- Fixed npm `repository` metadata.
+
+
 6.0.0 / 2026-07-11
 ------------------
 
