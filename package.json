@@ -48,7 +48,7 @@
     "postpublish": "npm run gh-pages"
   },
   "dependencies": {
-    "uc.micro": "^2.0.0"
+    "uc.micro": "^3.0.0"
   },
   "devDependencies": {
     "c8": "^11.0.0",
