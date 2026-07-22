@@ -1,0 +1,104 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>linkify-it - v6.1.0</title><meta name="description" content="Documentation for linkify-it"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">linkify-it - v6.1.0</a><div id="tsd-toolbar-links"><a href="https://github.com/markdown-it/linkify-it">GitHub</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>linkify-it - v6.1.0</h1></div><div class="tsd-panel tsd-typography"><h1 id="linkify-it" class="tsd-anchor-link">linkify-it<a href="#linkify-it" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p><a href="https://github.com/markdown-it/linkify-it/actions/workflows/ci.yml"><img src="https://github.com/markdown-it/linkify-it/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://www.npmjs.org/package/linkify-it"><img src="https://img.shields.io/npm/v/linkify-it.svg?style=flat" alt="NPM version"></a>
+<a href="https://coveralls.io/github/markdown-it/linkify-it?branch=master"><img src="https://coveralls.io/repos/github/markdown-it/linkify-it/badge.svg?branch=master" alt="Coverage Status"></a></p>
+<blockquote>
+<p>Links recognition library with FULL unicode support.
+Focused on high quality link patterns detection in plain text.</p>
+</blockquote>
+<p><strong><a href="http://markdown-it.github.io/linkify-it/">Demo</a></strong></p>
+<p>Why it's awesome:</p>
+<ul>
+<li>Full unicode support, <em>with astral characters</em>!</li>
+<li>International domains support.</li>
+<li>Allows rules extension &amp; custom normalizers.</li>
+</ul>
+<h2 id="install" class="tsd-anchor-link">Install<a href="#install" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">linkify-it</span><span class="hl-1"> </span><span class="hl-3">--save</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="usage-examples" class="tsd-anchor-link">Usage examples<a href="#usage-examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="js"><span class="hl-4">import</span><span class="hl-1"> { </span><span class="hl-5">LinkifyIt</span><span class="hl-1"> } </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&#39;linkify-it&#39;</span><span class="hl-1">;</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-6">linkify</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">LinkifyIt</span><span class="hl-1">({ </span><span class="hl-5">fuzzyLink:</span><span class="hl-1"> </span><span class="hl-3">true</span><span class="hl-1"> });</span><br/><br/><span class="hl-5">linkify</span><br/><span class="hl-1">  .</span><span class="hl-0">tlds</span><span class="hl-1">(</span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&#39;tlds&#39;</span><span class="hl-1">))</span><br/><span class="hl-1">  .</span><span class="hl-0">tlds</span><span class="hl-1">(</span><span class="hl-2">&#39;onion&#39;</span><span class="hl-1">, </span><span class="hl-3">true</span><span class="hl-1">)</span><br/><span class="hl-1">  .</span><span class="hl-0">add</span><span class="hl-1">(</span><span class="hl-2">&#39;ftp:&#39;</span><span class="hl-1">, </span><span class="hl-3">null</span><span class="hl-1">)</span><br/><span class="hl-1">  .</span><span class="hl-0">set</span><span class="hl-1">({ </span><span class="hl-5">fuzzyIP:</span><span class="hl-1"> </span><span class="hl-3">true</span><span class="hl-1"> });</span><br/><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-5">linkify</span><span class="hl-1">.</span><span class="hl-0">test</span><span class="hl-1">(</span><span class="hl-2">&#39;Site github.com!&#39;</span><span class="hl-1">));</span><br/><span class="hl-7">// true</span><br/><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-5">linkify</span><span class="hl-1">.</span><span class="hl-0">match</span><span class="hl-1">(</span><span class="hl-2">&#39;Site github.com!&#39;</span><span class="hl-1">));</span><br/><span class="hl-7">// [ {</span><br/><span class="hl-7">//   schema: &quot;&quot;,</span><br/><span class="hl-7">//   index: 5,</span><br/><span class="hl-7">//   lastIndex: 15,</span><br/><span class="hl-7">//   raw: &quot;github.com&quot;,</span><br/><span class="hl-7">//   text: &quot;github.com&quot;,</span><br/><span class="hl-7">//   url: &quot;http://github.com&quot;,</span><br/><span class="hl-7">// } ]</span>
+</code><button type="button">Copy</button></pre>
+
+<p>See more in examples folder:</p>
+<ul>
+<li><a href="media/twitter.mjs">twitter mentions</a></li>
+<li><a href="media/cjk-paired-brackets.mjs">CJK paired brackets in URL paths</a></li>
+<li><a href="media/nested-scopes-depth.mjs">increased nested scopes depth</a></li>
+</ul>
+<h2 id="api" class="tsd-anchor-link">API<a href="#api" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong><a href="http://markdown-it.github.io/linkify-it/doc">API documentation</a></strong></p>
+<h3 id="new-linkifyitoptions" class="tsd-anchor-link">new LinkifyIt(options)<a href="#new-linkifyitoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Creates new linkifier instance.</p>
+<p>By default understands:</p>
+<ul>
+<li><code>http(s)://...</code> , <code>ftp://...</code>, <code>mailto:...</code> &amp; <code>//...</code> links</li>
+<li>&quot;fuzzy&quot; emails (<a href="mailto:foo@bar.com">foo@bar.com</a>).</li>
+</ul>
+<p><code>options</code>:</p>
+<ul>
+<li><strong>fuzzyLink</strong> - recognize URL-s without <code>http(s)://</code> head. Default <code>false</code>.</li>
+<li><strong>fuzzyIP</strong> - allow IPs in fuzzy links above. Can conflict with some texts
+like version numbers. Default <code>false</code>.</li>
+<li><strong>fuzzyEmail</strong> - recognize emails without <code>mailto:</code> prefix. Default <code>true</code>.</li>
+<li><strong>tlds</strong> - allowed TLDs list for fuzzy links. Replaces the default list
+when set.</li>
+<li><strong>---</strong> - set <code>true</code> to terminate link with <code>---</code> (if it's considered as long dash).
+Default <code>false</code>.</li>
+<li><strong>rebuilder</strong> - custom <code>REBuilder</code> instance for patched regex fragments.</li>
+<li><strong>urlAuth</strong> - recognize authentication data in URLs. Default <code>false</code>.</li>
+<li><strong>maxLength</strong> - maximum link length. Default <code>10000</code>.</li>
+</ul>
+<h3 id="testtext" class="tsd-anchor-link">.test(text)<a href="#testtext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Searches linkifiable pattern and returns <code>true</code> on success or <code>false</code> on fail.</p>
+<h3 id="testschemaattext-name-offset" class="tsd-anchor-link">.testSchemaAt(text, name, offset)<a href="#testschemaattext-name-offset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Similar to <code>.test()</code> but checks only specific protocol tail exactly at given
+position. Returns length of found pattern (0 on fail).</p>
+<h3 id="matchtext" class="tsd-anchor-link">.match(text)<a href="#matchtext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Returns <code>Array</code> of found link matches or null if nothing found.</p>
+<p>Each match has:</p>
+<ul>
+<li><strong>schema</strong> - link schema, can be empty for fuzzy links, or <code>//</code> for
+protocol-neutral  links.</li>
+<li><strong>index</strong> - offset of matched text</li>
+<li><strong>lastIndex</strong> - index of next char after mathch end</li>
+<li><strong>raw</strong> - matched text</li>
+<li><strong>text</strong> - normalized text</li>
+<li><strong>url</strong> - link, generated from matched text</li>
+</ul>
+<h3 id="matchatstarttext" class="tsd-anchor-link">.matchAtStart(text)<a href="#matchatstarttext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Checks if a match exists at the start of the string. Returns <code>Match</code>
+(see docs for <code>match(text)</code>) or null if no URL is at the start.
+Doesn't work with fuzzy links.</p>
+<h3 id="tldslist-keepold" class="tsd-anchor-link">.tlds(list[, keepOld])<a href="#tldslist-keepold" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Load (or merge) new tlds list. Those are needed for fuzzy links (without schema)
+to avoid false positives. By default:</p>
+<ul>
+<li>2-letter root zones are ok.</li>
+<li>biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф are ok.</li>
+<li>encoded (<code>xn--...</code>) root zones are ok.</li>
+</ul>
+<p>If that's not enough, you can reload defaults with more detailed zones list.</p>
+<h3 id="addkey-value" class="tsd-anchor-link">.add(key, value)<a href="#addkey-value" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Add a new schema to the schemas object.</p>
+<p><code>key</code> is a link prefix (usually, protocol name with <code>:</code> at the end, <code>skype:</code>
+for example). <code>linkify-it</code> makes sure that prefix is not preceded with
+alphanumeric char.</p>
+<p><code>value</code> is a rule to check tail after link prefix:</p>
+<ul>
+<li><em>Object</em>
+<ul>
+<li><em>validate</em> - validator function which, given arguments <em>text</em>, <em>pos</em>, and
+<em>self</em>, returns the length of a match in <em>text</em> starting at index <em>pos</em>.
+<em>pos</em> is the index right after the link prefix. <em>self</em> can be used to
+access the linkify object to cache data.</li>
+<li><em>normalize</em> - optional function to normalize text &amp; url of matched result
+(for example, for twitter mentions).</li>
+</ul>
+</li>
+</ul>
+<p>To disable an existing rule, use <code>.add(key, null)</code>.</p>
+<h3 id="setoptions" class="tsd-anchor-link">.set(options)<a href="#setoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Override default options. Missed properties will not be changed.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#linkify-it"><span>linkify-<wbr/>it</span></a><a href="#install"><span>Install</span></a><a href="#usage-examples"><span>Usage examples</span></a><a href="#api"><span>API</span></a><ul><li><a href="#new-linkifyitoptions"><span>new <wbr/>Linkify<wbr/>It(options)</span></a></li><li><a href="#testtext"><span>.test(text)</span></a></li><li><a href="#testschemaattext-name-offset"><span>.test<wbr/>Schema<wbr/>At(text, name, offset)</span></a></li><li><a href="#matchtext"><span>.match(text)</span></a></li><li><a href="#matchatstarttext"><span>.match<wbr/>At<wbr/>Start(text)</span></a></li><li><a href="#tldslist-keepold"><span>.tlds(list[, keep<wbr/>Old])</span></a></li><li><a href="#addkey-value"><span>.add(key, value)</span></a></li><li><a href="#setoptions"><span>.set(options)</span></a></li></ul></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/markdown-it/linkify-it" class="tsd-nav-link">GitHub</a></nav><nav class="tsd-navigation"><a href="modules.html">linkify-it - v6.1.0</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
