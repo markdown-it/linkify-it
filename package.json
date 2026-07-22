@@ -8,7 +8,10 @@
     "autolink",
     "autolinker"
   ],
-  "repository": "markdown-it/linkify-it",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markdown-it/linkify-it.git"
+  },
   "main": "build/index.cjs.js",
   "module": "build/index.mjs",
   "types": "build/index.d.ts",
