@@ -110,6 +110,12 @@ export class REBuilder {
     )
   }
 
+  get_ipv4_mail_host () {
+    return this.cache.src_ipv4_mail_host ??= new RegExp(
+      `\\[${this.get_ipv4_addr().source}\\]`
+    )
+  }
+
   get_auth () {
     return this.cache.src_auth ??= new RegExp(
       // Prohibit any of "@/[]()" in user/pass to avoid wrong domain fetch.
@@ -284,6 +290,8 @@ export class REBuilder {
       '(?:' +
         this.get_ipv6_mail_host().source +
         '|' +
+        this.get_ipv4_mail_host().source +
+        '|' +
         `(?:(?:(?:${this.get_domain().source})\\.){0,4}${this.get_domain().source})` +
       ')' +
       this.get_host_terminator().source
@@ -295,6 +303,8 @@ export class REBuilder {
     return this.cache.src_fuzzy_mail_host ??= new RegExp(
       '(?:' +
         this.get_ipv6_mail_host().source +
+        '|' +
+        this.get_ipv4_mail_host().source +
         '|' +
         `(?:(?:(?:${this.get_domain().source})[.]){1,4}${this.get_domain_root().source})` +
       ')' +
