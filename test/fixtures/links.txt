@@ -288,6 +288,8 @@ mailto:user@[IPv6:::1]
 
 mailto:user@[IPv6:2001:db8::1]
 
+mailto:user@[192.168.1.1]
+
 (foobar email@example.com)
 email@example.com
 
