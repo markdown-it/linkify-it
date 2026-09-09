@@ -291,12 +291,14 @@ export class REBuilder {
   }
 
   get_fuzzy_mail_host () {
-    // Similar to normal mail host, but without local domains.
+    // Similar to normal mail host, but
+    // - TLD as anchor
+    // - No local domains
     return this.cache.src_fuzzy_mail_host ??= new RegExp(
       '(?:' +
         this.get_ipv6_mail_host().source +
         '|' +
-        `(?:(?:(?:${this.get_domain().source})[.]){1,4}${this.get_domain_root().source})` +
+        `(?:(?:(?:${this.get_domain().source})[.]){1,4}(?:${this.get_tld().source}))` +
       ')' +
       this.get_host_terminator().source
     )
