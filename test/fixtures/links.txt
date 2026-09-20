@@ -297,6 +297,25 @@ email@example.com
 (email@example.com)
 email@example.com
 
+% trailing hyphen is punctuation, not part of the host (#93)
+name@example.com-
+name@example.com
+
+name@example.com--
+name@example.com
+
+Contact name@example.com- for details
+name@example.com
+
+mailto:name@example.com-
+mailto:name@example.com
+
+% hyphenated domain labels must still match in full
+user@my-company.com
+
+user@my-company.com-
+user@my-company.com
+
 
 %
 % International

@@ -133,6 +133,15 @@ export class REBuilder {
     )
   }
 
+  get_mail_host_terminator () {
+    // Like get_host_terminator(), but `-`/`--` after the host are
+    // punctuation (emails have no path). `---` stays opt-in. #93
+    return this.cache.src_mail_host_terminator ??= new RegExp(
+      `(?=$|${this.get_text_separators().source}|${this.src_ZPCc})` +
+      `(?!${this.opts['---'] ? '' : '---|'}_|:\\d|\\.-|\\.(?!$|${this.src_ZPCc}))`
+    )
+  }
+
   get_path_terminator () {
     return this.cache.src_path_terminator ??= new RegExp(
       `${this.src_ZPCc}|${this.get_text_separators().source}`
@@ -286,7 +295,7 @@ export class REBuilder {
         '|' +
         `(?:(?:(?:${this.get_domain().source})\\.){0,4}${this.get_domain().source})` +
       ')' +
-      this.get_host_terminator().source
+      this.get_mail_host_terminator().source
     )
   }
 
@@ -298,7 +307,7 @@ export class REBuilder {
         '|' +
         `(?:(?:(?:${this.get_domain().source})[.]){1,4}${this.get_domain_root().source})` +
       ')' +
-      this.get_host_terminator().source
+      this.get_mail_host_terminator().source
     )
   }
 

@@ -232,6 +232,16 @@ describe('API', function () {
     l.match('😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡 .com')
   })
 
+  it('should detect emails followed by a hyphen (#93)', function () {
+    const l = new LinkifyIt()
+
+    assert.strictEqual(l.test('name@example.com'), true)
+    assert.strictEqual(l.test('name@example.com,'), true)
+    assert.strictEqual(l.test('name@example.com-'), true)
+    assert.strictEqual(l.match('name@example.com-')[0].text, 'name@example.com')
+    assert.strictEqual(l.match('Contact name@example.com- for details')[0].text, 'name@example.com')
+  })
+
   it('should accept `---` if enabled', function () {
     let l = new LinkifyIt()
 
