@@ -281,10 +281,12 @@ export class LinkifyIt {
     }
 
     if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
-      // guess schemaless links
-      re = this.re.get_fuzzy_link_search()
-      re.lastIndex = 0
-      if (re.exec(text) !== null) { return true }
+      // Cheap reject before the expensive fuzzy regex (#126)
+      if (this.re.get_fuzzy_host_test().test(text)) {
+        re = this.re.get_fuzzy_link_search()
+        re.lastIndex = 0
+        if (re.exec(text) !== null) { return true }
+      }
     }
 
     if (this.__opts__.fuzzyEmail && this.__schemas__['mailto:']) {
@@ -349,7 +351,8 @@ export class LinkifyIt {
 
     schemaRe.lastIndex = 0
 
-    if (this.__opts__.fuzzyLink && this.__schemas__['http:']) {
+    if (this.__opts__.fuzzyLink && this.__schemas__['http:'] &&
+        this.re.get_fuzzy_host_test().test(text)) {
       fuzzyLinkRe = this.re.get_fuzzy_link_search()
       fuzzyLinkRe.lastIndex = 0
     }

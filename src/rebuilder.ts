@@ -317,6 +317,22 @@ export class REBuilder {
     )
   }
 
+  /**
+   * Cheap fuzzy-link pretest (v5 host_fuzzy_test).
+   * Rejects plain text without localhost / www. / dotted-quad fragment / known TLD
+   * before running the expensive fuzzy link matcher (#126).
+   */
+  get_fuzzy_host_test () {
+    // Rude host pretest restored from v5 (tpl_host_fuzzy_test). Skips the
+    // expensive fuzzy link regex on plain prose (#126). `localhost` omitted:
+    // v6 fuzzy hosts require a TLD (or IP when fuzzyIP), not bare localhost.
+    return this.cache.fuzzy_host_test ??= new RegExp(
+      'www\\.|\\.\\d{1,3}\\.|' +
+      `(?:\\.(?:${this.get_tld().source})(?:${this.src_ZPCc}|>|$))`,
+      'i'
+    )
+  }
+
   get_fuzzy_link_search () {
     return this.cache.link_fuzzy_search ??= new RegExp(
         // Fuzzy link can't be prepended with .:/\- and non punctuation.
