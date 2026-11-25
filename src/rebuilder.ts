@@ -167,21 +167,21 @@ export class REBuilder {
             // This may be narrowed down later via separate rule.
             '\\.{2,20}[:]?[a-zA-Z0-9%/&]|' +
 
-            `\\.(?!${this.src_ZCc}|[.]|$)|` +
+            `\\.(?!${this.src_ZCc}|[.]|$|[)\\]}])|` +
             (this.opts['---']
               ? '\\-(?!--(?:[^-]|$))(?:-{0,19})|' // `---` => long dash, terminate
               : '\\-{1,20}|'
             ) +
             // allow `,,,` in paths
-            `,(?!${this.src_ZCc}|$)|` +
+            `,(?!${this.src_ZCc}|$|[)\\]}])|` +
 
             // allow `;` if not followed by space-like char
-            `;(?!${this.src_ZCc}|$)|` +
+            `;(?!${this.src_ZCc}|$|[)\\]}])|` +
 
             // allow `!!!` in paths, but not at the end
-            `\\!{1,20}(?!${this.src_ZCc}|[!]|$)|` +
+            `\\!{1,20}(?!${this.src_ZCc}|[!]|$|[)\\]}])|` +
 
-            `\\?(?!${this.src_ZCc}|[?]|$)|` +
+            `\\?(?!${this.src_ZCc}|[?]|$|[)\\]}])|` +
 
             this.get_path_extra().source +
 

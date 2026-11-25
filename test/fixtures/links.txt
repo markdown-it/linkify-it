@@ -352,3 +352,24 @@ www.a--b.com
 www.c--u.com
 
 http://a---b.com/
+
+%
+% Trailing punctuation before a closing bracket stays outside the link (#135)
+%
+(More at https://example.com/docs.)
+https://example.com/docs
+
+[https://example.com/a.]
+https://example.com/a
+
+(https://example.com/a,)
+https://example.com/a
+
+(https://example.com/a?)
+https://example.com/a
+
+(see https://example.com/a!)
+https://example.com/a
+
+{https://example.com/a;}
+https://example.com/a
